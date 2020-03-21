@@ -2,30 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/about/index.html</loc>
+    <loc>http://github.com/lubanproj/2020/03/18/hello-world/</loc>
+    
+    <lastmod>2020-03-21T17:58:36.968Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://github.com/lubanproj/about/index.html</loc>
     
     <lastmod>2020-03-19T16:55:54.172Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/publish/index.html</loc>
+    <loc>http://github.com/lubanproj/publish/index.html</loc>
     
     <lastmod>2020-03-19T16:29:19.540Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/publish/markdown.html</loc>
+    <loc>http://github.com/lubanproj/publish/markdown.html</loc>
     
     <lastmod>2020-03-18T16:21:40.094Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2020/03/18/hello-world/</loc>
-    
-    <lastmod>2020-03-18T07:08:56.431Z</lastmod>
     
   </url>
   

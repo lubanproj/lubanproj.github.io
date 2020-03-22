@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://github.com/lubanproj/2020/03/22/hello-world/</loc>
+    
+    <lastmod>2020-03-22T17:12:58.615Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://github.com/lubanproj/publish/index.html</loc>
     
     <lastmod>2020-03-22T13:18:49.783Z</lastmod>
@@ -19,13 +26,6 @@
     <loc>http://github.com/lubanproj/tags/index.html</loc>
     
     <lastmod>2020-03-22T13:12:57.145Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://github.com/lubanproj/2020/03/22/hello-world/</loc>
-    
-    <lastmod>2020-03-22T12:26:11.471Z</lastmod>
     
   </url>
   

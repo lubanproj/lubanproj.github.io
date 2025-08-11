@@ -1,3 +1,50 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = "https://diubrother.github.io/"
+languageCode = "zh-cn"
+title = "丢哥的博客"
+theme = "PaperMod"
+defaultContentLanguage = "zh"
+hasCJKLanguage = true
+
+
+[pagination]
+  pagerSize = 10
+
+
+[params]
+  author = "丢哥"
+  description = "一个使用 Hugo + PaperMod 搭建的博客"
+  keywords = ["博客", "Hugo", "PaperMod", "技术"]
+  ShowReadingTime = true
+  ShowToc = true
+  ShowBreadCrumbs = true
+  ShowPostNavLinks = true
+  ShowCodeCopyButtons = true
+  comments = false
+
+  # 开启首页文章列表
+  homeInfoParams = { Title = "欢迎来到我的博客 👋", Content = "这是我的个人技术博客，记录开发、思考和生活。" }
+
+[menu]
+  [[menu.main]]
+    name = "首页"
+    url = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "文章"
+    url = "/posts/"
+    weight = 2
+
+  [[menu.main]]
+    name = "关于"
+    url = "/about/"
+    weight = 3
+
+[markup]
+  [markup.tableOfContents]
+    endLevel = 3
+    ordered = false
+    startLevel = 2
+  [markup.highlight]
+    noClasses = false
+

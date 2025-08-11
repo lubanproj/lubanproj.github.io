@@ -1,0 +1,32 @@
+name: Deploy Hugo blog to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # 监听 main 分支的提交
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          submodules: true    # 使用主题子模块时必须为 true
+          fetch-depth: 0      # 获取全部提交记录，防止部署失败
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: 'latest'
+
+      - name: Build
+        run: hugo --minify
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # 内置 token，无需配置
+          publish_dir: ./public
+          publish_branch: gh-pages
+

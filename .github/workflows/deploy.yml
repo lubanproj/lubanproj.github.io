@@ -1,9 +1,14 @@
 name: Deploy Hugo site to Pages
 
+
 on:
   push:
     branches:
       - main  # 监听 main 分支的变更
+
+permissions:
+  contents: write
+
 
 jobs:
   deploy:

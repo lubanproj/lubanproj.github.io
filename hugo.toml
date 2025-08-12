@@ -1,7 +1,7 @@
 baseURL = "https://lubanproj.github.io/"
 languageCode = "zh-cn"
 title = "丢哥的博客"
-theme = "PaperMod"
+theme = "papermod"
 defaultContentLanguage = "zh"
 hasCJKLanguage = true
 

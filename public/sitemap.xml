@@ -2,20 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:56921/</loc>
+    <loc>https://lubanproj.github.io/</loc>
     <lastmod>2023-03-01T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:56921/about/</loc>
+    <loc>https://lubanproj.github.io/about/</loc>
     <lastmod>2023-03-01T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:56921/posts/</loc>
+    <loc>https://lubanproj.github.io/posts/</loc>
     <lastmod>2020-03-13T21:14:41+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:56921/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</loc>
+    <loc>https://lubanproj.github.io/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</loc>
     <lastmod>2020-03-13T21:14:41+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:56921/categories/</loc>
+    <loc>https://lubanproj.github.io/categories/</loc>
   </url><url>
-    <loc>http://localhost:56921/tags/</loc>
+    <loc>https://lubanproj.github.io/tags/</loc>
   </url>
 </urlset>

@@ -1,20 +1,37 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>丢哥的博客</title>
-    <link>https://lubanproj.github.io/</link>
-    <description>Recent content on 丢哥的博客</description>
+    <title>丢哥</title>
+    <link>http://localhost:56921/</link>
+    <description>Recent content on 丢哥</description>
     <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 11 Aug 2025 19:14:41 +0800</lastBuildDate>
-    <atom:link href="https://lubanproj.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 01 Mar 2023 00:00:00 +0800</lastBuildDate>
+    <atom:link href="http://localhost:56921/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>My First Post</title>
-      <link>https://lubanproj.github.io/posts/my-first-post/</link>
-      <pubDate>Mon, 11 Aug 2025 19:14:41 +0800</pubDate>
-      <guid>https://lubanproj.github.io/posts/my-first-post/</guid>
-      <description>&lt;h3 id=&#34;hello-world&#34;&gt;Hello World&lt;/h3&gt;
-&lt;hr&gt;</description>
+      <title>关于我</title>
+      <link>http://localhost:56921/about/</link>
+      <pubDate>Wed, 01 Mar 2023 00:00:00 +0800</pubDate>
+      <guid>http://localhost:56921/about/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;永不畏败&lt;/p&gt;&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;毕业于武汉大学&lt;/li&gt;
+&lt;li&gt;校招入职阿里手淘、后续在腾讯看点、华为 2012 实验室工作数年&lt;/li&gt;
+&lt;li&gt;两次创业经历，曾经是一家融资数千万的创业公司 CTO&lt;/li&gt;
+&lt;li&gt;担任过千人规模公司技术总监&lt;/li&gt;
+&lt;li&gt;Go | Java | Typescript | C# | C | Python | nodejs&lt;/li&gt;
+&lt;li&gt;旅行 | 游泳 | 小说迷&lt;/li&gt;
+&lt;li&gt;梦想是财务自由后，当一名网络作家&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;联系方式👇&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>我为什么想成立工作室</title>
+      <link>http://localhost:56921/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</link>
+      <pubDate>Fri, 13 Mar 2020 21:14:41 +0800</pubDate>
+      <guid>http://localhost:56921/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</guid>
+      <description>&lt;p&gt;其实是想说说自己成立鲁班科技工作室的初衷。但有一种五味陈杂的感觉，突然不知道从何说起。自身的感受很多、很杂、很乱，其实归结到一起无非就是，对未来感到焦虑，对目前阶段的自己的状态并不是非常满意。所以工作室的 slogan，我想表达的是希望鲁班科技工作室能够帮助大家成为让自己满意的人。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

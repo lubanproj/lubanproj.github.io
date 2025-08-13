@@ -1,6 +1,6 @@
 baseURL = "https://lubanproj.github.io/"
 languageCode = "zh-cn"
-title = "丢哥的博客"
+title = "丢哥"
 theme = "papermod"
 defaultContentLanguage = "zh"
 hasCJKLanguage = true
@@ -12,17 +12,17 @@ hasCJKLanguage = true
 
 [params]
   author = "丢哥"
-  description = "一个使用 Hugo + PaperMod 搭建的博客"
-  keywords = ["博客", "Hugo", "PaperMod", "技术"]
+  description = "记录个人成长、思考和生活感悟、独立开发碎碎恋、出海日记"
+  keywords = ["丢哥", "diuge", "独立开发", "出海"]
   ShowReadingTime = true
   ShowToc = true
-  ShowBreadCrumbs = true
+  ShowBreadCrumbs = false
   ShowPostNavLinks = true
   ShowCodeCopyButtons = true
   comments = false
 
   # 开启首页文章列表
-  homeInfoParams = { Title = "欢迎来到我的博客 👋", Content = "这是我的个人技术博客，记录开发、思考和生活。" }
+  # homeInfoParams = { Title = "欢迎来到我的博客 👋", Content = "这是我的个人技术博客，记录开发、思考和生活。" }
 
 [menu]
   [[menu.main]]

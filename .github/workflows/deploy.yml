@@ -17,7 +17,6 @@ jobs:
       - name: Checkout main branch
         uses: actions/checkout@v4
         with:
-          submodules: true  # 如果你有 Hugo 主题作为子模块
           fetch-depth: 0
 
       - name: Setup Hugo

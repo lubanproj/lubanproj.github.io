@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>第六章：超时机制 | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="一、超时
@@ -15,16 +15,16 @@
 
 我们发现，假如只对客户端进行超时处理，可能会出现一次 rpc 请求 client 返回异常了，server 还在运行，这是一种资源浪费。假如只对服务端进行超时处理，则 client 会循环等待收包，假如 server 的回包丢包了，会造成 client 死循环，这也是不合理的。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="http://localhost:1313/lessons/go-rpc/context-timeout/">
+<link rel="canonical" href="https://www.diu.life/lessons/go-rpc/context-timeout/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://www.diu.life/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.diu.life/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.diu.life/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.diu.life/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.diu.life/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/go-rpc/context-timeout/">
+<link rel="alternate" hreflang="zh" href="https://www.diu.life/lessons/go-rpc/context-timeout/">
 <noscript>
     <style>
         #theme-toggle,
@@ -61,7 +61,86 @@
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://www.diu.life/lessons/go-rpc/context-timeout/">
+  <meta property="og:site_name" content="丢哥">
+  <meta property="og:title" content="第六章：超时机制">
+  <meta property="og:description" content="一、超时 超时是 rpc 请求中最常见的问题之一。一般发生超时的情况都是在涉及到跨系统调用的场景，假如具体划分，可以分为客户端调用超时和服务端超时。
+假如对客户端超时进行处理，那么当客户端发起请求后，如果在规定时间内没有收到服务端的响应，则直接返回给上游调用超时异常，此时服务端的代码可能仍在运行。 假如对服务端超时进行处理，那么当客户端发起一次请求后，会一直等待服务端响应，服务端在方法执行之后的指定时间内如果未执行完程序，则不会继续处理，而是直接返回一个超时异常给到客户端。 我们发现，假如只对客户端进行超时处理，可能会出现一次 rpc 请求 client 返回异常了，server 还在运行，这是一种资源浪费。假如只对服务端进行超时处理，则 client 会循环等待收包，假如 server 的回包丢包了，会造成 client 死循环，这也是不合理的。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="lessons">
+    <meta property="article:published_time" content="2020-02-06T00:00:00+08:00">
+    <meta property="article:modified_time" content="2020-02-06T00:00:00+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第六章：超时机制">
+<meta name="twitter:description" content="一、超时
+超时是 rpc 请求中最常见的问题之一。一般发生超时的情况都是在涉及到跨系统调用的场景，假如具体划分，可以分为客户端调用超时和服务端超时。
+
+假如对客户端超时进行处理，那么当客户端发起请求后，如果在规定时间内没有收到服务端的响应，则直接返回给上游调用超时异常，此时服务端的代码可能仍在运行。
+假如对服务端超时进行处理，那么当客户端发起一次请求后，会一直等待服务端响应，服务端在方法执行之后的指定时间内如果未执行完程序，则不会继续处理，而是直接返回一个超时异常给到客户端。
+
+我们发现，假如只对客户端进行超时处理，可能会出现一次 rpc 请求 client 返回异常了，server 还在运行，这是一种资源浪费。假如只对服务端进行超时处理，则 client 会循环等待收包，假如 server 的回包丢包了，会造成 client 死循环，这也是不合理的。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "教程",
+      "item": "https://www.diu.life/lessons/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "从 0 到 1 开发一款高性能 RPC 框架",
+      "item": "https://www.diu.life/lessons/go-rpc/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "第六章：超时机制",
+      "item": "https://www.diu.life/lessons/go-rpc/context-timeout/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第六章：超时机制",
+  "name": "第六章：超时机制",
+  "description": "一、超时 超时是 rpc 请求中最常见的问题之一。一般发生超时的情况都是在涉及到跨系统调用的场景，假如具体划分，可以分为客户端调用超时和服务端超时。\n假如对客户端超时进行处理，那么当客户端发起请求后，如果在规定时间内没有收到服务端的响应，则直接返回给上游调用超时异常，此时服务端的代码可能仍在运行。 假如对服务端超时进行处理，那么当客户端发起一次请求后，会一直等待服务端响应，服务端在方法执行之后的指定时间内如果未执行完程序，则不会继续处理，而是直接返回一个超时异常给到客户端。 我们发现，假如只对客户端进行超时处理，可能会出现一次 rpc 请求 client 返回异常了，server 还在运行，这是一种资源浪费。假如只对服务端进行超时处理，则 client 会循环等待收包，假如 server 的回包丢包了，会造成 client 死循环，这也是不合理的。\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "一、超时 超时是 rpc 请求中最常见的问题之一。一般发生超时的情况都是在涉及到跨系统调用的场景，假如具体划分，可以分为客户端调用超时和服务端超时。\n假如对客户端超时进行处理，那么当客户端发起请求后，如果在规定时间内没有收到服务端的响应，则直接返回给上游调用超时异常，此时服务端的代码可能仍在运行。 假如对服务端超时进行处理，那么当客户端发起一次请求后，会一直等待服务端响应，服务端在方法执行之后的指定时间内如果未执行完程序，则不会继续处理，而是直接返回一个超时异常给到客户端。 我们发现，假如只对客户端进行超时处理，可能会出现一次 rpc 请求 client 返回异常了，server 还在运行，这是一种资源浪费。假如只对服务端进行超时处理，则 client 会循环等待收包，假如 server 的回包丢包了，会造成 client 死循环，这也是不合理的。\n那么我们的思路清楚了，最好的超时机制的实现应该是 client 和 server 同时处理超时。\n二、超时机制的设计 假如有一次请求，请求流程如下所示，A 同时调用了 B、C、D，C 同时调用了 E、F，E 调用了 G。\n假如整个请求的超时时间是 2s，那么我们就拿最长的一条链路 A ——\u003e C ——\u003e E ——\u003e G 来说，A 给下游链路的处理时间是 2s，假如 C 处理耗费了 1s，那么 C 给下游 E 的处理时间为 1s，假如 E 处理耗费了 0.5s ，那么留给下游 G 的处理时间就是 0.5s， 假如这条链路中出现下面任何一种情况，则这次请求视为超时：\nC 的处理时间超过了 2s E 的处理时间超过了 1s G 的处理时间超过了 0.5s 基于对上面请求流程的分析，我们就可以设计出我们的超时机制了，具体如下：\n客户端 client 一般是一条请求链路的源头。client 向下游发起调用，如果在规定时间内没有收到服务端的响应，则直接返回超时异常。\n对于一次请求的服务端 C 而言，请求从上游到 C 有一个上游传递下来的剩余处理时间。服务端 C 有一个自己处理请求的耗时，处理完之后，往下游发起调用时会有一个带给下游的剩余处理时间。这样，超时的信息就完成了上下游传递。也就是下面的等式：\n上游传递下来的剩余处理时间 - 服务端处理请求的时间 = 传递给下游的剩余处理时间\n三、超时机制的实现 上面我们详细讲解了超时机制的设计，那么我们要如何去实现这样一套超时机制呢？\n这里就介绍一下 go 里面一个非常强大的包 —— context\n1、什么是 context Context 是一个非常抽象的概念，中文翻译为 ”上下文“，为了方便理解，我们可以把它看做是 goroutine 的上下文。包括 goroutine 的运行状态、环境等信息。Context 可以用来在 goroutine 之间传递上下文信息，包括：信号、超时时间、k-v 键值对等。同时它可以用作并发控制。它的接口定义如下：\ntype Context interface { // 返回代表 Context 完成的时间 Deadline() (deadline time.Time, ok bool) // 当 Context 被取消或者死亡后，返回一个 channel Done() \u003c-chan struct{} // 当 Context 被取消或者死亡后，返回错误信息 Err() error // 获取 key 对应的 value Value(key interface{}) interface{} } 它主要有上面四个方法，通过 Deadline() 我们可以获取 Context 存活的时间。\n2、Context 的父子模型 要理解 Context ，必须要介绍下 Context 的父子模型。假如上图是在某个服务端 server 内进行请求处理的流程。 goroutine A 这里的 Context A 是 goroutine B、C、D 的 parent Context。goroutine E、F 与 goroutine C 共用 context C，Context C 是 Context G 的 parent Context。\nContext 的父子模型通俗点说就是，假如父 Context 已经执行完或者超时取消了，那么子 Context 相应地也会被取消。也就是说，上图假如 Context A 被取消了，那么 B、C、D 都会被取消，假如 Context C 被取消了，那么 Context G也会被取消。\n3、使用 context 包实现超时控制 使用 context 包实现超时控制，主要用到了下面两个函数：\ncontext.WithTimeout ：为 Context 设置超时时间，超过这个时间，Context 会被取消执行。 context.Deadline：返回 Context 完成的时间点。 具体实现：\n（1）client 端：\nclient 发起调用时，通过 client.WithTimeout 方法设置 client Options 参数选项的 timeout 参数的值。\n判断 client Options 参数选项的 timeout 值是否被设置，假如被设置，则通过 context.WithTimeout 方法设置 parent Context 的超时时间。\nif c.opts.timeout \u003e 0 { var cancel context.CancelFunc ctx, cancel = context.WithTimeout(ctx, c.opts.timeout) defer cancel() } 对下游链路发起调用，基于 parent Context 去生成子 Context 发起调用。\n（2）server 端：\nserver 端启动时，通过 server.WithTimeout 方法设置 service Options 参数选项的 timeout 参数的值。\nservice 在调用 Handle 方法处理请求时，判断 timeout 值是否被设置，假如被设置，则新起一个携带超时时间 timeout 的子 Context。\nif s.opts.timeout != 0 { var cancel context.CancelFunc ctx, cancel = context.WithTimeout(ctx, s.opts.timeout) defer cancel() } 通过这样一套机制，则实现了 client 和 server 双端的超时控制。\n小结 本章主要介绍了超时机制的原理、设计，并且借助 context 包实现了 client 和 server 的超时控制。\n",
+  "wordCount" : "1740",
+  "inLanguage": "zh",
+  "datePublished": "2020-02-06T00:00:00+08:00",
+  "dateModified": "2020-02-06T00:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "丢哥"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.diu.life/lessons/go-rpc/context-timeout/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "丢哥",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.diu.life/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -79,7 +158,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="https://www.diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -105,27 +184,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="首页">
+                <a href="https://www.diu.life/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/posts/" title="文章">
+                <a href="https://www.diu.life/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/projects/" title="独立开发">
+                <a href="https://www.diu.life/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/lessons/" title="教程">
+                <a href="https://www.diu.life/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="关于">
+                <a href="https://www.diu.life/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -140,122 +219,122 @@
       <h3>Go-Rpc 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/what-is-rpc/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/what-is-rpc/" class="chapter-link">
             <span class="chapter-title">第一章：RPC 原理</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
             <span class="chapter-title">第二章：RPC 框架概览</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-server/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/build-server/" class="chapter-link">
             <span class="chapter-title">第三章：框架搭建 —— server</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-client/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/build-client/" class="chapter-link">
             <span class="chapter-title">第四章：框架搭建 —— client</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-transport/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/build-transport/" class="chapter-link">
             <span class="chapter-title">第五章：框架搭建 —— transport</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="http://localhost:1313/lessons/go-rpc/context-timeout/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/context-timeout/" class="chapter-link">
             <span class="chapter-title">第六章：超时机制</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/custom-protocol/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/custom-protocol/" class="chapter-link">
             <span class="chapter-title">第七章：自定义协议实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/codec/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/codec/" class="chapter-link">
             <span class="chapter-title">第八章：协议编解码实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
             <span class="chapter-title">第九章：序列化实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/log-component/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/log-component/" class="chapter-link">
             <span class="chapter-title">第十章：日志模块实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/connection-pool/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/connection-pool/" class="chapter-link">
             <span class="chapter-title">第十一章：连接池实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/interceptor/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/interceptor/" class="chapter-link">
             <span class="chapter-title">第十二章：拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/component-interface/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/component-interface/" class="chapter-link">
             <span class="chapter-title">第十三章：组件可插拔实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/plugin/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/plugin/" class="chapter-link">
             <span class="chapter-title">第十四章：插件体系实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
             <span class="chapter-title">第十五章：服务发现原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
             <span class="chapter-title">第十六章：服务发现实现 —— consul</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
             <span class="chapter-title">第十七章：负载均衡实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/tracing-selection/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/tracing-selection/" class="chapter-link">
             <span class="chapter-title">第十八章：分布式链路追踪原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/tracing-implementation/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/tracing-implementation/" class="chapter-link">
             <span class="chapter-title">第十九章：分布式链路追踪实现 —— jaeger</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/auth/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/auth/" class="chapter-link">
             <span class="chapter-title">第二十章：认证鉴权实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/code-generation/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/code-generation/" class="chapter-link">
             <span class="chapter-title">第二十一章：代码生成工具实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/performance-test/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/performance-test/" class="chapter-link">
             <span class="chapter-title">第二十二章：框架性能测试</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/performance-optimization/" class="chapter-link">
             <span class="chapter-title">第二十三章：框架性能优化</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/summary/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/summary/" class="chapter-link">
             <span class="chapter-title">第二十四章：总结与展望</span>
           </a>
         </li>
@@ -364,11 +443,11 @@
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="http://localhost:1313/lessons/go-rpc/build-transport/" class="nav-btn prev-btn">
+            <a href="https://www.diu.life/lessons/go-rpc/build-transport/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第五章：框架搭建 —— transport</span>
             </a>
-            <a href="http://localhost:1313/lessons/go-rpc/custom-protocol/" class="nav-btn next-btn">
+            <a href="https://www.diu.life/lessons/go-rpc/custom-protocol/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第七章：自定义协议实现</span>
             </a>
@@ -765,7 +844,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="http://localhost:1313/">丢哥</a></span> · 
+        <span>&copy; 2025 <a href="https://www.diu.life/">丢哥</a></span> · 
 
     <span>
         Powered by

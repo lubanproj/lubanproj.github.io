@@ -2,101 +2,101 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/lessons/go-rpc/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/</loc>
     <lastmod>2024-01-20T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://www.diu.life/</loc>
     <lastmod>2024-01-20T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/</loc>
+    <loc>https://www.diu.life/lessons/</loc>
     <lastmod>2024-01-01T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/projects/</loc>
+    <loc>https://www.diu.life/projects/</loc>
     <lastmod>2023-06-01T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/about/</loc>
+    <loc>https://www.diu.life/about/</loc>
     <lastmod>2023-03-01T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/</loc>
+    <loc>https://www.diu.life/posts/</loc>
     <lastmod>2020-03-13T21:14:41+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</loc>
+    <loc>https://www.diu.life/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</loc>
     <lastmod>2020-03-13T21:14:41+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/summary/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/summary/</loc>
     <lastmod>2020-02-24T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/performance-optimization/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/performance-optimization/</loc>
     <lastmod>2020-02-23T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/performance-test/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/performance-test/</loc>
     <lastmod>2020-02-22T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/code-generation/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/code-generation/</loc>
     <lastmod>2020-02-21T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/auth/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/auth/</loc>
     <lastmod>2020-02-20T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/tracing-implementation/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/tracing-implementation/</loc>
     <lastmod>2020-02-19T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/tracing-selection/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/tracing-selection/</loc>
     <lastmod>2020-02-18T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/load-balance-implementation/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/load-balance-implementation/</loc>
     <lastmod>2020-02-17T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/service-discovery-implementation/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/service-discovery-implementation/</loc>
     <lastmod>2020-02-16T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/service-discovery-selection/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/service-discovery-selection/</loc>
     <lastmod>2020-02-15T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/plugin/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/plugin/</loc>
     <lastmod>2020-02-14T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/component-interface/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/component-interface/</loc>
     <lastmod>2020-02-13T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/interceptor/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/interceptor/</loc>
     <lastmod>2020-02-12T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/connection-pool/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/connection-pool/</loc>
     <lastmod>2020-02-11T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/log-component/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/log-component/</loc>
     <lastmod>2020-02-10T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/</loc>
     <lastmod>2020-02-09T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/codec/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/codec/</loc>
     <lastmod>2020-02-08T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/custom-protocol/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/custom-protocol/</loc>
     <lastmod>2020-02-07T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/context-timeout/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/context-timeout/</loc>
     <lastmod>2020-02-06T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/build-transport/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/build-transport/</loc>
     <lastmod>2020-02-05T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/build-client/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/build-client/</loc>
     <lastmod>2020-02-04T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/build-server/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/build-server/</loc>
     <lastmod>2020-02-03T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/rpc-framework-overview/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/rpc-framework-overview/</loc>
     <lastmod>2020-02-02T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/lessons/go-rpc/what-is-rpc/</loc>
+    <loc>https://www.diu.life/lessons/go-rpc/what-is-rpc/</loc>
     <lastmod>2020-02-01T00:00:00+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://www.diu.life/categories/</loc>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>https://www.diu.life/tags/</loc>
   </url>
 </urlset>

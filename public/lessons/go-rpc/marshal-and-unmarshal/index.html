@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>第九章：序列化实现 | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="一、序列化与反序列化
 在计算机网络中，数据都是以二进制形式进行传输的。将对象转换成可以传输的二进制数据的过程叫做序列化。将二进制的数据转换成对象的过程叫做反序列化。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/">
+<link rel="canonical" href="https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://www.diu.life/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.diu.life/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.diu.life/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://www.diu.life/apple-touch-icon.png">
+<link rel="mask-icon" href="https://www.diu.life/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/">
+<link rel="alternate" hreflang="zh" href="https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/">
 <noscript>
     <style>
         #theme-toggle,
@@ -56,7 +56,80 @@
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/">
+  <meta property="og:site_name" content="丢哥">
+  <meta property="og:title" content="第九章：序列化实现">
+  <meta property="og:description" content="一、序列化与反序列化 在计算机网络中，数据都是以二进制形式进行传输的。将对象转换成可以传输的二进制数据的过程叫做序列化。将二进制的数据转换成对象的过程叫做反序列化。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="lessons">
+    <meta property="article:published_time" content="2020-02-09T00:00:00+08:00">
+    <meta property="article:modified_time" content="2020-02-09T00:00:00+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第九章：序列化实现">
+<meta name="twitter:description" content="一、序列化与反序列化
+在计算机网络中，数据都是以二进制形式进行传输的。将对象转换成可以传输的二进制数据的过程叫做序列化。将二进制的数据转换成对象的过程叫做反序列化。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "教程",
+      "item": "https://www.diu.life/lessons/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "从 0 到 1 开发一款高性能 RPC 框架",
+      "item": "https://www.diu.life/lessons/go-rpc/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "第九章：序列化实现",
+      "item": "https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第九章：序列化实现",
+  "name": "第九章：序列化实现",
+  "description": "一、序列化与反序列化 在计算机网络中，数据都是以二进制形式进行传输的。将对象转换成可以传输的二进制数据的过程叫做序列化。将二进制的数据转换成对象的过程叫做反序列化。\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "一、序列化与反序列化 在计算机网络中，数据都是以二进制形式进行传输的。将对象转换成可以传输的二进制数据的过程叫做序列化。将二进制的数据转换成对象的过程叫做反序列化。\ngo 原生序列化与反序列化 go 语言中提供了一个 encoding/binary 包实现了简单的数字（固定长度的数字类型或者只包含定长值的结构体或数组）与字节流的转换和 varint 的编解码。varint 也是一种编解码方式，google 的 protobuffer 也大量使用了 varint ，这里不详细介绍，有兴趣的同学可以自行 google。我们重点来看看 go binary 包提供的数据和 []byte 的转换能力，核心 api 如下：\n// r - 实现了 io.Reader 接口的可以被读取的数据源，如 net.Conn // order - 特殊字节序，binary 中提供了大端序和小端序 // data - 需要被解码的数据 func Read(r io.Reader, order ByteOrder, data interface{}) error // w - 实现了 io.Writer 接口的可以被写入数据源，如 net.Conn // order - 特殊字节序，binary 中提供了大端序和小端序 // data - 需要被编码的数据 func Write(w io.Writer, order ByteOrder, data interface{}) error 它提供了具有读写能力的 Read 和 Write 接口。下面是一个简单的使用 binary 进行读写的 example\nfunc main() { var pi float64 b := []byte{0x18,0x2d,0x44,0x54,0xfb,0x21,0x09,0x40} buf := bytes.NewBuffer(b) err := binary.Read(buf, binary.BigEndian, \u0026pi) if err != nil { log.Fatalln(err) } fmt.Println(\"pi = \", pi) buf = new(bytes.Buffer) pi = math.Pi err = binary.Write(buf, binary.BigEndian, pi) if err != nil { log.Fatalln(err) } fmt.Println(\"math.Pi bytes : \", buf.Bytes()) } 二、序列化方案的选型 之前介绍 rpc 原理的时候，介绍过一些序列化方案的选型，这里再展开说一下。每种序列化库的性能数据如下：（引用网上的数据）\nbenchmark _name iter time/iter alloc bytes/iter allocs/iter ------------------------------------------------------------------------------------------------------------------------- BenchmarkMarshalByJson-4 1000000 1795 ns/op 376 B/op 4 allocs/op BenchmarkUnmarshalByJson-4 500000 3927 ns/op 296 B/op 9 allocs/op BenchmarkMarshalByXml-4 200000 8216 ns/op 4801 B/op 12 allocs/op BenchmarkUnmarshalByXml-4 50000 26284 ns/op 2807 B/op 67 allocs/op BenchmarkMarshalByBson-4 500000 3258 ns/op 1248 B/op 14 allocs/op BenchmarkUnmarshalByBson-4 1000000 1433 ns/op 272 B/op 7 allocs/op BenchmarkMarshalByMsgp-4 5000000 259 ns/op 80 B/op 1 allocs/op BenchmarkUnmarshalByMsgp-4 3000000 466 ns/op 32 B/op 5 allocs/op BenchmarkMarshalByProtoBuf-4 2000000 955 ns/op 328 B/op 5 allocs/op BenchmarkUnmarshalByProtoBuf-4 1000000 1571 ns/op 400 B/op 11 allocs/op BenchmarkMarshalByGogoProtoBuf-4 10000000 224 ns/op 48 B/op 1 allocs/op BenchmarkUnmarshalByGogoProtoBuf-4 2000000 828 ns/op 144 B/op 8 allocs/op BenchmarkMarshalByFlatBuffers-4 3000000 626 ns/op 16 B/op 1 allocs/op BenchmarkUnmarshalByFlatBuffers-4 100000000 10.4 ns/op 0 B/op 0 allocs/op BenchmarkUnmarshalByFlatBuffers_withFields-4 3000000 493 ns/op 32 B/op 5 allocs/op BenchmarkMarshalByThrift-4 2000000 840 ns/op 64 B/op 1 allocs/op BenchmarkUnmarshalByThrift-4 1000000 1575 ns/op 96 B/op 6 allocs/op BenchmarkMarshalByAvro-4 1000000 1330 ns/op 133 B/op 7 allocs/op BenchmarkUnmarshalByAvro-4 200000 7036 ns/op 1680 B/op 63 allocs/op BenchmarkMarshalByGencode-4 20000000 66.2 ns/op 0 B/op 0 allocs/op BenchmarkUnmarshalByGencode-4 5000000 258 ns/op 32 B/op 5 allocs/op 可以看到，比较常用的库里面，gogoprotobuf \u003e msgpack \u003e flatbuffers \u003e thrift \u003e protobuf \u003e json\n之前我们说过，我们的框架有两种调用方式，一种是使用反射、一种是使用代码生成。\n假如使用反射的话，我们发现只有 msgpack 、json 能够对原生的 go struct 进行序列化。由于 msgpack 性能远高于 json，所以这里我们就直接选择了 msgpack。\n假如使用代码生成的调用方式，这里有 gogoprotobuf、flatbuffers、thrift、protobuf 四种方案可以选。从性能上讲，四种序列化库其实性能都已经比较优秀了，但是其中 gogoprotobuf 的序列化性能是最好的。由于目前使用最广泛的还是 protobuf，考虑到 gogoprotobuf 和 protobuf 不兼容，这里选择了比较广泛的通用化方案 protobuf，当然，后续我们也支持 gogoprotobuf 序列化方式的实现，业务可以自己选择用哪种方式进行序列化。\n三、何时进行序列化与反序列化 讲到序列化这里，可能有些朋友会把序列化和编解码搞混。把对象转为二进制数据不是编码的过程吗？这里编解码和序列化/反序列化的关系是什么呢？下面一张图告诉你。\n所以编码是在对象序列化之后，将对象的二进制数据进行编码，加上包头、帧头使其成为一个完整的消息帧。反序列化是在对象解码之后，从一个完整的消息帧解析出帧头、包头，得到对象的二进制数据，然后再进行反序列化得到一个对象。\n四、序列化和反序列化实现 这里首先定义一个 Serialization 的接口，用与序列化的通用实现标准，所有的序列化组件都需要实现这两个方法。\ntype Serialization interface { Marshal(interface{})([]byte, error) Unmarshal([]byte, interface{}) error } 、msgpack 序列化实现 msgpack 的序列化与反序列化直接使用 github 上第三方包实现 msgpack\n这里的实现比较简单，只需要实现 Marshal、Unmarshal 两个方法即可\ntype MsgpackSerialization struct {} func (c *MsgpackSerialization) Marshal(v interface{}) ([]byte, error) { var buf bytes.Buffer encoder := msgpack.NewEncoder(\u0026buf) err := encoder.Encode(v) return buf.Bytes(), err } func (c *MsgpackSerialization) Unmarshal(data []byte, v interface{}) error { decoder := msgpack.NewDecoder(bytes.NewReader(data)) err := decoder.Decode(v) return err } 2、protobuf 序列化实现 protobuf 序列化与反序列化这里，为了避免对象的频繁创建于销毁，使用了一个内存池。如下：\nvar bufferPool = \u0026sync.Pool{ New : func() interface {} { return \u0026cachedBuffer { Buffer : proto.Buffer{}, lastMarshaledSize : 16, } }, } type cachedBuffer struct { proto.Buffer lastMarshaledSize uint32 } func (d *pbSerialization) Marshal(v interface{}) ([]byte, error) { if pm, ok := v.(proto.Marshaler); ok { // 可以 marshal 自身，无需 buffer return pm.Marshal() } buffer := bufferPool.Get().(*cachedBuffer) protoMsg := v.(proto.Message) lastMarshaledSize := make([]byte, 0, buffer.lastMarshaledSize) buffer.SetBuf(lastMarshaledSize) buffer.Reset() if err := buffer.Marshal(protoMsg); err != nil { return nil, err } data := buffer.Bytes() buffer.lastMarshaledSize = upperLimit(len(data)) return data, nil } func (d *pbSerialization) Unmarshal(data []byte, v interface{}) error { protoMsg := v.(proto.Message) protoMsg.Reset() if pu, ok := protoMsg.(proto.Unmarshaler); ok { // 可以 unmarshal 自身，无需 buffer return pu.Unmarshal(data) } buffer := bufferPool.Get().(*cachedBuffer) buffer.SetBuf(data) err := buffer.Unmarshal(protoMsg) buffer.SetBuf(nil) bufferPool.Put(buffer) return err } 小结 本章主要介绍了 go 原生序列化的实现，序列化的选型，序列化与编解码的区别。同时提供了 msgpack 和 protobuf 两种方式的序列化和反序列化实现。\n",
+  "wordCount" : "1674",
+  "inLanguage": "zh",
+  "datePublished": "2020-02-09T00:00:00+08:00",
+  "dateModified": "2020-02-09T00:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "丢哥"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "丢哥",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.diu.life/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -74,7 +147,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="https://www.diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -100,27 +173,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="首页">
+                <a href="https://www.diu.life/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/posts/" title="文章">
+                <a href="https://www.diu.life/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/projects/" title="独立开发">
+                <a href="https://www.diu.life/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/lessons/" title="教程">
+                <a href="https://www.diu.life/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="关于">
+                <a href="https://www.diu.life/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -135,122 +208,122 @@
       <h3>Go-Rpc 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/what-is-rpc/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/what-is-rpc/" class="chapter-link">
             <span class="chapter-title">第一章：RPC 原理</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
             <span class="chapter-title">第二章：RPC 框架概览</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-server/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/build-server/" class="chapter-link">
             <span class="chapter-title">第三章：框架搭建 —— server</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-client/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/build-client/" class="chapter-link">
             <span class="chapter-title">第四章：框架搭建 —— client</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-transport/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/build-transport/" class="chapter-link">
             <span class="chapter-title">第五章：框架搭建 —— transport</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/context-timeout/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/context-timeout/" class="chapter-link">
             <span class="chapter-title">第六章：超时机制</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/custom-protocol/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/custom-protocol/" class="chapter-link">
             <span class="chapter-title">第七章：自定义协议实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/codec/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/codec/" class="chapter-link">
             <span class="chapter-title">第八章：协议编解码实现</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
             <span class="chapter-title">第九章：序列化实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/log-component/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/log-component/" class="chapter-link">
             <span class="chapter-title">第十章：日志模块实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/connection-pool/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/connection-pool/" class="chapter-link">
             <span class="chapter-title">第十一章：连接池实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/interceptor/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/interceptor/" class="chapter-link">
             <span class="chapter-title">第十二章：拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/component-interface/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/component-interface/" class="chapter-link">
             <span class="chapter-title">第十三章：组件可插拔实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/plugin/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/plugin/" class="chapter-link">
             <span class="chapter-title">第十四章：插件体系实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
             <span class="chapter-title">第十五章：服务发现原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
             <span class="chapter-title">第十六章：服务发现实现 —— consul</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
             <span class="chapter-title">第十七章：负载均衡实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/tracing-selection/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/tracing-selection/" class="chapter-link">
             <span class="chapter-title">第十八章：分布式链路追踪原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/tracing-implementation/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/tracing-implementation/" class="chapter-link">
             <span class="chapter-title">第十九章：分布式链路追踪实现 —— jaeger</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/auth/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/auth/" class="chapter-link">
             <span class="chapter-title">第二十章：认证鉴权实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/code-generation/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/code-generation/" class="chapter-link">
             <span class="chapter-title">第二十一章：代码生成工具实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/performance-test/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/performance-test/" class="chapter-link">
             <span class="chapter-title">第二十二章：框架性能测试</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/performance-optimization/" class="chapter-link">
             <span class="chapter-title">第二十三章：框架性能优化</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/summary/" class="chapter-link">
+          <a href="https://www.diu.life/lessons/go-rpc/summary/" class="chapter-link">
             <span class="chapter-title">第二十四章：总结与展望</span>
           </a>
         </li>
@@ -431,11 +504,11 @@
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="http://localhost:1313/lessons/go-rpc/codec/" class="nav-btn prev-btn">
+            <a href="https://www.diu.life/lessons/go-rpc/codec/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第八章：协议编解码实现</span>
             </a>
-            <a href="http://localhost:1313/lessons/go-rpc/log-component/" class="nav-btn next-btn">
+            <a href="https://www.diu.life/lessons/go-rpc/log-component/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第十章：日志模块实现</span>
             </a>
@@ -832,7 +905,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="http://localhost:1313/">丢哥</a></span> · 
+        <span>&copy; 2025 <a href="https://www.diu.life/">丢哥</a></span> · 
 
     <span>
         Powered by

@@ -6,6 +6,7 @@ set -e
 hugo
 
 # 2. 进入 public 目录
+echo "www.diu.life" > public/CNAME
 cd public
 
 # 3. 初始化临时 Git 仓库
@@ -19,7 +20,9 @@ git commit -m "Deploy site $(date '+%Y-%m-%d %H:%M:%S')"
 git push --force origin gh-pages
 
 # 5. 返回上一级
+git checkout main
 cd ..
+
 
 echo "✅ 部署完成"
 

@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>第十七章：负载均衡实现 | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="其实我们在前面介绍服务发现的时候就顺带牵涉到了负载均衡。我们在这一章对负载均衡进行一个详细的讲解。
 一、什么是负载均衡？
 负载均衡（load balance），它的职责是将网络请求，或者其他形式的负载 “均摊” 到不同的机器上吗，从而避免出现集群中某些服务器压力过大，而另一些服务器又比较空闲的情况。通过负载均衡，我们可以让每台服务器获取到适合自己处理能力的负载。在为高负载服务器分流的同时，还可以避免资源浪费，一举两得。负载均衡可分为软件负载均衡和硬件负载均衡。在我们日常开发中，一般很难接触到硬件负载均衡。但软件负载均衡还是可以接触到的，比如 nginx。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/">
+<link rel="canonical" href="https://lubanproj.github.io/lessons/go-rpc/load-balance-implementation/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://lubanproj.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://lubanproj.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://lubanproj.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://lubanproj.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://lubanproj.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/">
+<link rel="alternate" hreflang="zh" href="https://lubanproj.github.io/lessons/go-rpc/load-balance-implementation/">
 <noscript>
     <style>
         #theme-toggle,
@@ -57,7 +57,82 @@
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://lubanproj.github.io/lessons/go-rpc/load-balance-implementation/">
+  <meta property="og:site_name" content="丢哥">
+  <meta property="og:title" content="第十七章：负载均衡实现">
+  <meta property="og:description" content="其实我们在前面介绍服务发现的时候就顺带牵涉到了负载均衡。我们在这一章对负载均衡进行一个详细的讲解。
+一、什么是负载均衡？ 负载均衡（load balance），它的职责是将网络请求，或者其他形式的负载 “均摊” 到不同的机器上吗，从而避免出现集群中某些服务器压力过大，而另一些服务器又比较空闲的情况。通过负载均衡，我们可以让每台服务器获取到适合自己处理能力的负载。在为高负载服务器分流的同时，还可以避免资源浪费，一举两得。负载均衡可分为软件负载均衡和硬件负载均衡。在我们日常开发中，一般很难接触到硬件负载均衡。但软件负载均衡还是可以接触到的，比如 nginx。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="lessons">
+    <meta property="article:published_time" content="2020-02-17T00:00:00+08:00">
+    <meta property="article:modified_time" content="2020-02-17T00:00:00+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第十七章：负载均衡实现">
+<meta name="twitter:description" content="其实我们在前面介绍服务发现的时候就顺带牵涉到了负载均衡。我们在这一章对负载均衡进行一个详细的讲解。
+一、什么是负载均衡？
+负载均衡（load balance），它的职责是将网络请求，或者其他形式的负载 “均摊” 到不同的机器上吗，从而避免出现集群中某些服务器压力过大，而另一些服务器又比较空闲的情况。通过负载均衡，我们可以让每台服务器获取到适合自己处理能力的负载。在为高负载服务器分流的同时，还可以避免资源浪费，一举两得。负载均衡可分为软件负载均衡和硬件负载均衡。在我们日常开发中，一般很难接触到硬件负载均衡。但软件负载均衡还是可以接触到的，比如 nginx。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "教程",
+      "item": "https://lubanproj.github.io/lessons/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "从 0 到 1 开发一款高性能 RPC 框架",
+      "item": "https://lubanproj.github.io/lessons/go-rpc/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "第十七章：负载均衡实现",
+      "item": "https://lubanproj.github.io/lessons/go-rpc/load-balance-implementation/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第十七章：负载均衡实现",
+  "name": "第十七章：负载均衡实现",
+  "description": "其实我们在前面介绍服务发现的时候就顺带牵涉到了负载均衡。我们在这一章对负载均衡进行一个详细的讲解。\n一、什么是负载均衡？ 负载均衡（load balance），它的职责是将网络请求，或者其他形式的负载 “均摊” 到不同的机器上吗，从而避免出现集群中某些服务器压力过大，而另一些服务器又比较空闲的情况。通过负载均衡，我们可以让每台服务器获取到适合自己处理能力的负载。在为高负载服务器分流的同时，还可以避免资源浪费，一举两得。负载均衡可分为软件负载均衡和硬件负载均衡。在我们日常开发中，一般很难接触到硬件负载均衡。但软件负载均衡还是可以接触到的，比如 nginx。\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "其实我们在前面介绍服务发现的时候就顺带牵涉到了负载均衡。我们在这一章对负载均衡进行一个详细的讲解。\n一、什么是负载均衡？ 负载均衡（load balance），它的职责是将网络请求，或者其他形式的负载 “均摊” 到不同的机器上吗，从而避免出现集群中某些服务器压力过大，而另一些服务器又比较空闲的情况。通过负载均衡，我们可以让每台服务器获取到适合自己处理能力的负载。在为高负载服务器分流的同时，还可以避免资源浪费，一举两得。负载均衡可分为软件负载均衡和硬件负载均衡。在我们日常开发中，一般很难接触到硬件负载均衡。但软件负载均衡还是可以接触到的，比如 nginx。\n二、常用的负载均衡算法 软件负载均衡一般都是通过负载均衡算法实现，常用的负载均衡算法有随机、轮询、加权轮询、一致性哈希等。\n1、随机\n请求随机分配到各个服务器。\n优点：使用简单 缺点：不适合机器配置不同的场景 2、轮询\n将所有请求依次分发到每台服务器上，适合服务器硬件配置相同的场景。\n优点：每台服务器的请求数目相同 缺点：服务器压力不一样，不适合服务器配置不同的情况 3、加权轮询\n根据服务器硬件配置和负载能力，为服务器设置不同的权重，在进行请求分发时，不同权重的服务器分配的流量不同，权重越大的服务器，分配的请求数越多，流量越大。\n优点：根据权重，调节转发到后端服务器的请求数目 缺点：相比于轮询而言，使用相对复杂 4、一致性哈希\n按照一致性哈希算法，将请求分发到每台服务器上。\n优点：能够避免传统哈希算法因服务器数量变化而引起的集群雪崩问题。 缺点：实现较为复杂，请求量比较小的场景下，可能会出现某个服务器节点完全空闲的情况 三、框架的负载均衡实现 框架目前为止，实现了随机、轮询、加权轮询三种负载均衡算法，一致性哈希算法暂未支持，欢迎大家一起贡献代码。\n1、随机 随机算法是框架默认的负载均衡算法。要实现一个随机算法的负载均衡器，首先要实现负载均衡的通用接口 Balancer，如下：\ntype randomBalancer struct { } func (r *randomBalancer) Balance(serviceName string, nodes []*Node) *Node { if len(nodes) == 0 { return nil } rand.Seed(time.Now().Unix()) num := rand.Intn(len(nodes)) return nodes[num] } 我们先定义一个 randomBalancer 结构，然后实现 Balancer 的 Balance 方法。随机负载均衡器实现非常简单，使用 go 自带的 rand 工具类，用当前时间生成随机种子，根据服务列表的长度去随机生成一个数字，以此为数组下标去取相应的服务节点就好。\n2、轮询 轮询算法的实现比随机算法要稍微复杂一点。因为考虑到一个 Server 可能有多个 Service （Service 是提供的具体服务），由于每个服务有其唯一的服务名 serviceName，所以我们需要针对每一个 serviceName 的服务器地址列表，都需要去记录当前访问的下标。\n这里，每个服务名和其对应的服务器列表是一个映射关系，所以我们用一个 map 结构来保存所有服务的服务名和其对应的服务器列表。考虑到并发安全性，这里使用 sync.Map，如下：\ntype roundRobinBalancer struct { pickers *sync.Map duration time.Duration // time duration to update again } 由于针对每一个服务 Service，我们还需要记录它的一些状态，比如服务列表的上次访问下标，服务列表的长度，上次访问时间等。所以我们用一个结构来记录这些信息，如下：\ntype roundRobinPicker struct { length int // service nodes length lastUpdateTime time.Time // last update time duration time.Duration // time duration to update again lastIndex int // last accessed index } roundRobinPicker 真正实现了根据上次访问下标 lastIndex、服务列表长度 length、上次访问时间 lastUpdateTime 等从一个服务列表里面去获取一个服务节点。如下：\nfunc (rp *roundRobinPicker) pick(nodes []*Node) *Node { if len(nodes) == 0 { return nil } // update picker after timeout if time.Now().Sub(rp.lastUpdateTime) \u003e rp.duration || len(nodes) != rp.length { rp.length = len(nodes) rp.lastUpdateTime = time.Now() rp.lastIndex = 0 } if rp.lastIndex == len(nodes) - 1 { rp.lastIndex = 0 return nodes[0] } rp.lastIndex += 1 return nodes[rp.lastIndex] } 至于 roundRobinBalancer 这个结构，它实现了负载均衡器，也就是实现了 Balancer 的 Balance 方法。\nfunc (r *roundRobinBalancer) Balance(serviceName string, nodes []*Node) *Node { var picker *roundRobinPicker if p, ok := r.pickers.Load(serviceName); !ok { picker = \u0026roundRobinPicker{ lastUpdateTime: time.Now(), duration : r.duration, length : len(nodes), } } else { picker = p.(*roundRobinPicker) } node := picker.pick(nodes) r.pickers.Store(serviceName,picker) return node } 在 Balance 方法中，会先根据服务的服务名去找到其对应的 roundRobinPicker，然后调用 roundRobinPicker 的 pick 方法去获取访问的服务节点。\n3、加权轮询 前面说到了，加权轮询是根据服务器硬件配置和负载能力，为服务器设置不同的权重，在进行请求分发时，不同权重的服务器分配的流量不同，权重越大的服务器，分配的请求数越多，流量越大。假如存在 A、B、C 三台服务器，权重分别是 A : B : C = 4 : 2 : 1，那么普通的加权轮询可能是 {A，A，A，A，B，B，C}，这样的话，会有 5 个联系的请求落在 A 服务器上，这样的调度其实不太好，一段时间内可能有大量的请求落到 A 服务器上，给 A 服务器造成很大压力，当 QPS 很大时容易造成单点故障。\n所以我们希望实现一种平滑的加权轮询算法。使得能够出现类似 {A，B，A，C，A，B，A} 这样的效果。\n这里参考 nginx 平滑的基于权重轮询算法进行实现。其实很简单，算法主要分为两步：\n1、每个节点，用它们当前的值加上自己的权重。\n2、选择当前值最大的节点，把它的当前值减去所有节点的权重总和，作为它的新权重\n例如{A:4, B:2, C:1}三个节点。一开始我们初始化三个节点的当前值为{0, 0, 0}。 选择过程如下表：\n轮数 选择前的当前权重 选择节点 选择后的当前权重 1 {4, 2, 1} A {-3, 2, 1} 2 {1, 4, 2} B {1, -3, 2} 3 {5, -1, 3} A {-2, -1, 3} 4 {2, 1, 4} C {2, 1, -3} 5 {6, 3, -2} A {-1, 3, -2} 6 {3, 5, -1} B {3, -2, -1} 7 {7, 0, 0} A {0, 0, 0} 这样选择出来的服务节点依次是 {A，B，A，C，A，B，A} ，就实现了相对平滑的效果。其实这个算法的本质是保证权重和不变，如上面权重和永远是 7，但是每一次节点被选择之后，当前节点需要减去权重和，所以下一次这一个节点一定不会被选到，避免了某台服务器某段时间流量过于集中的问题，实现了平滑的效果。\n框架中加权轮询的实现引入了几个变量：节点权重 weight、节点的当前权重 currentWeight、节点的有效权重 effectiveWeight （某个服务节点挂了后，effectiveWeight 变为 0，防止单点故障）\n具体代码实现如下：\ntype weightedRoundRobinBalancer struct { pickers *sync.Map duration time.Duration // time duration to update again } weightedRoundRobinBalancer 和轮询中 roundRobinPicker 结构类似，这里不作赘述。跟轮询不同的是 wRoundRobinPicker 的结构，它包含了一个 weightedNode 数组，如下：\ntype wRoundRobinPicker struct { nodes []*weightedNode // service nodes lastUpdateTime time.Time // last update time duration time.Duration // time duration to update again } type weightedNode struct { node *Node weight int effectiveWeight int currentWeight int } 可以看到，weightedNode 中真正描述了节点权重 weight、节点的当前权重 currentWeight、节点的有效权重 effectiveWeight 这三个变量。\nBalance 的过程与轮询类似，如下：\nfunc (w *weightedRoundRobinBalancer) Balance(serviceName string, nodes []*Node) *Node { var picker *wRoundRobinPicker if p, ok := w.pickers.Load(serviceName); !ok { picker = \u0026wRoundRobinPicker{ lastUpdateTime: time.Now(), duration : w.duration, nodes : getWeightedNode(nodes), } w.pickers.Store(serviceName,picker) } else { picker = p.(*wRoundRobinPicker) } node := picker.pick(nodes) w.pickers.Store(serviceName,picker) return node } 可以看到和轮询类似，先通过服务名获取到对应的 wRoundRobinPicker，然后调用 pick 方法进行加权轮询实现。如下：\nfunc (wr *wRoundRobinPicker) pick(nodes []*Node) *Node { if len(nodes) == 0 { return nil } // update picker after timeout if time.Now().Sub(wr.lastUpdateTime) \u003e wr.duration || len(nodes) != len(wr.nodes){ wr.nodes = getWeightedNode(nodes) wr.lastUpdateTime = time.Now() } totalWeight := 0 maxWeight := 0 index := 0 for i, node := range wr.nodes { totalWeight += node.weight if node.weight \u003e maxWeight { maxWeight = node.weight index = i } } wr.nodes[index].currentWeight -= totalWeight return wr.nodes[index].node } 这段代码其实就是实现了加权轮询算法的下面两步。\n1、每个节点，用它们当前的值加上自己的权重。\n2、选择当前值最大的节点，把它的当前值减去所有节点的权重总和，作为它的新权重\n小结 本章主要介绍了几种常见的负载均衡算法原理和实现。\n",
+  "wordCount" : "2727",
+  "inLanguage": "zh",
+  "datePublished": "2020-02-17T00:00:00+08:00",
+  "dateModified": "2020-02-17T00:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "丢哥"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://lubanproj.github.io/lessons/go-rpc/load-balance-implementation/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "丢哥",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://lubanproj.github.io/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -75,7 +150,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="https://lubanproj.github.io/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -101,27 +176,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="首页">
+                <a href="https://lubanproj.github.io/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/posts/" title="文章">
+                <a href="https://lubanproj.github.io/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/projects/" title="独立开发">
+                <a href="https://lubanproj.github.io/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/lessons/" title="教程">
+                <a href="https://lubanproj.github.io/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="关于">
+                <a href="https://lubanproj.github.io/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -136,122 +211,122 @@
       <h3>Go-Rpc 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/what-is-rpc/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/what-is-rpc/" class="chapter-link">
             <span class="chapter-title">第一章：RPC 原理</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
             <span class="chapter-title">第二章：RPC 框架概览</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-server/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/build-server/" class="chapter-link">
             <span class="chapter-title">第三章：框架搭建 —— server</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-client/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/build-client/" class="chapter-link">
             <span class="chapter-title">第四章：框架搭建 —— client</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-transport/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/build-transport/" class="chapter-link">
             <span class="chapter-title">第五章：框架搭建 —— transport</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/context-timeout/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/context-timeout/" class="chapter-link">
             <span class="chapter-title">第六章：超时机制</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/custom-protocol/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/custom-protocol/" class="chapter-link">
             <span class="chapter-title">第七章：自定义协议实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/codec/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/codec/" class="chapter-link">
             <span class="chapter-title">第八章：协议编解码实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
             <span class="chapter-title">第九章：序列化实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/log-component/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/log-component/" class="chapter-link">
             <span class="chapter-title">第十章：日志模块实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/connection-pool/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/connection-pool/" class="chapter-link">
             <span class="chapter-title">第十一章：连接池实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/interceptor/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/interceptor/" class="chapter-link">
             <span class="chapter-title">第十二章：拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/component-interface/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/component-interface/" class="chapter-link">
             <span class="chapter-title">第十三章：组件可插拔实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/plugin/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/plugin/" class="chapter-link">
             <span class="chapter-title">第十四章：插件体系实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
             <span class="chapter-title">第十五章：服务发现原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
             <span class="chapter-title">第十六章：服务发现实现 —— consul</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
             <span class="chapter-title">第十七章：负载均衡实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/tracing-selection/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/tracing-selection/" class="chapter-link">
             <span class="chapter-title">第十八章：分布式链路追踪原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/tracing-implementation/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/tracing-implementation/" class="chapter-link">
             <span class="chapter-title">第十九章：分布式链路追踪实现 —— jaeger</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/auth/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/auth/" class="chapter-link">
             <span class="chapter-title">第二十章：认证鉴权实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/code-generation/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/code-generation/" class="chapter-link">
             <span class="chapter-title">第二十一章：代码生成工具实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/performance-test/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/performance-test/" class="chapter-link">
             <span class="chapter-title">第二十二章：框架性能测试</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/performance-optimization/" class="chapter-link">
             <span class="chapter-title">第二十三章：框架性能优化</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/summary/" class="chapter-link">
+          <a href="https://lubanproj.github.io/lessons/go-rpc/summary/" class="chapter-link">
             <span class="chapter-title">第二十四章：总结与展望</span>
           </a>
         </li>
@@ -513,11 +588,11 @@
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="nav-btn prev-btn">
+            <a href="https://lubanproj.github.io/lessons/go-rpc/service-discovery-implementation/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第十六章：服务发现实现 —— consul</span>
             </a>
-            <a href="http://localhost:1313/lessons/go-rpc/tracing-selection/" class="nav-btn next-btn">
+            <a href="https://lubanproj.github.io/lessons/go-rpc/tracing-selection/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第十八章：分布式链路追踪原理及选型</span>
             </a>

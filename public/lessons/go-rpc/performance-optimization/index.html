@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>第二十三章：框架性能优化 | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="上一章介绍了使用 pprof 工具进行框架的性能测试，本章来继续介绍一下如何通过火焰图分析框架的性能瓶颈，并进行相应的性能优化。
 一、压测环境
 压测的前提是有一台压测机器，我们的压测环境为：">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="https://lubanproj.github.io/lessons/go-rpc/performance-optimization/">
+<link rel="canonical" href="http://localhost:1313/lessons/go-rpc/performance-optimization/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://lubanproj.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://lubanproj.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://lubanproj.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://lubanproj.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://lubanproj.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="https://lubanproj.github.io/lessons/go-rpc/performance-optimization/">
+<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/go-rpc/performance-optimization/">
 <noscript>
     <style>
         #theme-toggle,
@@ -57,82 +57,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://lubanproj.github.io/lessons/go-rpc/performance-optimization/">
-  <meta property="og:site_name" content="丢哥">
-  <meta property="og:title" content="第二十三章：框架性能优化">
-  <meta property="og:description" content="上一章介绍了使用 pprof 工具进行框架的性能测试，本章来继续介绍一下如何通过火焰图分析框架的性能瓶颈，并进行相应的性能优化。
-一、压测环境 压测的前提是有一台压测机器，我们的压测环境为：">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="lessons">
-    <meta property="article:published_time" content="2020-02-23T00:00:00+08:00">
-    <meta property="article:modified_time" content="2020-02-23T00:00:00+08:00">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="第二十三章：框架性能优化">
-<meta name="twitter:description" content="上一章介绍了使用 pprof 工具进行框架的性能测试，本章来继续介绍一下如何通过火焰图分析框架的性能瓶颈，并进行相应的性能优化。
-一、压测环境
-压测的前提是有一台压测机器，我们的压测环境为：">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "教程",
-      "item": "https://lubanproj.github.io/lessons/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "从 0 到 1 开发一款高性能 RPC 框架",
-      "item": "https://lubanproj.github.io/lessons/go-rpc/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  3 ,
-      "name": "第二十三章：框架性能优化",
-      "item": "https://lubanproj.github.io/lessons/go-rpc/performance-optimization/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "第二十三章：框架性能优化",
-  "name": "第二十三章：框架性能优化",
-  "description": "上一章介绍了使用 pprof 工具进行框架的性能测试，本章来继续介绍一下如何通过火焰图分析框架的性能瓶颈，并进行相应的性能优化。\n一、压测环境 压测的前提是有一台压测机器，我们的压测环境为：\n",
-  "keywords": [
-    
-  ],
-  "articleBody": "上一章介绍了使用 pprof 工具进行框架的性能测试，本章来继续介绍一下如何通过火焰图分析框架的性能瓶颈，并进行相应的性能优化。\n一、压测环境 压测的前提是有一台压测机器，我们的压测环境为：\nCPU : Intel(R) Xeon(R) Gold 61xx CPU @2.44GHz CPU cores : 8 Memory : 16G Disk : 540G 优化前的性能是：\ntook 13267 ms for 1000000 requests sent requests : 1000000 received requests : 1000000 received requests succ : 1000000 received requests fail : 0 throughput (TPS) : 75374 二、分析火焰图 优化前的火焰图如下：\n火焰图非常清楚地展示了框架的整个调用链路。我们阅读火焰图时只需要从上往下看，调用的层次是从上往下层层调用。比如 transport.(serverTransport).handleConn 这个函数就调用了 transport.(serverTransport).read 和 transport.(*serverTransport).handle 这两个函数。\n我们可以比较清晰地看到，log.Debugf 这个函数耗时非常大，原来是我们在代码中调试时不小心加上了一行日志。\n把这行日志去掉，继续测试，发现性能果然有显著提升，如下：\ntook 30574 ms for 5000000 requestssent requests : 5000000 received requests : 5000000 received requests succ : 5000000 received requests fail : 0 throughput (TPS) : 163537 说明打日志是非常消耗性能的。这也是我们线上的业务一般来说不会打 debug 日志，只会打少量业务失败的 error 日志的原因之一。\n三、性能优化过程 ok，刚刚的日志问题只是一个小插曲，让大家简单了解怎么去看火焰图，接下来我们来看看如何继续去提升框架的性能。\n去掉 log.Debugf 日志打印后，继续分析火焰图，按道理，一个 server 的性能应该主要是消耗在读写上，读写的占比越高，server 的性能就越高。我们看到耗时占比很高的地方是 transport.(serverTransport).handle 这个函数，继续分析发现是 gorpc.getServiceMethods.func1 这个函数里面主要有两步操作比较耗时，第一步是 reflect.Value.Call 反射调用 ，第二步是 codec.(MsgpackSerialization).Unmarshal 反序列化操作。\n反序列化操作的耗时是无法避免的，之前我们分析过各种反序列化的库，发现 msgpack 这个库的反序列化性能是比较靠前的。于是这里我们主要的突破点就放在反射操作上。尝试一下用代码生成的方式，提前生成调用代码，避免反射操作运行时动态去探测数据类型造成的性能消耗。\n这里我们在 gorpc-benchmark 里面新建一个 codegen 目录，这个目录里面的 server 和 client 的桩代码都是使用代码生成的方式实现。使用 codegen 下的 client 和 server 测试，结果如下：\ntook 26011 ms for 5000000 requests sent requests : 5000000 received requests : 5000000 received requests succ : 5000000 received requests fail : 0 throughput (TPS) : 192226 这就很厉害了，直接提升了近 3w，达到了 19 w，此时的火焰图如下：\n再仔细分析一下火焰图，发现在 proto 序列化和反序列化的过程中有不少耗时，此时 proto 序列化和反序列化的代码如下：\ntype pbSerialization struct {} func (d *pbSerialization) Marshal(v interface{}) ([]byte, error) { if v == nil { return nil, errors.New(\"marshal nil interface{}\") } if val, ok := v.(proto.Message); ok { return proto.Marshal(val) } return []byte(\"\"), errors.New(\"data type not proto.Message\") } func (d *pbSerialization) Unmarshal(data []byte, v interface{}) error { if data == nil || len(data) == 0 { return errors.New(\"unmarshal nil or empty bytes\") } if val, ok := v.(proto.Message); ok { return proto.Unmarshal(data, val) } return errors.New(\"data type not proto.Message\") } 仔细阅读 proto.Marshal 和 Unmarshal 的源码发现，它是使用反射机制去进行序列化和反序列化的。前面说到了反射会影响系统的性能。这里我们就想能不能有个办法去减少反射调用的次数，这里直接使用了 proto.Buffer 对象来进行优化。从官方的介绍中可以知道它能够被用来减少内存使用，我们可以通过 Buffer 类来减少每次序列化和反序列化的内存消耗和反射次数。它的定义如下：\n// A Buffer is a buffer manager for marshaling and unmarshaling // protocol buffers. It may be reused between invocations to // reduce memory usage. It is not necessary to use a Buffer; // the global functions Marshal and Unmarshal create a // temporary Buffer and are fine for most applications. type Buffer struct { buf []byte // encode/decode byte stream index int // read point deterministic bool } 这里我们用了一个对象池 bufferPool 来减少内存的频繁分配导致的 gc，如下：\nvar bufferPool = \u0026sync.Pool{ New : func() interface {} { return \u0026cachedBuffer { Buffer : proto.Buffer{}, lastMarshaledSize : 16, } }, } type cachedBuffer struct { proto.Buffer lastMarshaledSize uint32 } 序列化和反序列化优化后代码如下：\ntype pbSerialization struct {} func (d *pbSerialization) MarshalV2(v interface{}) ([]byte, error) { if v == nil { return nil, errors.New(\"marshal nil interface{}\") } if pm, ok := v.(proto.Marshaler); ok { // 可以 marshal 自身，无需 buffer return pm.Marshal() } buffer := bufferPool.Get().(*cachedBuffer) protoMsg := v.(proto.Message) lastMarshaledSize := make([]byte, 0, buffer.lastMarshaledSize) buffer.SetBuf(lastMarshaledSize) buffer.Reset() if err := buffer.Marshal(protoMsg); err != nil { return nil, err } data := buffer.Bytes() buffer.lastMarshaledSize = upperLimit(len(data)) buffer.SetBuf(nil) bufferPool.Put(buffer) return data, nil } func (d *pbSerialization) UnmarshalV2(data []byte, v interface{}) error { if data == nil || len(data) == 0 { return errors.New(\"unmarshal nil or empty bytes\") } protoMsg := v.(proto.Message) protoMsg.Reset() if pu, ok := protoMsg.(proto.Unmarshaler); ok { // 可以 unmarshal 自身，无需 buffer return pu.Unmarshal(data) } buffer := bufferPool.Get().(*cachedBuffer) buffer.SetBuf(data) err := buffer.Unmarshal(protoMsg) buffer.SetBuf(nil) bufferPool.Put(buffer) return err } 此时，我们再进行性能测试，结果如下：\ntook 4624 ms for 1000000 requests sent requests : 1000000 received requests : 1000000 received requests succ : 1000000 received requests fail : 0 throughput (TPS) : 216262 可以看到，这里大约有 2w 左右的提升。\n四、对标 grpc 经过上面的简单优化，我们发现框架的性能提升到了 21 w 左右，同时对 grpc 进行简单的性能测试，发现性能为 6w 左右，性能数据如下：\ntook 17169 ms for 1000000 requests sent requests : 1000000 received requests : 1000000 received requests succ : 1000000 received requests fail : 0 throughput (TPS) : 58244 详情可以参考：Performance\n单从性能上来说，我们的 gorpc 框架性能达到了 grpc-go 的 3.5 倍。我们的性能优化先到这里。\n小结 本章节主要介绍了框架的性能优化过程，性能优化是一条很漫长的旅途，本章节只是抛砖引玉，重点是如何去分析系统性能瓶颈，如何看火焰图等。路漫漫其修远兮，这里做了一些简单的入门级介绍。\n",
-  "wordCount" : "1695",
-  "inLanguage": "zh",
-  "datePublished": "2020-02-23T00:00:00+08:00",
-  "dateModified": "2020-02-23T00:00:00+08:00",
-  "author":{
-    "@type": "Person",
-    "name": "丢哥"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://lubanproj.github.io/lessons/go-rpc/performance-optimization/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "丢哥",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://lubanproj.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -150,7 +75,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://lubanproj.github.io/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -176,27 +101,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://lubanproj.github.io/" title="首页">
+                <a href="http://localhost:1313/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="https://lubanproj.github.io/posts/" title="文章">
+                <a href="http://localhost:1313/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="https://lubanproj.github.io/projects/" title="独立开发">
+                <a href="http://localhost:1313/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="https://lubanproj.github.io/lessons/" title="教程">
+                <a href="http://localhost:1313/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="https://lubanproj.github.io/about/" title="关于">
+                <a href="http://localhost:1313/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -211,122 +136,122 @@
       <h3>Go-Rpc 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/what-is-rpc/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/what-is-rpc/" class="chapter-link">
             <span class="chapter-title">第一章：RPC 原理</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
             <span class="chapter-title">第二章：RPC 框架概览</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/build-server/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/build-server/" class="chapter-link">
             <span class="chapter-title">第三章：框架搭建 —— server</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/build-client/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/build-client/" class="chapter-link">
             <span class="chapter-title">第四章：框架搭建 —— client</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/build-transport/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/build-transport/" class="chapter-link">
             <span class="chapter-title">第五章：框架搭建 —— transport</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/context-timeout/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/context-timeout/" class="chapter-link">
             <span class="chapter-title">第六章：超时机制</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/custom-protocol/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/custom-protocol/" class="chapter-link">
             <span class="chapter-title">第七章：自定义协议实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/codec/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/codec/" class="chapter-link">
             <span class="chapter-title">第八章：协议编解码实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
             <span class="chapter-title">第九章：序列化实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/log-component/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/log-component/" class="chapter-link">
             <span class="chapter-title">第十章：日志模块实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/connection-pool/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/connection-pool/" class="chapter-link">
             <span class="chapter-title">第十一章：连接池实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/interceptor/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/interceptor/" class="chapter-link">
             <span class="chapter-title">第十二章：拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/component-interface/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/component-interface/" class="chapter-link">
             <span class="chapter-title">第十三章：组件可插拔实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/plugin/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/plugin/" class="chapter-link">
             <span class="chapter-title">第十四章：插件体系实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
             <span class="chapter-title">第十五章：服务发现原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
             <span class="chapter-title">第十六章：服务发现实现 —— consul</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
             <span class="chapter-title">第十七章：负载均衡实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/tracing-selection/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/tracing-selection/" class="chapter-link">
             <span class="chapter-title">第十八章：分布式链路追踪原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/tracing-implementation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/tracing-implementation/" class="chapter-link">
             <span class="chapter-title">第十九章：分布式链路追踪实现 —— jaeger</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/auth/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/auth/" class="chapter-link">
             <span class="chapter-title">第二十章：认证鉴权实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/code-generation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/code-generation/" class="chapter-link">
             <span class="chapter-title">第二十一章：代码生成工具实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/performance-test/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/performance-test/" class="chapter-link">
             <span class="chapter-title">第二十二章：框架性能测试</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/performance-optimization/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="chapter-link">
             <span class="chapter-title">第二十三章：框架性能优化</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://lubanproj.github.io/lessons/go-rpc/summary/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/summary/" class="chapter-link">
             <span class="chapter-title">第二十四章：总结与展望</span>
           </a>
         </li>
@@ -514,11 +439,11 @@
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="https://lubanproj.github.io/lessons/go-rpc/performance-test/" class="nav-btn prev-btn">
+            <a href="http://localhost:1313/lessons/go-rpc/performance-test/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第二十二章：框架性能测试</span>
             </a>
-            <a href="https://lubanproj.github.io/lessons/go-rpc/summary/" class="nav-btn next-btn">
+            <a href="http://localhost:1313/lessons/go-rpc/summary/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第二十四章：总结与展望</span>
             </a>
@@ -915,7 +840,13 @@
     </main>
     
 <footer class="footer">
-    <span>&copy; 2016 丢哥 all rights reserved.</span>
+        <span>&copy; 2025 <a href="http://localhost:1313/">丢哥</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
 </footer>
 <a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">

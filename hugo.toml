@@ -20,6 +20,7 @@ hasCJKLanguage = true
   ShowPostNavLinks = true
   ShowCodeCopyButtons = true
   comments = false
+  mainSections = ["posts"]
 
   # 开启首页文章列表
   # homeInfoParams = { Title = "欢迎来到我的博客 👋", Content = "这是我的个人技术博客，记录开发、思考和生活。" }
@@ -36,9 +37,19 @@ hasCJKLanguage = true
     weight = 2
 
   [[menu.main]]
+    name = "独立开发"
+    url = "/projects/"
+    weight = 3
+
+  [[menu.main]]
+    name = "教程"
+    url = "/lessons/"
+    weight = 4
+
+  [[menu.main]]
     name = "关于"
     url = "/about/"
-    weight = 3
+    weight = 5
 
 [markup]
   [markup.tableOfContents]

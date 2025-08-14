@@ -21,3 +21,7 @@ showPagination: false
 
 - [ItSoFunny](https://www.itsofunny.com/) 一个有趣的网站，分享一些有趣的内容
 
+### Lumo
+
+- [Lumo](https://www.lumomusic.xyz/) 一个简易的 AI 音乐播放器
+

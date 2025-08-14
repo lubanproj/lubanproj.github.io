@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>第二十四章：总结与展望 | 丢哥</title>
+<meta name="keywords" content="">
+<meta name="description" content="写到这里，感慨颇多
+从 0 到 1 去实现一款 rpc 框架，其实还是有一些难度和挑战的。但是相信在这个过程中，大家一定会有不少收获
+在这里推荐一个 go 资料的网址（收集了几乎所有使用 go 实现的开源系统或第三方包的源码）：https://github.com/avelino/awesome-go">
+<meta name="author" content="丢哥">
+<link rel="canonical" href="http://localhost:1313/lessons/go-rpc/summary/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/go-rpc/summary/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/" title="首页">
+                    <span>首页</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/posts/" title="文章">
+                    <span>文章</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/projects/" title="独立开发">
+                    <span>独立开发</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/lessons/" title="教程">
+                    <span>教程</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+<div class="lesson-container">
+  
+  <div class="lesson-sidebar">
+    <div class="lesson-nav">
+      <h3>Go-Rpc 教程</h3>
+      <ul class="chapter-list">
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/what-is-rpc/" class="chapter-link">
+            <span class="chapter-title">第一章：RPC 原理</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
+            <span class="chapter-title">第二章：RPC 框架概览</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/build-server/" class="chapter-link">
+            <span class="chapter-title">第三章：框架搭建 —— server</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/build-client/" class="chapter-link">
+            <span class="chapter-title">第四章：框架搭建 —— client</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/build-transport/" class="chapter-link">
+            <span class="chapter-title">第五章：框架搭建 —— transport</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/context-timeout/" class="chapter-link">
+            <span class="chapter-title">第六章：超时机制</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/custom-protocol/" class="chapter-link">
+            <span class="chapter-title">第七章：自定义协议实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/codec/" class="chapter-link">
+            <span class="chapter-title">第八章：协议编解码实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
+            <span class="chapter-title">第九章：序列化实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/log-component/" class="chapter-link">
+            <span class="chapter-title">第十章：日志模块实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/connection-pool/" class="chapter-link">
+            <span class="chapter-title">第十一章：连接池实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/interceptor/" class="chapter-link">
+            <span class="chapter-title">第十二章：拦截器实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/component-interface/" class="chapter-link">
+            <span class="chapter-title">第十三章：组件可插拔实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/plugin/" class="chapter-link">
+            <span class="chapter-title">第十四章：插件体系实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
+            <span class="chapter-title">第十五章：服务发现原理及选型</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
+            <span class="chapter-title">第十六章：服务发现实现 —— consul</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
+            <span class="chapter-title">第十七章：负载均衡实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/tracing-selection/" class="chapter-link">
+            <span class="chapter-title">第十八章：分布式链路追踪原理及选型</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/tracing-implementation/" class="chapter-link">
+            <span class="chapter-title">第十九章：分布式链路追踪实现 —— jaeger</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/auth/" class="chapter-link">
+            <span class="chapter-title">第二十章：认证鉴权实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/code-generation/" class="chapter-link">
+            <span class="chapter-title">第二十一章：代码生成工具实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/performance-test/" class="chapter-link">
+            <span class="chapter-title">第二十二章：框架性能测试</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="chapter-link">
+            <span class="chapter-title">第二十三章：框架性能优化</span>
+          </a>
+        </li>
+        <li class="chapter-item active">
+          <a href="http://localhost:1313/lessons/go-rpc/summary/" class="chapter-link">
+            <span class="chapter-title">第二十四章：总结与展望</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  
+  <div class="lesson-content">
+    <article class="post-single">
+      <header class="post-header">
+        <h1 class="post-title">第二十四章：总结与展望</h1>
+        <div class="post-meta">
+          <time datetime="2020-02-24T00:00:00&#43;08:00">2020-02-24</time>
+        </div>
+      </header>
+
+      <div class="post-content">
+        <p>写到这里，感慨颇多</p>
+<p>从 0 到 1 去实现一款 rpc 框架，其实还是有一些难度和挑战的。但是相信在这个过程中，大家一定会有不少收获</p>
+<p>在这里推荐一个 go 资料的网址（收集了几乎所有使用 go 实现的开源系统或第三方包的源码）：https://github.com/avelino/awesome-go</p>
+<p>当然，还有两个地址是必须要贴上来的：</p>
+<p><a href="https://github.com/golang/go">https://github.com/golang/go</a></p>
+<p><a href="https://go.dev/doc/">https://go.dev/doc/</a></p>
+<p>身为一个使用 go 的人，必须要玩转 github 和 官方社区，重要的事情说三遍！</p>
+<p>当然，对 go 感兴趣的同学或者学习过程中碰到问题的同学，欢迎随时找我。</p>
+<p>拥抱开源！希望能尽点微薄之力，为开源社区贡献一点力量。</p>
+<p>源码：https://github.com/lubanproj/gorpc</p>
+
+      </div>
+
+      
+      <div class="lesson-navigation">
+        
+        <div class="nav-buttons">
+            <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="nav-btn prev-btn">
+              <span>← 上一章</span>
+              <span class="nav-title">第二十三章：框架性能优化</span>
+            </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<style>
+ 
+.main {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+.lesson-container {
+  display: flex;
+  min-height: calc(100vh - 60px);
+  gap: 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.lesson-sidebar {
+  width: 320px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  border-right: none;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding: 30px 25px;
+  z-index: 10;
+}
+
+.lesson-nav h3 {
+  margin: 0 0 30px 0;
+  color: #2c3e50;
+  font-size: 1.4em;
+  font-weight: 700;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e3f2fd;
+  position: relative;
+}
+
+.lesson-nav h3::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.chapter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chapter-item {
+  margin-bottom: 12px;
+}
+
+.chapter-link {
+  display: block;
+  padding: 16px 20px;
+  color: #5a6c7d;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.chapter-link:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #2c3e50;
+  transform: translateX(8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-link:hover::before {
+  left: 100%;
+}
+
+.chapter-item.active .chapter-link {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  transform: translateX(8px);
+}
+
+.chapter-item.active .chapter-link::before {
+  display: none;
+}
+
+.chapter-title {
+  font-size: 0.95em;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.lesson-content {
+  flex: 1;
+  padding: 40px 50px;
+  width: 100%;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  margin: 20px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.lesson-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.post-single {
+  max-width: 100%;
+  margin: 0;
+}
+
+.post-header {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e8ecef;
+}
+
+.post-title {
+  font-size: 2.2em;
+  font-weight: 800;
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  line-height: 1.3;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.post-meta {
+  color: #7f8c8d;
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
+.post-content {
+  line-height: 1.8;
+  color: #34495e;
+  font-size: 1.05em;
+}
+
+.post-content h2 {
+  margin-top: 50px;
+  margin-bottom: 25px;
+  font-size: 1.6em;
+  font-weight: 700;
+  color: #2c3e50;
+  position: relative;
+  padding-left: 20px;
+}
+
+.post-content h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.post-content h3 {
+  margin-top: 35px;
+  margin-bottom: 20px;
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.post-content p {
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+.post-content ul, .post-content ol {
+  margin-bottom: 20px;
+  padding-left: 25px;
+}
+
+.post-content li {
+  margin-bottom: 10px;
+  line-height: 1.7;
+}
+
+.post-content code {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: #e83e8c;
+  font-weight: 500;
+  border: 1px solid #dee2e6;
+}
+
+.post-content pre {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  padding: 25px;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin: 30px 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #4a5568;
+}
+
+.post-content pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: #a0aec0;
+  border: none;
+}
+
+.lesson-navigation {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 2px solid #e8ecef;
+  position: relative;
+}
+
+.lesson-navigation::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 25px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 15px;
+  text-decoration: none;
+  color: #2c3e50;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex: 1;
+  max-width: 320px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transition: left 0.6s;
+}
+
+.nav-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+}
+
+.nav-btn:hover::before {
+  left: 100%;
+}
+
+.nav-btn span:first-child {
+  font-size: 0.95em;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nav-btn:hover span:first-child {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.nav-title {
+  font-weight: 600;
+  line-height: 1.4;
+  font-size: 1.05em;
+}
+
+.next-btn {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .lesson-container {
+    flex-direction: column;
+    background: linear-gradient(180deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
+  
+  .lesson-sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 2px solid #e8ecef;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px 20px;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .lesson-content {
+    max-width: 100%;
+    padding: 30px 20px;
+    margin: 15px;
+    border-radius: 15px;
+  }
+  
+  .post-title {
+    font-size: 1.8em;
+  }
+  
+  .post-content {
+    font-size: 1em;
+  }
+  
+  .nav-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .nav-btn {
+    max-width: 100%;
+  }
+  
+  .next-btn {
+    text-align: left;
+  }
+  
+  .chapter-link:hover,
+  .chapter-item.active .chapter-link {
+    transform: none;
+  }
+}
+</style>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2016 丢哥 all rights reserved.</span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

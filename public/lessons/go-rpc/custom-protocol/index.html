@@ -11,16 +11,16 @@
 协议是客户端和服务端之间对话的 “语言” ，是客户端和服务端双方必须共同遵从的一组约定。如怎么样建立连接、怎么样互相识别等。
 之前 RPC 原理的章节说到了，关于 client 和 server 之间进行传输的协议选型，这里有两种方案。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="https://www.diu.life/lessons/go-rpc/custom-protocol/">
+<link rel="canonical" href="https://diu.life/lessons/go-rpc/custom-protocol/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://www.diu.life/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://www.diu.life/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://www.diu.life/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://www.diu.life/apple-touch-icon.png">
-<link rel="mask-icon" href="https://www.diu.life/safari-pinned-tab.svg">
+<link rel="icon" href="https://diu.life/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://diu.life/apple-touch-icon.png">
+<link rel="mask-icon" href="https://diu.life/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="https://www.diu.life/lessons/go-rpc/custom-protocol/">
+<link rel="alternate" hreflang="zh" href="https://diu.life/lessons/go-rpc/custom-protocol/">
 <noscript>
     <style>
         #theme-toggle,
@@ -57,7 +57,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://www.diu.life/lessons/go-rpc/custom-protocol/">
+</noscript><meta property="og:url" content="https://diu.life/lessons/go-rpc/custom-protocol/">
   <meta property="og:site_name" content="丢哥">
   <meta property="og:title" content="第七章：自定义协议实现">
   <meta property="og:description" content="一、协议选型 协议是客户端和服务端之间对话的 “语言” ，是客户端和服务端双方必须共同遵从的一组约定。如怎么样建立连接、怎么样互相识别等。
@@ -83,19 +83,19 @@
       "@type": "ListItem",
       "position":  1 ,
       "name": "教程",
-      "item": "https://www.diu.life/lessons/"
+      "item": "https://diu.life/lessons/"
     }, 
     {
       "@type": "ListItem",
       "position":  2 ,
       "name": "从 0 到 1 开发一款高性能 RPC 框架",
-      "item": "https://www.diu.life/lessons/go-rpc/"
+      "item": "https://diu.life/lessons/go-rpc/"
     }, 
     {
       "@type": "ListItem",
       "position":  3 ,
       "name": "第七章：自定义协议实现",
-      "item": "https://www.diu.life/lessons/go-rpc/custom-protocol/"
+      "item": "https://diu.life/lessons/go-rpc/custom-protocol/"
     }
   ]
 }
@@ -121,14 +121,14 @@
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://www.diu.life/lessons/go-rpc/custom-protocol/"
+    "@id": "https://diu.life/lessons/go-rpc/custom-protocol/"
   },
   "publisher": {
     "@type": "Organization",
     "name": "丢哥",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://www.diu.life/favicon.ico"
+      "url": "https://diu.life/favicon.ico"
     }
   }
 }
@@ -150,7 +150,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://www.diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="https://diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -176,27 +176,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://www.diu.life/" title="首页">
+                <a href="https://diu.life/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="https://www.diu.life/posts/" title="文章">
+                <a href="https://diu.life/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="https://www.diu.life/projects/" title="独立开发">
+                <a href="https://diu.life/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="https://www.diu.life/lessons/" title="教程">
+                <a href="https://diu.life/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="https://www.diu.life/about/" title="关于">
+                <a href="https://diu.life/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -211,122 +211,122 @@
       <h3>Go-Rpc 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/what-is-rpc/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/what-is-rpc/" class="chapter-link">
             <span class="chapter-title">第一章：RPC 原理</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
             <span class="chapter-title">第二章：RPC 框架概览</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/build-server/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/build-server/" class="chapter-link">
             <span class="chapter-title">第三章：框架搭建 —— server</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/build-client/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/build-client/" class="chapter-link">
             <span class="chapter-title">第四章：框架搭建 —— client</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/build-transport/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/build-transport/" class="chapter-link">
             <span class="chapter-title">第五章：框架搭建 —— transport</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/context-timeout/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/context-timeout/" class="chapter-link">
             <span class="chapter-title">第六章：超时机制</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="https://www.diu.life/lessons/go-rpc/custom-protocol/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/custom-protocol/" class="chapter-link">
             <span class="chapter-title">第七章：自定义协议实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/codec/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/codec/" class="chapter-link">
             <span class="chapter-title">第八章：协议编解码实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
             <span class="chapter-title">第九章：序列化实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/log-component/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/log-component/" class="chapter-link">
             <span class="chapter-title">第十章：日志模块实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/connection-pool/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/connection-pool/" class="chapter-link">
             <span class="chapter-title">第十一章：连接池实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/interceptor/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/interceptor/" class="chapter-link">
             <span class="chapter-title">第十二章：拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/component-interface/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/component-interface/" class="chapter-link">
             <span class="chapter-title">第十三章：组件可插拔实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/plugin/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/plugin/" class="chapter-link">
             <span class="chapter-title">第十四章：插件体系实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
             <span class="chapter-title">第十五章：服务发现原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
             <span class="chapter-title">第十六章：服务发现实现 —— consul</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
             <span class="chapter-title">第十七章：负载均衡实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/tracing-selection/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/tracing-selection/" class="chapter-link">
             <span class="chapter-title">第十八章：分布式链路追踪原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/tracing-implementation/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/tracing-implementation/" class="chapter-link">
             <span class="chapter-title">第十九章：分布式链路追踪实现 —— jaeger</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/auth/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/auth/" class="chapter-link">
             <span class="chapter-title">第二十章：认证鉴权实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/code-generation/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/code-generation/" class="chapter-link">
             <span class="chapter-title">第二十一章：代码生成工具实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/performance-test/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/performance-test/" class="chapter-link">
             <span class="chapter-title">第二十二章：框架性能测试</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/performance-optimization/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/performance-optimization/" class="chapter-link">
             <span class="chapter-title">第二十三章：框架性能优化</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://www.diu.life/lessons/go-rpc/summary/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/summary/" class="chapter-link">
             <span class="chapter-title">第二十四章：总结与展望</span>
           </a>
         </li>
@@ -472,11 +472,11 @@
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="https://www.diu.life/lessons/go-rpc/context-timeout/" class="nav-btn prev-btn">
+            <a href="https://diu.life/lessons/go-rpc/context-timeout/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第六章：超时机制</span>
             </a>
-            <a href="https://www.diu.life/lessons/go-rpc/codec/" class="nav-btn next-btn">
+            <a href="https://diu.life/lessons/go-rpc/codec/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第八章：协议编解码实现</span>
             </a>
@@ -873,7 +873,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://www.diu.life/">丢哥</a></span> · 
+        <span>&copy; 2025 <a href="https://diu.life/">丢哥</a></span> · 
 
     <span>
         Powered by

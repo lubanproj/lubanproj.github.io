@@ -20,6 +20,7 @@ git push --force origin gh-pages
 
 # 5. 返回上一级
 cd ..
+git checkout main
 
 echo "✅ 部署完成"
 

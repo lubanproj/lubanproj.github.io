@@ -6,7 +6,6 @@ set -e
 hugo
 
 # 2. 进入 public 目录
-echo "www.diu.life" > public/CNAME
 cd public
 
 # 3. 初始化临时 Git 仓库

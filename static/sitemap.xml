@@ -5,8 +5,6 @@
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
-
 <url>
   <loc>https://diu.life/</loc>
   <lastmod>2025-08-15T03:26:46+00:00</lastmod>
@@ -162,6 +160,4 @@
   <lastmod>2025-08-15T03:26:46+00:00</lastmod>
   <priority>0.51</priority>
 </url>
-
-
 </urlset>

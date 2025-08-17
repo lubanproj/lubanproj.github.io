@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>第十章：grpc 协议编解码器 | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="协议编解码器
 一般的协议都会包括协议头和协议体，对于业务而言，一般只关心需要发送的业务数据。所以，协议头的内容一般是框架自动帮忙填充。将业务数据包装成指定协议格式的数据包就是编码的过程，从指定协议格式中的数据包中取出业务数据的过程就是解码的过程。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="http://localhost:1313/lessons/grpc-read/grpc-protocol-codec/">
+<link rel="canonical" href="https://diu.life/lessons/grpc-read/grpc-protocol-codec/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://diu.life/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://diu.life/apple-touch-icon.png">
+<link rel="mask-icon" href="https://diu.life/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/grpc-read/grpc-protocol-codec/">
+<link rel="alternate" hreflang="zh" href="https://diu.life/lessons/grpc-read/grpc-protocol-codec/">
 <noscript>
     <style>
         #theme-toggle,
@@ -56,7 +56,80 @@
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-protocol-codec/">
+  <meta property="og:site_name" content="丢哥">
+  <meta property="og:title" content="第十章：grpc 协议编解码器">
+  <meta property="og:description" content="协议编解码器 一般的协议都会包括协议头和协议体，对于业务而言，一般只关心需要发送的业务数据。所以，协议头的内容一般是框架自动帮忙填充。将业务数据包装成指定协议格式的数据包就是编码的过程，从指定协议格式中的数据包中取出业务数据的过程就是解码的过程。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="lessons">
+    <meta property="article:published_time" content="2019-11-10T00:00:00+08:00">
+    <meta property="article:modified_time" content="2019-11-10T00:00:00+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第十章：grpc 协议编解码器">
+<meta name="twitter:description" content="协议编解码器
+一般的协议都会包括协议头和协议体，对于业务而言，一般只关心需要发送的业务数据。所以，协议头的内容一般是框架自动帮忙填充。将业务数据包装成指定协议格式的数据包就是编码的过程，从指定协议格式中的数据包中取出业务数据的过程就是解码的过程。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "教程",
+      "item": "https://diu.life/lessons/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "gRPC 源码阅读",
+      "item": "https://diu.life/lessons/grpc-read/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "第十章：grpc 协议编解码器",
+      "item": "https://diu.life/lessons/grpc-read/grpc-protocol-codec/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第十章：grpc 协议编解码器",
+  "name": "第十章：grpc 协议编解码器",
+  "description": "协议编解码器 一般的协议都会包括协议头和协议体，对于业务而言，一般只关心需要发送的业务数据。所以，协议头的内容一般是框架自动帮忙填充。将业务数据包装成指定协议格式的数据包就是编码的过程，从指定协议格式中的数据包中取出业务数据的过程就是解码的过程。\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "协议编解码器 一般的协议都会包括协议头和协议体，对于业务而言，一般只关心需要发送的业务数据。所以，协议头的内容一般是框架自动帮忙填充。将业务数据包装成指定协议格式的数据包就是编码的过程，从指定协议格式中的数据包中取出业务数据的过程就是解码的过程。\n每个 rpc 框架基本都有自己的编解码器，下面我们就来说说 grpc 的编解码过程。\ngrpc 解码 我们还是从我们的 examples 目录下的 helloworld demo 中 server 的 main 函数入手\nfunc main() { lis, err := net.Listen(\"tcp\", port) if err != nil { log.Fatalf(\"failed to listen: %v\", err) } s := grpc.NewServer() pb.RegisterGreeterServer(s, \u0026server{}) if err := s.Serve(lis); err != nil { log.Fatalf(\"failed to serve: %v\", err) } } 在 s.Serve(lis) ——\u003e s.handleRawConn(rawConn) —— \u003e s.serveStreams(st) ——\u003e s.handleStream(st, stream, s.traceInfo(st, stream)) ——\u003e s.processUnaryRPC(t, stream, srv, md, trInfo) 方法中有一段代码：\nsh := s.opts.statsHandler ... df := func(v interface{}) error { if err := s.getCodec(stream.ContentSubtype()).Unmarshal(d, v); err != nil { return status.Errorf(codes.Internal, \"grpc: error unmarshalling request: %v\", err) } if sh != nil { sh.HandleRPC(stream.Context(), \u0026stats.InPayload{ RecvTime: time.Now(), Payload: v, WireLength: payInfo.wireLength, Data: d, Length: len(d), }) } if binlog != nil { binlog.Log(\u0026binarylog.ClientMessage{ Message: d, }) } if trInfo != nil { trInfo.tr.LazyLog(\u0026payload{sent: false, msg: v}, true) } return nil } 这段代码的逻辑先调 getCodec 获取解包类，然后调用这个类的 Unmarshal 方法进行解包。将业务数据取出来，然后调用 handler 进行处理。\nfunc (s *Server) getCodec(contentSubtype string) baseCodec { if s.opts.codec != nil { return s.opts.codec } if contentSubtype == \"\" { return encoding.GetCodec(proto.Name) } codec := encoding.GetCodec(contentSubtype) if codec == nil { return encoding.GetCodec(proto.Name) } return codec } 我们来看 getCodec 这个方法，它是通过 contentSubtype 这个字段来获取解包类的。假如不设置 contentSubtype ，那么默认会用名字为 proto 的解码器。\n我们来看看 contentSubtype 是如何设置的。之前说到了 grpc 的底层默认是基于 http2 的。在 serveHttp 时调用了 NewServerHandlerTransport 这个方法来创建一个 ServerTransport，然后我们发现，其实就是根据 content-type 这个字段去生成的。\nfunc NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats stats.Handler) (ServerTransport, error) { ... contentType := r.Header.Get(\"Content-Type\") // TODO: do we assume contentType is lowercase? we did before contentSubtype, validContentType := contentSubtype(contentType) if !validContentType { return nil, errors.New(\"invalid gRPC request content-type\") } if _, ok := w.(http.Flusher); !ok { return nil, errors.New(\"gRPC requires a ResponseWriter supporting http.Flusher\") } st := \u0026serverHandlerTransport{ rw: w, req: r, closedCh: make(chan struct{}), writes: make(chan func()), contentType: contentType, contentSubtype: contentSubtype, stats: stats, } } 我们来看看 contentSubtype 这个方法 。\n... baseContentType = \"application/grpc\" ... func contentSubtype(contentType string) (string, bool) { if contentType == baseContentType { return \"\", true } if !strings.HasPrefix(contentType, baseContentType) { return \"\", false } // guaranteed since != baseContentType and has baseContentType prefix switch contentType[len(baseContentType)] { case '+', ';': // this will return true for \"application/grpc+\" or \"application/grpc;\" // which the previous validContentType function tested to be valid, so we // just say that no content-subtype is specified in this case return contentType[len(baseContentType)+1:], true default: return \"\", false } } 可以看到 grpc 协议默认以 application/grpc 开头，假如不一这个开头会返回错误，假如我们想使用 json 的解码器，应该设置 content-type = application/grpc+json 。下面是一个基于 grpc 协议的请求 request ：\nHEADERS (flags = END_HEADERS) :method = POST :scheme = http :path = /google.pubsub.v2.PublisherService/CreateTopic :authority = pubsub.googleapis.com grpc-timeout = 1S content-type = application/grpc+proto grpc-encoding = gzip authorization = Bearer y235.wef315yfh138vh31hv93hv8h3v DATA (flags = END_STREAM) 详细可参考 proto-http2\n怎么拿的呢，再看一下 encoding.getCodec 方法\nfunc GetCodec(contentSubtype string) Codec { return registeredCodecs[contentSubtype] } 它其实取得是 registeredCodecs 这个 map 中的 codec，这个 map 是 RegisterCodec 方法注册进去的。\nvar registeredCodecs = make(map[string]Codec) func RegisterCodec(codec Codec) { if codec == nil { panic(\"cannot register a nil Codec\") } if codec.Name() == \"\" { panic(\"cannot register Codec with empty string result for Name()\") } contentSubtype := strings.ToLower(codec.Name()) registeredCodecs[contentSubtype] = codec } 毫无疑问， encoding 目录的 proto 包下肯定在初始化时调用注册方法了。果然\nfunc init() { encoding.RegisterCodec(codec{}) } 绕了一圈，调用的其实是 proto 的 Unmarshal 方法，如下：\nfunc (codec) Unmarshal(data []byte, v interface{}) error { protoMsg := v.(proto.Message) protoMsg.Reset() if pu, ok := protoMsg.(proto.Unmarshaler); ok { // object can unmarshal itself, no need for buffer return pu.Unmarshal(data) } cb := protoBufferPool.Get().(*cachedProtoBuffer) cb.SetBuf(data) err := cb.Unmarshal(protoMsg) cb.SetBuf(nil) protoBufferPool.Put(cb) return err } grpc 编码 在剖析解码代码的基础上，编码代码就很轻松了，其实直接找到 encoding 目录的 proto 包，看 Marshal 方法在哪儿被调用就行了。\n于是我们很快就找到了调用路径，也是这个路径：\ns.Serve(lis) ——\u003e s.handleRawConn(rawConn) —— \u003e s.serveStreams(st) ——\u003e s.handleStream(st, stream, s.traceInfo(st, stream)) ——\u003e s.processUnaryRPC(t, stream, srv, md, trInfo)\nprocessUnaryRPC 方法中有一段 server 发送响应数据的代码。其实也就是这一行：\nif err := s.sendResponse(t, stream, reply, cp, opts, comp); err != nil { 我们其实也能猜到，发送数据给 client 之前肯定要编码。果然调用了 encode 方法\nfunc (s *Server) sendResponse(t transport.ServerTransport, stream *transport.Stream, msg interface{}, cp Compressor, opts *transport.Options, comp encoding.Compressor) error { data, err := encode(s.getCodec(stream.ContentSubtype()), msg) if err != nil { grpclog.Errorln(\"grpc: server failed to encode response: \", err) return err } ... } 来看一下 encode\nfunc encode(c baseCodec, msg interface{}) ([]byte, error) { if msg == nil { // NOTE: typed nils will not be caught by this check return nil, nil } b, err := c.Marshal(msg) if err != nil { return nil, status.Errorf(codes.Internal, \"grpc: error while marshaling: %v\", err.Error()) } if uint(len(b)) \u003e math.MaxUint32 { return nil, status.Errorf(codes.ResourceExhausted, \"grpc: message too large (%d bytes)\", len(b)) } return b, nil } 它调用了 c.Marshal 方法， Marshal 方法其实是 baseCodec 定义的一个通用抽象方法\ntype baseCodec interface { Marshal(v interface{}) ([]byte, error) Unmarshal(data []byte, v interface{}) error } proto 实现了 baseCodec，前面说到了通过 s.getCodec(stream.ContentSubtype(),msg) 获取到的其实是 contentType 里面设置的协议名称，不设置的话默认取 proto 的编码器。所以最终是调用了 proto 包下的 Marshal 方法，如下：\nfunc (codec) Marshal(v interface{}) ([]byte, error) { if pm, ok := v.(proto.Marshaler); ok { // object can marshal itself, no need for buffer return pm.Marshal() } cb := protoBufferPool.Get().(*cachedProtoBuffer) out, err := marshal(v, cb) // put back buffer and lose the ref to the slice cb.SetBuf(nil) protoBufferPool.Put(cb) return out, err } ok，那么至此，grpc 的整个编解码的流程我们就已经剖析完了\n",
+  "wordCount" : "1506",
+  "inLanguage": "zh",
+  "datePublished": "2019-11-10T00:00:00+08:00",
+  "dateModified": "2019-11-10T00:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "丢哥"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://diu.life/lessons/grpc-read/grpc-protocol-codec/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "丢哥",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://diu.life/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -74,7 +147,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="https://diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -100,27 +173,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="首页">
+                <a href="https://diu.life/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/posts/" title="文章">
+                <a href="https://diu.life/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/projects/" title="独立开发">
+                <a href="https://diu.life/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/lessons/" title="教程">
+                <a href="https://diu.life/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="关于">
+                <a href="https://diu.life/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -135,62 +208,62 @@
       <h3>Grpc-Read 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-concepts-http2/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-concepts-http2/" class="chapter-link">
             <span class="chapter-title">第一章：grpc concepts &amp; http2</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world/" class="chapter-link">
             <span class="chapter-title">第二章：grpc hello world</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world-server-analysis/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/" class="chapter-link">
             <span class="chapter-title">第三章：grpc hello world server 解析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world-client-analysis/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/" class="chapter-link">
             <span class="chapter-title">第四章：grpc hello world client 解析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-service-discovery/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-service-discovery/" class="chapter-link">
             <span class="chapter-title">第五章：grpc 服务发现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-load-balancing/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-load-balancing/" class="chapter-link">
             <span class="chapter-title">第六章：grpc 负载均衡</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-auth-tls/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-auth-tls/" class="chapter-link">
             <span class="chapter-title">第七章：grpc 认证鉴权——tls认证</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-auth-oauth2/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-auth-oauth2/" class="chapter-link">
             <span class="chapter-title">第八章：grpc 认证鉴权——oauth2认证</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-interceptor-implementation/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/" class="chapter-link">
             <span class="chapter-title">第九章：grpc 拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-protocol-codec/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-codec/" class="chapter-link">
             <span class="chapter-title">第十章：grpc 协议编解码器</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="chapter-link">
             <span class="chapter-title">第十一章：grpc 协议解包过程全剖析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-data-flow/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-data-flow/" class="chapter-link">
             <span class="chapter-title">第十二章：grpc 数据流转</span>
           </a>
         </li>
@@ -436,11 +509,11 @@ func RegisterCodec(codec Codec) {
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="http://localhost:1313/lessons/grpc-read/grpc-interceptor-implementation/" class="nav-btn prev-btn">
+            <a href="https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第九章：grpc 拦截器实现</span>
             </a>
-            <a href="http://localhost:1313/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="nav-btn next-btn">
+            <a href="https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第十一章：grpc 协议解包过程全剖析</span>
             </a>

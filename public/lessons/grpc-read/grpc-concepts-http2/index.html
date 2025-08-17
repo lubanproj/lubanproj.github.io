@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>第一章：grpc concepts &amp; http2 | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="写在前面
@@ -14,16 +14,16 @@ gRPC is a modern, open source, high-performance remote procedure call (RPC) fram
 
 市面上的 rpc 框架数不胜数，包括 alibaba dubbo 和微博的 motan 等。grpc 能够在众多的框架中脱颖而出是跟其高性能是密切相关的。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="http://localhost:1313/lessons/grpc-read/grpc-concepts-http2/">
+<link rel="canonical" href="https://diu.life/lessons/grpc-read/grpc-concepts-http2/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://diu.life/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://diu.life/apple-touch-icon.png">
+<link rel="mask-icon" href="https://diu.life/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/grpc-read/grpc-concepts-http2/">
+<link rel="alternate" hreflang="zh" href="https://diu.life/lessons/grpc-read/grpc-concepts-http2/">
 <noscript>
     <style>
         #theme-toggle,
@@ -60,7 +60,85 @@ gRPC is a modern, open source, high-performance remote procedure call (RPC) fram
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-concepts-http2/">
+  <meta property="og:site_name" content="丢哥">
+  <meta property="og:title" content="第一章：grpc concepts & http2">
+  <meta property="og:description" content="写在前面 grpc 介绍 grpc 是 google 开源的一款高性能的 rpc 框架。github 上介绍如下：
+gRPC is a modern, open source, high-performance remote procedure call (RPC) framework that can run anywhere 市面上的 rpc 框架数不胜数，包括 alibaba dubbo 和微博的 motan 等。grpc 能够在众多的框架中脱颖而出是跟其高性能是密切相关的。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="lessons">
+    <meta property="article:published_time" content="2019-11-01T00:00:00+08:00">
+    <meta property="article:modified_time" content="2019-11-01T00:00:00+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第一章：grpc concepts &amp; http2">
+<meta name="twitter:description" content="写在前面
+grpc 介绍
+grpc 是 google 开源的一款高性能的 rpc 框架。github 上介绍如下：
+gRPC is a modern, open source, high-performance remote procedure call (RPC) framework that can run anywhere
+
+市面上的 rpc 框架数不胜数，包括 alibaba dubbo 和微博的 motan 等。grpc 能够在众多的框架中脱颖而出是跟其高性能是密切相关的。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "教程",
+      "item": "https://diu.life/lessons/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "gRPC 源码阅读",
+      "item": "https://diu.life/lessons/grpc-read/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "第一章：grpc concepts \u0026 http2",
+      "item": "https://diu.life/lessons/grpc-read/grpc-concepts-http2/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第一章：grpc concepts \u0026 http2",
+  "name": "第一章：grpc concepts \u0026 http2",
+  "description": "写在前面 grpc 介绍 grpc 是 google 开源的一款高性能的 rpc 框架。github 上介绍如下：\ngRPC is a modern, open source, high-performance remote procedure call (RPC) framework that can run anywhere 市面上的 rpc 框架数不胜数，包括 alibaba dubbo 和微博的 motan 等。grpc 能够在众多的框架中脱颖而出是跟其高性能是密切相关的。\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "写在前面 grpc 介绍 grpc 是 google 开源的一款高性能的 rpc 框架。github 上介绍如下：\ngRPC is a modern, open source, high-performance remote procedure call (RPC) framework that can run anywhere 市面上的 rpc 框架数不胜数，包括 alibaba dubbo 和微博的 motan 等。grpc 能够在众多的框架中脱颖而出是跟其高性能是密切相关的。\nCONCEPTS 阅读 grpc 源码之前，我们不妨先了解一些 concepts，github 上也有一些 concepts 介绍\nhttps://github.com/grpc/grpc/blob/master/CONCEPTS.md\n1.接口设计 Developers using gRPC start with a language agnostic description of an RPC service (a collection of methods). From this description, gRPC will generate client and server side interfaces in any of the supported languages. The server implements the service interface, which can be remotely invoked by the client interface. By default, gRPC uses Protocol Buffers as the Interface Definition Language (IDL) for describing both the service interface and the structure of the payload messages. It is possible to use other alternatives if desired. 对一个远程服务 service 的调用，grpc 约定 client 和 server 首先需要约定好 service 的结构。包括一系列方法的组合，每个方法定义、参数、返回体等。对这个结构的描述，grpc 默认是用 protocol buffer 去实现的。\n2. Streaming streaming 在 http/1.x 已经出现了，http2 实现了 streaming 的多路复用。grpc 是基于 http2 实现的。所以 grpc 也实现了 streaming 的多路复用，所以 grpc 的请求有四种模式：Simple RPC、Client-side streaming RPC、Server-side streaming RPC、Bidirectional streaming RPC 。也就是说同时支持单边流和双向流\n3. Protocol grpc 的协议层是基于 http2 设计的，所以你如果想了解 grpc 的话，可以先深入了解 http2\n4. Flow Control grpc 的协议支持流量控制，这里也是采用了 http2 的 flow control 机制。\n通过上面的介绍可以看到，grpc 的高性能很大程度上依赖了 http2 的能力，所以要了解 grpc 之前，我们需要先了解一下 http 2 的特性。\nhttp2 特性 二进制协议\n众所周知，二进制协议比文本形式的协议，发送的数据量肯定是更小，传输效率更高的。所以 http2 比 http/1.x 更高效，因为二进制是不可读的，所以会损失部分可读性。\n多路复用的流\nhttp/1.x 一个 stream 是需要一个 tcp 连接的，其实从性能上来说是比较浪费的。http2 可以复用 tcp 连接，实现一个 tcp 连接可以处理多个 stream，同时可以为每一个 stream 设置优先级，可以用来告诉对端哪个流更重要。当资源有限的时候，服务器会根据优先级来选择应该先发送哪些流\n头部压缩\n由于 http 协议是一个无状态的协议，导致了很多相同或者类似的 http 请求重复发送时，带的头部信息很多时候是完全一样的。http2 对头部进行压缩，可以减少数据包大小，提高协议性能\n请求 reset\n在 http/1.x 中，当一个含有确切值的 Content-Length 的 http 消息发出之后，需要断开 tcp 连接才能中断。这样会导致需要通过三次握手来重新建立一个新的 tcp 连接，代价是比较大的。在 http2 里面，我们可以通过发送 RST_STREAM 帧来终止当前消息发送，从而避免了浪费带宽和中断已有的连接。\n服务器推送\n如果一个 client 请求资源 A，而 server 知道 client 可能也会需要资源 B， 所以在 client 发起请求前，server 提前将 B 推送给 A 缓存起来，从而可以缩短资源 A 这个请求的响应时间。\nflow control\n在 http2 中，每个 http stream 都有自己公示的流量窗口，对于每个 stream 来说，client 和 server 都必须互相告诉对方自己能够处理的窗口大小，stream 中的数据帧大小不得超过能处理的窗口值。\n这是题主简单了解，并总结了一下，对 http2，网上有很多文章介绍的非常详细，大家可以自行深入研究下。\n",
+  "wordCount" : "1194",
+  "inLanguage": "zh",
+  "datePublished": "2019-11-01T00:00:00+08:00",
+  "dateModified": "2019-11-01T00:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "丢哥"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://diu.life/lessons/grpc-read/grpc-concepts-http2/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "丢哥",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://diu.life/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -78,7 +156,7 @@ gRPC is a modern, open source, high-performance remote procedure call (RPC) fram
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="https://diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -104,27 +182,27 @@ gRPC is a modern, open source, high-performance remote procedure call (RPC) fram
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="首页">
+                <a href="https://diu.life/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/posts/" title="文章">
+                <a href="https://diu.life/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/projects/" title="独立开发">
+                <a href="https://diu.life/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/lessons/" title="教程">
+                <a href="https://diu.life/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="关于">
+                <a href="https://diu.life/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -139,62 +217,62 @@ gRPC is a modern, open source, high-performance remote procedure call (RPC) fram
       <h3>Grpc-Read 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item active">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-concepts-http2/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-concepts-http2/" class="chapter-link">
             <span class="chapter-title">第一章：grpc concepts &amp; http2</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world/" class="chapter-link">
             <span class="chapter-title">第二章：grpc hello world</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world-server-analysis/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/" class="chapter-link">
             <span class="chapter-title">第三章：grpc hello world server 解析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world-client-analysis/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/" class="chapter-link">
             <span class="chapter-title">第四章：grpc hello world client 解析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-service-discovery/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-service-discovery/" class="chapter-link">
             <span class="chapter-title">第五章：grpc 服务发现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-load-balancing/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-load-balancing/" class="chapter-link">
             <span class="chapter-title">第六章：grpc 负载均衡</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-auth-tls/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-auth-tls/" class="chapter-link">
             <span class="chapter-title">第七章：grpc 认证鉴权——tls认证</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-auth-oauth2/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-auth-oauth2/" class="chapter-link">
             <span class="chapter-title">第八章：grpc 认证鉴权——oauth2认证</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-interceptor-implementation/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/" class="chapter-link">
             <span class="chapter-title">第九章：grpc 拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-protocol-codec/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-codec/" class="chapter-link">
             <span class="chapter-title">第十章：grpc 协议编解码器</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="chapter-link">
             <span class="chapter-title">第十一章：grpc 协议解包过程全剖析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/grpc-read/grpc-data-flow/" class="chapter-link">
+          <a href="https://diu.life/lessons/grpc-read/grpc-data-flow/" class="chapter-link">
             <span class="chapter-title">第十二章：grpc 数据流转</span>
           </a>
         </li>
@@ -270,7 +348,7 @@ By default, gRPC uses Protocol Buffers as the Interface Definition Language (IDL
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world/" class="nav-btn next-btn">
+            <a href="https://diu.life/lessons/grpc-read/grpc-hello-world/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第二章：grpc hello world</span>
             </a>

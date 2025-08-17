@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>第十五章：服务发现原理及选型 | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="上一章介绍了插件体系的实现，从本章开始，我们开始陆续介绍各个插件的设计与实现。之前说到了，在微服务环境下，框架默认支持的能力包括：服务发现、负载均衡、分布式链路追踪。我们先从服务发现开始，介绍框架是如何支持服务发现能力的。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/">
+<link rel="canonical" href="https://diu.life/lessons/go-rpc/service-discovery-selection/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://diu.life/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://diu.life/apple-touch-icon.png">
+<link rel="mask-icon" href="https://diu.life/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/">
+<link rel="alternate" hreflang="zh" href="https://diu.life/lessons/go-rpc/service-discovery-selection/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,7 +55,79 @@
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://diu.life/lessons/go-rpc/service-discovery-selection/">
+  <meta property="og:site_name" content="丢哥">
+  <meta property="og:title" content="第十五章：服务发现原理及选型">
+  <meta property="og:description" content="上一章介绍了插件体系的实现，从本章开始，我们开始陆续介绍各个插件的设计与实现。之前说到了，在微服务环境下，框架默认支持的能力包括：服务发现、负载均衡、分布式链路追踪。我们先从服务发现开始，介绍框架是如何支持服务发现能力的。">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="lessons">
+    <meta property="article:published_time" content="2020-02-15T00:00:00+08:00">
+    <meta property="article:modified_time" content="2020-02-15T00:00:00+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第十五章：服务发现原理及选型">
+<meta name="twitter:description" content="上一章介绍了插件体系的实现，从本章开始，我们开始陆续介绍各个插件的设计与实现。之前说到了，在微服务环境下，框架默认支持的能力包括：服务发现、负载均衡、分布式链路追踪。我们先从服务发现开始，介绍框架是如何支持服务发现能力的。">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "教程",
+      "item": "https://diu.life/lessons/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "从 0 到 1 开发一款高性能 RPC 框架",
+      "item": "https://diu.life/lessons/go-rpc/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "第十五章：服务发现原理及选型",
+      "item": "https://diu.life/lessons/go-rpc/service-discovery-selection/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第十五章：服务发现原理及选型",
+  "name": "第十五章：服务发现原理及选型",
+  "description": "上一章介绍了插件体系的实现，从本章开始，我们开始陆续介绍各个插件的设计与实现。之前说到了，在微服务环境下，框架默认支持的能力包括：服务发现、负载均衡、分布式链路追踪。我们先从服务发现开始，介绍框架是如何支持服务发现能力的。\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "上一章介绍了插件体系的实现，从本章开始，我们开始陆续介绍各个插件的设计与实现。之前说到了，在微服务环境下，框架默认支持的能力包括：服务发现、负载均衡、分布式链路追踪。我们先从服务发现开始，介绍框架是如何支持服务发现能力的。\n一、什么是服务发现？ 我们知道，将容器或者应用部署到集群时，其服务地址，即 IP 和端口, 是由集群系统动态分配的。那么，当我们需要访问这个服务时，如何确定它的地址呢？这时，就需要**服务发现(Service Discovery)**了。\n我们可以简单把服务发现理解为从一个集群中获取到服务的访问地址，即 IP 和端口的过程。\n二、路由方式 服务发现的路由方式，一般来说，我们有客户端路由和代理层路由两种方式。\n1、客户端路由 客户端路由模式，也就是调用方负责获取被调用方的地址信息，并使用相应的负载均衡算法发起请求。调用方访问服务注册服务，获取对应的服务 IP 地址和端口，可能还包括对应的服务负载信息（负载均衡算法、服务实例权重等）。调用方通过负载均衡算法选取其中一个发起请求。如下：\nserver 启动的时候向 config server 注册自身的服务地址，server 正常退出的时候调用接口移除自身地址，通过定时心跳保证服务是否正常以及地址的有效性。\n2、代理层路由 代理层路由，不是由调用方去获取被调方的地址，而是通过代理的方式，由代理去获取被调方的地址、发起调用请求。如下：\n代理层路由这种模式，对 server 的寻址不再是由 client 去实现，而是由代理去实现。client 只是会对代理层发起简单请求，代理层去进行 server 寻址、负载均衡等。\n三、技术选型 1、客户端路由还是代理层路由？ 首先关于客户端路由和代理层路由的选择。假如选择代理层路由，我们需要引入一个 proxy 去做中转站，框架请求 proxy 去进行服务发现和负载均衡，这里考虑到，假如引入第三方 proxy，后续框架需要支持一些自定义实现（比如新增一种负载均衡算法）将会需要 proxy 进行相应支持，可能会产生一些不可控因素。所以这里我们选择的是客户端路由的方式。\n2、CAP 定理 在进行服务发现组件选型之前·，你需要了解下 CAP 定理。\n什么是 CAP 定理呢？在分布式系统中有三个重要的指标，C （即 Consistency）指的是一致性，常见的场景就是写操作之后的读操作必须返回刚刚写入的值。A（即 Availability）指的是可用性，常见的场景就是只要收到用户的请求，服务器就必须给出回应。P （即 Partition tolerance）指的是分区容错性，常见的场景就是集群之间的通信可能存在失败，分区容错性允许不同分区的服务器通信失败。\nCAP 定理证明了 C、A、P 三个特性不可能同时满足，最多只能满足两种特性。具体论证大家可以去看相关论文了，这里不进行证明。\n、第三方组件选择 目前社区上常见的服务发现组件基本都是保证 CP，因为 P 是不可避免的，所以在 C 和 A 的选择上，基本上都是选择 C，也就是保证数据的最终一致性，比较成熟的服务发现组件主要有 zookeeper、consul 和 etcd 等。下面我们就来调研和对比下这三种组件的区别。\nzookeeper\nzookeeper 是一个典型的分布式数据一致性解决方案，分布式应用程序可以基于 zookeeper 实现诸如数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master 选举、分布式锁和分布式队列等功能。可以看到 zookeeper 提供的功能非常强大，假如只是打算将 zookeeper 作为服务发现类的工具，我们可能用到其配置存储和分布式同步的功能。\nzookeeper 的主要优势是其成熟、健壮以及丰富的特性，然而，它也有自己的缺点，其中使用 Java 开发以及复杂性是罪魁祸首。尽管 Java 在许多方面非常伟大，然后对于这种类型的工作还是太沉重了。\netcd\netcd是一个采用http协议的分布式键值对存储系统，因其易用，简单。很多系统都采用或支持 etcd 作为服务发现的一部分，比如 kubernetes。但正是因为其只是一个存储系统，如果想要提供完整的服务发现功能，必须搭配一些第三方的工具。\nconsul\nconsul 是强一致性的数据存储。与 zookeeper 和 etcd 不一样，consul 内嵌实现了服务发现系统，所以这样就不需要构建自己的系统或使用第三方系统。这一发现系统除了上述提到的特性之外，还包括节点健康检查和运行在其上的服务。\n对 zookeeper、consul、etcd 三种组件的对比，如下（来自网络）\n名称 优点 缺点 接口 一致性算法 zookeeper 1.功能强大，不仅仅只是服务发现 2.提供watcher机制能实时获取服务提供者的状态 3.dubbo等框架支持 1.没有健康检查 2.需在服务中集成sdk，复杂度高 3.不支持多数据中心 sdk Paxos consul 1.简单易用，不需要集成sdk 2.自带健康检查 3.支持多数据中心 4.提供web管理界面 1.不能实时获取服务信息的变化通知 http/dns Raft etcd 1.简单易用，不需要集成sdk 2.可配置性强 1.没有健康检查 2.需配合第三方工具一起完成服务发现 3.不支持多数据中心 http Raft 考虑到易用性、以及语言机制（zookeeper 是用 java 实现，consul 和 etcd 是用 go 实现），这里我们选择 consul 来进行我们框架的服务发现能力支持。\n小结 本章主要介绍了服务发现的原理，路由方式（包括客户端路由和代理层路由），以及服务发现组件 zookeeper、etcd、consul 的选择。下一章我们将进行具体实现介绍\n",
+  "wordCount" : "2081",
+  "inLanguage": "zh",
+  "datePublished": "2020-02-15T00:00:00+08:00",
+  "dateModified": "2020-02-15T00:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "丢哥"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://diu.life/lessons/go-rpc/service-discovery-selection/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "丢哥",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://diu.life/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -73,7 +145,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="https://diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -99,27 +171,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="首页">
+                <a href="https://diu.life/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/posts/" title="文章">
+                <a href="https://diu.life/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/projects/" title="独立开发">
+                <a href="https://diu.life/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/lessons/" title="教程">
+                <a href="https://diu.life/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="关于">
+                <a href="https://diu.life/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -134,122 +206,122 @@
       <h3>Go-Rpc 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/what-is-rpc/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/what-is-rpc/" class="chapter-link">
             <span class="chapter-title">第一章：RPC 原理</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
             <span class="chapter-title">第二章：RPC 框架概览</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-server/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/build-server/" class="chapter-link">
             <span class="chapter-title">第三章：框架搭建 —— server</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-client/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/build-client/" class="chapter-link">
             <span class="chapter-title">第四章：框架搭建 —— client</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/build-transport/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/build-transport/" class="chapter-link">
             <span class="chapter-title">第五章：框架搭建 —— transport</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/context-timeout/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/context-timeout/" class="chapter-link">
             <span class="chapter-title">第六章：超时机制</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/custom-protocol/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/custom-protocol/" class="chapter-link">
             <span class="chapter-title">第七章：自定义协议实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/codec/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/codec/" class="chapter-link">
             <span class="chapter-title">第八章：协议编解码实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
             <span class="chapter-title">第九章：序列化实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/log-component/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/log-component/" class="chapter-link">
             <span class="chapter-title">第十章：日志模块实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/connection-pool/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/connection-pool/" class="chapter-link">
             <span class="chapter-title">第十一章：连接池实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/interceptor/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/interceptor/" class="chapter-link">
             <span class="chapter-title">第十二章：拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/component-interface/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/component-interface/" class="chapter-link">
             <span class="chapter-title">第十三章：组件可插拔实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/plugin/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/plugin/" class="chapter-link">
             <span class="chapter-title">第十四章：插件体系实现</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
             <span class="chapter-title">第十五章：服务发现原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
             <span class="chapter-title">第十六章：服务发现实现 —— consul</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
             <span class="chapter-title">第十七章：负载均衡实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/tracing-selection/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/tracing-selection/" class="chapter-link">
             <span class="chapter-title">第十八章：分布式链路追踪原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/tracing-implementation/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/tracing-implementation/" class="chapter-link">
             <span class="chapter-title">第十九章：分布式链路追踪实现 —— jaeger</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/auth/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/auth/" class="chapter-link">
             <span class="chapter-title">第二十章：认证鉴权实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/code-generation/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/code-generation/" class="chapter-link">
             <span class="chapter-title">第二十一章：代码生成工具实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/performance-test/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/performance-test/" class="chapter-link">
             <span class="chapter-title">第二十二章：框架性能测试</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/performance-optimization/" class="chapter-link">
             <span class="chapter-title">第二十三章：框架性能优化</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="http://localhost:1313/lessons/go-rpc/summary/" class="chapter-link">
+          <a href="https://diu.life/lessons/go-rpc/summary/" class="chapter-link">
             <span class="chapter-title">第二十四章：总结与展望</span>
           </a>
         </li>
@@ -343,11 +415,11 @@
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="http://localhost:1313/lessons/go-rpc/plugin/" class="nav-btn prev-btn">
+            <a href="https://diu.life/lessons/go-rpc/plugin/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第十四章：插件体系实现</span>
             </a>
-            <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="nav-btn next-btn">
+            <a href="https://diu.life/lessons/go-rpc/service-discovery-implementation/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第十六章：服务发现实现 —— consul</span>
             </a>

@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>第四章：grpc hello world client 解析 | 丢哥</title>
+<meta name="keywords" content="">
+<meta name="description" content="grpc hello world  client 解析
+上一节我们介绍了 grpc 输出 hello world 过程中 server 监听和处理请求的过程。这一节中我们将介绍 client 发出请求的过程。
+来先看代码：
+func main() {
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf(&quot;did not connect: %v&quot;, err)
+	}
+	defer conn.Close()
+	c := pb.NewGreeterClient(conn)
+
+	// Contact the server and print out its response.
+	name := defaultName
+	if len(os.Args) &gt; 1 {
+		name = os.Args[1]
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.SayHello(ctx, &amp;pb.HelloRequest{Name: name})
+	if err != nil {
+		log.Fatalf(&quot;could not greet: %v&quot;, err)
+	}
+	log.Printf(&quot;Greeting: %s&quot;, r.Message)
+}
+
+可以看到 client 的建立也可以大致分为 3 步：">
+<meta name="author" content="丢哥">
+<link rel="canonical" href="https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://diu.life/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://diu.life/apple-touch-icon.png">
+<link rel="mask-icon" href="https://diu.life/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/">
+  <meta property="og:site_name" content="丢哥">
+  <meta property="og:title" content="第四章：grpc hello world client 解析">
+  <meta property="og:description" content="grpc hello world client 解析 上一节我们介绍了 grpc 输出 hello world 过程中 server 监听和处理请求的过程。这一节中我们将介绍 client 发出请求的过程。
+来先看代码：
+func main() { // Set up a connection to the server. conn, err := grpc.Dial(address, grpc.WithInsecure()) if err != nil { log.Fatalf(&#34;did not connect: %v&#34;, err) } defer conn.Close() c := pb.NewGreeterClient(conn) // Contact the server and print out its response. name := defaultName if len(os.Args) &gt; 1 { name = os.Args[1] } ctx, cancel := context.WithTimeout(context.Background(), time.Second) defer cancel() r, err := c.SayHello(ctx, &amp;pb.HelloRequest{Name: name}) if err != nil { log.Fatalf(&#34;could not greet: %v&#34;, err) } log.Printf(&#34;Greeting: %s&#34;, r.Message) } 可以看到 client 的建立也可以大致分为 3 步：">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="lessons">
+    <meta property="article:published_time" content="2019-11-04T00:00:00+08:00">
+    <meta property="article:modified_time" content="2019-11-04T00:00:00+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第四章：grpc hello world client 解析">
+<meta name="twitter:description" content="grpc hello world  client 解析
+上一节我们介绍了 grpc 输出 hello world 过程中 server 监听和处理请求的过程。这一节中我们将介绍 client 发出请求的过程。
+来先看代码：
+func main() {
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf(&quot;did not connect: %v&quot;, err)
+	}
+	defer conn.Close()
+	c := pb.NewGreeterClient(conn)
+
+	// Contact the server and print out its response.
+	name := defaultName
+	if len(os.Args) &gt; 1 {
+		name = os.Args[1]
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.SayHello(ctx, &amp;pb.HelloRequest{Name: name})
+	if err != nil {
+		log.Fatalf(&quot;could not greet: %v&quot;, err)
+	}
+	log.Printf(&quot;Greeting: %s&quot;, r.Message)
+}
+
+可以看到 client 的建立也可以大致分为 3 步：">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "教程",
+      "item": "https://diu.life/lessons/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "第四章：grpc hello world client 解析",
+      "item": "https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第四章：grpc hello world client 解析",
+  "name": "第四章：grpc hello world client 解析",
+  "description": "grpc hello world client 解析 上一节我们介绍了 grpc 输出 hello world 过程中 server 监听和处理请求的过程。这一节中我们将介绍 client 发出请求的过程。\n来先看代码：\nfunc main() { // Set up a connection to the server. conn, err := grpc.Dial(address, grpc.WithInsecure()) if err != nil { log.Fatalf(\u0026quot;did not connect: %v\u0026quot;, err) } defer conn.Close() c := pb.NewGreeterClient(conn) // Contact the server and print out its response. name := defaultName if len(os.Args) \u0026gt; 1 { name = os.Args[1] } ctx, cancel := context.WithTimeout(context.Background(), time.Second) defer cancel() r, err := c.SayHello(ctx, \u0026amp;pb.HelloRequest{Name: name}) if err != nil { log.Fatalf(\u0026quot;could not greet: %v\u0026quot;, err) } log.Printf(\u0026quot;Greeting: %s\u0026quot;, r.Message) } 可以看到 client 的建立也可以大致分为 3 步：\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "grpc hello world client 解析 上一节我们介绍了 grpc 输出 hello world 过程中 server 监听和处理请求的过程。这一节中我们将介绍 client 发出请求的过程。\n来先看代码：\nfunc main() { // Set up a connection to the server. conn, err := grpc.Dial(address, grpc.WithInsecure()) if err != nil { log.Fatalf(\"did not connect: %v\", err) } defer conn.Close() c := pb.NewGreeterClient(conn) // Contact the server and print out its response. name := defaultName if len(os.Args) \u003e 1 { name = os.Args[1] } ctx, cancel := context.WithTimeout(context.Background(), time.Second) defer cancel() r, err := c.SayHello(ctx, \u0026pb.HelloRequest{Name: name}) if err != nil { log.Fatalf(\"could not greet: %v\", err) } log.Printf(\"Greeting: %s\", r.Message) } 可以看到 client 的建立也可以大致分为 3 步：\n1）创建一个客户端连接 conn\n2）通过一个 conn 创建一个客户端\n3）发起 rpc 调用\nok，那我们开始 step by step ，具体看看每一步做了啥\n1）创建一个客户端连接 conn conn, err := grpc.Dial(address, grpc.WithInsecure()) 通过 Dial 方法创建 conn，Dial 调用了 DialContext 方法\nfunc Dial(target string, opts ...DialOption) (*ClientConn, error) { return DialContext(context.Background(), target, opts...) } 跟进 DialContext，发现 DialContext 这个方法非常长，这里就不贴代码了，具体就是先实例化了一个 ClientConn 的结构体，然后主要为 ClientConn 的 dopts 的各个属性进行初始化赋值。\ncc := \u0026ClientConn{ target: target, csMgr: \u0026connectivityStateManager{}, conns: make(map[*addrConn]struct{}), dopts: defaultDialOptions(), blockingpicker: newPickerWrapper(), czData: new(channelzData), firstResolveEvent: grpcsync.NewEvent(), } 我们先来看看 ClientConn 的结构\ntype ClientConn struct { ctx context.Context cancel context.CancelFunc target string parsedTarget resolver.Target authority string dopts dialOptions csMgr *connectivityStateManager balancerBuildOpts balancer.BuildOptions blockingpicker *pickerWrapper mu sync.RWMutex resolverWrapper *ccResolverWrapper sc *ServiceConfig conns map[*addrConn]struct{} // Keepalive parameter can be updated if a GoAway is received. mkp keepalive.ClientParameters curBalancerName string balancerWrapper *ccBalancerWrapper retryThrottler atomic.Value firstResolveEvent *grpcsync.Event channelzID int64 // channelz unique identification number czData *channelzData } dialOptions 其实就是对客户端属性的一些设置，包括压缩解压缩、是否需要认证、超时时间、是否重试等信息。\n这里我们来看一下初始化了哪些属性：\n####connectivityStateManager\ntype connectivityStateManager struct { mu sync.Mutex state connectivity.State notifyChan chan struct{} channelzID int64 } 连接的状态管理器，每个连接具有 “IDLE”、“CONNECTING”、“READY”、“TRANSIENT_FAILURE”、“SHUTDOW N”、“Invalid-State” 这几种状态。\npickerWrapper type pickerWrapper struct { mu sync.Mutex done bool blockingCh chan struct{} picker balancer.Picker // The latest connection happened. connErrMu sync.Mutex connErr error } pickerWrapper 是对 balancer.Picker 的一层封装，balancer.Picker 其实是一个负载均衡器，它里面只有一个 Pick 方法，它返回一个 SubConn 连接。\ntype Picker interface { Pick(ctx context.Context, opts PickOptions) (conn SubConn, done func(DoneInfo), err error) } 什么是 SubConn 呢？看一下这个类的介绍\n// Each sub connection contains a list of addresses. gRPC will // try to connect to them (in sequence), and stop trying the // remainder once one connection is successful. 这里我们就明白了，在分布式环境下，可能会存在多个 client 和 多个 server，client 发起一个 rpc 调用之前，需要通过 balancer 去找到一个 server 的 address，balancer 的 Picker 类返回一个 SubConn，SubConn 里面包含了多个 server 的 address，假如返回的 SubConn 是 “READY” 状态，grpc 会发送 RPC 请求，否则则会阻塞，等待 UpdateBalancerState 这个方法更新连接的状态并且通过 picker 获取一个新的 SubConn 连接。\nchannelz channelz 主要用来监测 server 和 channel 的状态，这里的概念和实现比较复杂，暂时不进行深入研究，感兴趣的同学可以参考：https://github.com/grpc/proposal/blob/master/A14-channelz.md 这个 proposal ，初始化的代码如下：\nif channelz.IsOn() { if cc.dopts.channelzParentID != 0 { cc.channelzID = channelz.RegisterChannel(\u0026channelzChannel{cc}, cc.dopts.channelzParentID, target) channelz.AddTraceEvent(cc.channelzID, \u0026channelz.TraceEventDesc{ Desc: \"Channel Created\", Severity: channelz.CtINFO, Parent: \u0026channelz.TraceEventDesc{ Desc: fmt.Sprintf(\"Nested Channel(id:%d) created\", cc.channelzID), Severity: channelz.CtINFO, }, }) } else { cc.channelzID = channelz.RegisterChannel(\u0026channelzChannel{cc}, 0, target) channelz.AddTraceEvent(cc.channelzID, \u0026channelz.TraceEventDesc{ Desc: \"Channel Created\", Severity: channelz.CtINFO, }) } cc.csMgr.channelzID = cc.channelzID } Authentication 这一段是对认证信息的初始化校验，这里暂不研究，感兴趣的同学可以了解下 ：https://grpc.io/docs/guides/auth/\nif !cc.dopts.insecure { if cc.dopts.copts.TransportCredentials == nil \u0026\u0026 cc.dopts.copts.CredsBundle == nil { return nil, errNoTransportSecurity } if cc.dopts.copts.TransportCredentials != nil \u0026\u0026 cc.dopts.copts.CredsBundle != nil { return nil, errTransportCredsAndBundle } } else { if cc.dopts.copts.TransportCredentials != nil || cc.dopts.copts.CredsBundle != nil { return nil, errCredentialsConflict } for _, cd := range cc.dopts.copts.PerRPCCredentials { if cd.RequireTransportSecurity() { return nil, errTransportCredentialsMissing } } } Dialer Dialer 是发起 rpc 请求的调用器，dialer 中实现了对 rpc 请求调用的具体细节，所以可以算是我们的重点研究对象之一。dialer 中包括了连接建立、地址解析、服务发现、长连接等等具体策略的实现。\nif cc.dopts.copts.Dialer == nil { cc.dopts.copts.Dialer = newProxyDialer( func(ctx context.Context, addr string) (net.Conn, error) { network, addr := parseDialTarget(addr) return (\u0026net.Dialer{}).DialContext(ctx, network, addr) }, ) } 这一段方法只是简单进行了地址的规则解析，我们具体看 DialContext 方法，其中有一行：\naddrs, err := d.resolver().resolveAddrList(resolveCtx, \"dial\", network, address, d.LocalAddr) 可以看到通过 dialer 的 resolver 来进行服务发现，这里以后我们再单独详细讲解。\n这里值得一提的是，通过 dialContext 可以看出，这里的 dial 有两种请求方式，一种是 dialParallel , 另一种是 dialSerial。dialParallel 发出两个完全相同的请求，采用第一个返回的结果，抛弃掉第二个请求。dialSerial 则是发出一串（多个）请求。然后采取第一个返回的请求结果（ 成功或者失败）。\nscChan scChan 是 dialOptions 中的一个属性，定义如下：\nscChan \u003c-chan ServiceConfig 可以看到其实他是一个 ServiceConfig类型的一个 channel，那么 ServiceConfig 是什么呢？源码中对这个类的介绍如下：\n// ServiceConfig is provided by the service provider and contains parameters for how clients that connect to the service should behave. 通过介绍得知 ServiceConfig 是服务提供方约定的一些参数。这里说明 client 提供给 server 一个可以通过 channel 来修改这些参数的入口。这里到时候我们介绍服务发现时可以细讲，我们在这里只需要知道 client 的某些属性是可以被 server 修改的就行了\nif cc.dopts.scChan != nil { // Try to get an initial service config. select { case sc, ok := \u003c-cc.dopts.scChan: if ok { cc.sc = \u0026sc scSet = true } default: } } 2）通过一个 conn 创建一个客户端 通过一个 conn 创建客户端的代码如下：\nc := pb.NewGreeterClient(conn) 这一步非常简单，其实是 pb 文件中生成的代码，就是创建一个 greeterClient 的客户端。\ntype greeterClient struct { cc *grpc.ClientConn } func NewGreeterClient(cc *grpc.ClientConn) GreeterClient { return \u0026greeterClient{cc} } 3）发起 rpc 调用 前面在创建 Dialer 的时候，我们已经将请求的 target 解析成了 address。我们猜这一步应该是向指定 address 发起 rpc 请求了。来具体看看\nfunc (c *greeterClient) SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) { out := new(HelloReply) err := c.cc.Invoke(ctx, \"/helloworld.Greeter/SayHello\", in, out, opts...) if err != nil { return nil, err } return out, nil } SayHello 方法是通过调用 Invoke 的方法去发起 rpc 调用， Invoke 方法如下：\nfunc (cc *ClientConn) Invoke(ctx context.Context, method string, args, reply interface{}, opts ...CallOption) error { // allow interceptor to see all applicable call options, which means those // configured as defaults from dial option as well as per-call options opts = combine(cc.dopts.callOptions, opts) if cc.dopts.unaryInt != nil { return cc.dopts.unaryInt(ctx, method, args, reply, cc, invoke, opts...) } return invoke(ctx, method, args, reply, cc, opts...) } func invoke(ctx context.Context, method string, req, reply interface{}, cc *ClientConn, opts ...CallOption) error { cs, err := newClientStream(ctx, unaryStreamDesc, cc, method, opts...) if err != nil { return err } if err := cs.SendMsg(req); err != nil { return err } return cs.RecvMsg(reply) } Invoke 方法调用了 invoke， 在 invoke 这个方法里面，果然不出所料，我们看到了 sendMsg 和 recvMsg 接口，这两个接口在 clientStream 中被实现了。\nSendMsg 我们先来看看 clientStream 中定义的 sendMsg，关键代码如下：\nfunc (cs *clientStream) SendMsg(m interface{}) (err error) { ... // load hdr, payload, data hdr, payload, data, err := prepareMsg(m, cs.codec, cs.cp, cs.comp) if err != nil { return err } ... op := func(a *csAttempt) error { err := a.sendMsg(m, hdr, payload, data) // nil out the message and uncomp when replaying; they are only needed for // stats which is disabled for subsequent attempts. m, data = nil, nil return err } } 先准备数据，然后再调用 csAttempt 这个结构体中的 sendMsg 方法，\nfunc (a *csAttempt) sendMsg(m interface{}, hdr, payld, data []byte) error { cs := a.cs if a.trInfo != nil { a.mu.Lock() if a.trInfo.tr != nil { a.trInfo.tr.LazyLog(\u0026payload{sent: true, msg: m}, true) } a.mu.Unlock() } if err := a.t.Write(a.s, hdr, payld, \u0026transport.Options{Last: !cs.desc.ClientStreams}); err != nil { if !cs.desc.ClientStreams { // For non-client-streaming RPCs, we return nil instead of EOF on error // because the generated code requires it. finish is not called; RecvMsg() // will call it with the stream's status independently. return nil } return io.EOF } if a.statsHandler != nil { a.statsHandler.HandleRPC(cs.ctx, outPayload(true, m, data, payld, time.Now())) } if channelz.IsOn() { a.t.IncrMsgSent() } return nil } 最终是通过 a.t.Write 发出的数据写操作，a.t 是一个 ClientTransport 类型，所以最终是通过 ClientTransport 这个结构体的 Write 方法发送数据\nRecvMsg 发送数据是通过 ClientTransport 的 Write 方法，我们猜测接收数据肯定是某个结构体的 Read 方法。这里我们来详细看一下\nfunc (a *csAttempt) recvMsg(m interface{}, payInfo *payloadInfo) (err error) { ... err = recv(a.p, cs.codec, a.s, a.dc, m, *cs.callInfo.maxReceiveMessageSize, payInfo, a.decomp) ... if a.statsHandler != nil { a.statsHandler.HandleRPC(cs.ctx, \u0026stats.InPayload{ Client: true, RecvTime: time.Now(), Payload: m, // TODO truncate large payload. Data: payInfo.uncompressedBytes, WireLength: payInfo.wireLength, Length: len(payInfo.uncompressedBytes), }) } ... } 可以看到调用了 recv 方法：\nfunc recv(p *parser, c baseCodec, s *transport.Stream, dc Decompressor, m interface{}, maxReceiveMessageSize int, payInfo *payloadInfo, compressor encoding.Compressor) error { d, err := recvAndDecompress(p, s, dc, maxReceiveMessageSize, payInfo, compressor) ... } 再看 recvAndDecompress 方法，调用了 recvMsg\nfunc recvAndDecompress(p *parser, s *transport.Stream, dc Decompressor, maxReceiveMessageSize int, payInfo *payloadInfo, compressor encoding.Compressor) ([]byte, error) { pf, d, err := p.recvMsg(maxReceiveMessageSize) ... } func (p *parser) recvMsg(maxReceiveMessageSize int) (pf payloadFormat, msg []byte, err error) { if _, err := p.r.Read(p.header[:]); err != nil { return 0, nil, err } ... } 这里比较清楚了，最终还是调用了 p.r.Read 方法，p.r 是一个 io.Reader 类型。果然万变不离其中，最终都是要落到 IO 上。\n到这里，整个 client 结构已经基本解析清楚了，but wait，总感觉哪里不太对，接收数据是调用 io.Reader ，按道理发送数据应该也是调用 io.Writer 才对。可是追溯到 ClientTransport 这里，发现它是一个 interface ，并没有实现 Write 方法，所以，Write 也是一个接口，这里是不是可以继续追溯呢？\nWrite(s *Stream, hdr []byte, data []byte, opts *Options) error 返回去从头看，我们找到了 transport 的来源，在 Serve() 方法 的 handleRawConn 方法中，newHttp2Transport，创建了一个 Http2Transport ，然后通过 serveStreams 方法将这个 Http2Transport 层层透传下去。\n// Finish handshaking (HTTP2) st := s.newHTTP2Transport(conn, authInfo) if st == nil { return } rawConn.SetDeadline(time.Time{}) if !s.addConn(st) { return } go func() { s.serveStreams(st) s.removeConn(st) }() 继续看一下 http2Client 的 Write 方法，如下：\nfunc (t *http2Server) Write(s *Stream, hdr []byte, data []byte, opts *Options) error { ... hdr = append(hdr, data[:emptyLen]...) data = data[emptyLen:] df := \u0026dataFrame{ streamID: s.id, h: hdr, d: data, onEachWrite: t.setResetPingStrikes, } if err := s.wq.get(int32(len(hdr) + len(data))); err != nil { select { case \u003c-t.ctx.Done(): return ErrConnClosing default: } return ContextErr(s.ctx.Err()) } return t.controlBuf.put(df) } 可以看到，最终是把 data 放到了一个 controlBuf 的结构体里面\n// controlBuf delivers all the control related tasks (e.g., window // updates, reset streams, and various settings) to the controller. controlBuf *controlBuffer controlBuf 是 http2 客户端发送数据的实现，这里留待后续研究\n",
+  "wordCount" : "3024",
+  "inLanguage": "zh",
+  "datePublished": "2019-11-04T00:00:00+08:00",
+  "dateModified": "2019-11-04T00:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "丢哥"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "丢哥",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://diu.life/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://diu.life/" title="首页">
+                    <span>首页</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://diu.life/posts/" title="文章">
+                    <span>文章</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://diu.life/projects/" title="独立开发">
+                    <span>独立开发</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://diu.life/lessons/" title="教程">
+                    <span>教程</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://diu.life/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+<div class="lesson-container">
+  
+  <div class="lesson-sidebar">
+    <div class="lesson-nav">
+      <h3>Grpc-Read 教程</h3>
+      <ul class="chapter-list">
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-concepts-http2/" class="chapter-link">
+            <span class="chapter-title">第一章：grpc concepts &amp; http2</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world/" class="chapter-link">
+            <span class="chapter-title">第二章：grpc hello world</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/" class="chapter-link">
+            <span class="chapter-title">第三章：grpc hello world server 解析</span>
+          </a>
+        </li>
+        <li class="chapter-item active">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/" class="chapter-link">
+            <span class="chapter-title">第四章：grpc hello world client 解析</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-service-discovery/" class="chapter-link">
+            <span class="chapter-title">第五章：grpc 服务发现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-load-balancing/" class="chapter-link">
+            <span class="chapter-title">第六章：grpc 负载均衡</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-auth-tls/" class="chapter-link">
+            <span class="chapter-title">第七章：grpc 认证鉴权——tls认证</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-auth-oauth2/" class="chapter-link">
+            <span class="chapter-title">第八章：grpc 认证鉴权——oauth2认证</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/" class="chapter-link">
+            <span class="chapter-title">第九章：grpc 拦截器实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-codec/" class="chapter-link">
+            <span class="chapter-title">第十章：grpc 协议编解码器</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="chapter-link">
+            <span class="chapter-title">第十一章：grpc 协议解包过程全剖析</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-data-flow/" class="chapter-link">
+            <span class="chapter-title">第十二章：grpc 数据流转</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  
+  <div class="lesson-content">
+    <article class="post-single">
+      <header class="post-header">
+        <h1 class="post-title">第四章：grpc hello world client 解析</h1>
+        <div class="post-meta">
+          <time datetime="2019-11-04T00:00:00&#43;08:00">2019-11-04</time>
+        </div>
+      </header>
+
+      <div class="post-content">
+        <h3 id="grpc-hello-world--client-解析">grpc hello world  client 解析</h3>
+<p>上一节我们介绍了 grpc 输出 hello world 过程中 server 监听和处理请求的过程。这一节中我们将介绍 client 发出请求的过程。</p>
+<p>来先看代码：</p>
+<pre><code>func main() {
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf(&quot;did not connect: %v&quot;, err)
+	}
+	defer conn.Close()
+	c := pb.NewGreeterClient(conn)
+
+	// Contact the server and print out its response.
+	name := defaultName
+	if len(os.Args) &gt; 1 {
+		name = os.Args[1]
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.SayHello(ctx, &amp;pb.HelloRequest{Name: name})
+	if err != nil {
+		log.Fatalf(&quot;could not greet: %v&quot;, err)
+	}
+	log.Printf(&quot;Greeting: %s&quot;, r.Message)
+}
+</code></pre>
+<p>可以看到 client 的建立也可以大致分为 3 步：</p>
+<p>1）创建一个客户端连接 conn</p>
+<p>2）通过一个 conn 创建一个客户端</p>
+<p>3）发起 rpc 调用</p>
+<p>ok，那我们开始 step by step ，具体看看每一步做了啥</p>
+<h4 id="1创建一个客户端连接-conn">1）创建一个客户端连接 conn</h4>
+<pre><code>conn, err := grpc.Dial(address, grpc.WithInsecure())
+</code></pre>
+<p>通过 Dial 方法创建 conn，Dial 调用了 DialContext 方法</p>
+<pre><code>func Dial(target string, opts ...DialOption) (*ClientConn, error) {
+	return DialContext(context.Background(), target, opts...)
+}
+</code></pre>
+<p>跟进 DialContext，发现 DialContext 这个方法非常长，这里就不贴代码了，具体就是先实例化了一个 ClientConn 的结构体，然后主要为 ClientConn 的 dopts 的各个属性进行初始化赋值。</p>
+<pre><code>cc := &amp;ClientConn{
+		target:            target,
+		csMgr:             &amp;connectivityStateManager{},
+		conns:             make(map[*addrConn]struct{}),
+		dopts:             defaultDialOptions(),
+		blockingpicker:    newPickerWrapper(),
+		czData:            new(channelzData),
+		firstResolveEvent: grpcsync.NewEvent(),
+}
+</code></pre>
+<p>我们先来看看 ClientConn 的结构</p>
+<pre><code>type ClientConn struct {
+	ctx    context.Context
+	cancel context.CancelFunc
+
+	target       string
+	parsedTarget resolver.Target
+	authority    string
+	dopts        dialOptions
+	csMgr        *connectivityStateManager
+
+	balancerBuildOpts balancer.BuildOptions
+	blockingpicker    *pickerWrapper
+
+	mu              sync.RWMutex
+	resolverWrapper *ccResolverWrapper
+	sc              *ServiceConfig
+	conns           map[*addrConn]struct{}
+	// Keepalive parameter can be updated if a GoAway is received.
+	mkp             keepalive.ClientParameters
+	curBalancerName string
+	balancerWrapper *ccBalancerWrapper
+	retryThrottler  atomic.Value
+
+	firstResolveEvent *grpcsync.Event
+
+	channelzID int64 // channelz unique identification number
+	czData     *channelzData
+}
+</code></pre>
+<p>dialOptions 其实就是对客户端属性的一些设置，包括压缩解压缩、是否需要认证、超时时间、是否重试等信息。</p>
+<p>这里我们来看一下初始化了哪些属性：</p>
+<p>####connectivityStateManager</p>
+<pre><code>type connectivityStateManager struct {
+	mu         sync.Mutex
+	state      connectivity.State
+	notifyChan chan struct{}
+	channelzID int64
+}
+</code></pre>
+<p>连接的状态管理器，每个连接具有 “IDLE”、“CONNECTING”、“READY”、“TRANSIENT_FAILURE”、“SHUTDOW
+N”、“Invalid-State” 这几种状态。</p>
+<h4 id="pickerwrapper">pickerWrapper</h4>
+<pre><code>type pickerWrapper struct {
+	mu         sync.Mutex
+	done       bool
+	blockingCh chan struct{}
+	picker     balancer.Picker
+
+	// The latest connection happened.
+	connErrMu sync.Mutex
+	connErr   error
+}
+</code></pre>
+<p>pickerWrapper 是对 balancer.Picker 的一层封装，balancer.Picker 其实是一个负载均衡器，它里面只有一个 Pick 方法，它返回一个 SubConn 连接。</p>
+<pre><code>type Picker interface {
+	Pick(ctx context.Context, opts PickOptions) (conn SubConn, done func(DoneInfo), err error)
+}
+</code></pre>
+<p>什么是 SubConn 呢？看一下这个类的介绍</p>
+<pre><code>// Each sub connection contains a list of addresses. gRPC will
+// try to connect to them (in sequence), and stop trying the
+// remainder once one connection is successful.
+</code></pre>
+<p>这里我们就明白了，在分布式环境下，可能会存在多个 client 和 多个 server，client 发起一个 rpc 调用之前，需要通过 balancer 去找到一个 server 的 address，balancer 的 Picker 类返回一个 SubConn，SubConn 里面包含了多个 server 的 address，假如返回的 SubConn 是 “READY” 状态，grpc 会发送 RPC 请求，否则则会阻塞，等待 UpdateBalancerState 这个方法更新连接的状态并且通过 picker 获取一个新的 SubConn 连接。</p>
+<h4 id="channelz">channelz</h4>
+<p>channelz 主要用来监测 server 和 channel 的状态，这里的概念和实现比较复杂，暂时不进行深入研究，感兴趣的同学可以参考：https://github.com/grpc/proposal/blob/master/A14-channelz.md 这个 proposal ，初始化的代码如下：</p>
+<pre><code>if channelz.IsOn() {
+		if cc.dopts.channelzParentID != 0 {
+			cc.channelzID = channelz.RegisterChannel(&amp;channelzChannel{cc}, cc.dopts.channelzParentID, target)
+			channelz.AddTraceEvent(cc.channelzID, &amp;channelz.TraceEventDesc{
+				Desc:     &quot;Channel Created&quot;,
+				Severity: channelz.CtINFO,
+				Parent: &amp;channelz.TraceEventDesc{
+					Desc:     fmt.Sprintf(&quot;Nested Channel(id:%d) created&quot;, cc.channelzID),
+					Severity: channelz.CtINFO,
+				},
+			})
+		} else {
+			cc.channelzID = channelz.RegisterChannel(&amp;channelzChannel{cc}, 0, target)
+			channelz.AddTraceEvent(cc.channelzID, &amp;channelz.TraceEventDesc{
+				Desc:     &quot;Channel Created&quot;,
+				Severity: channelz.CtINFO,
+			})
+		}
+		cc.csMgr.channelzID = cc.channelzID
+	}
+</code></pre>
+<h4 id="authentication">Authentication</h4>
+<p>这一段是对认证信息的初始化校验，这里暂不研究，感兴趣的同学可以了解下 ：https://grpc.io/docs/guides/auth/</p>
+<pre><code>if !cc.dopts.insecure {
+		if cc.dopts.copts.TransportCredentials == nil &amp;&amp; cc.dopts.copts.CredsBundle == nil {
+			return nil, errNoTransportSecurity
+		}
+		if cc.dopts.copts.TransportCredentials != nil &amp;&amp; cc.dopts.copts.CredsBundle != nil {
+			return nil, errTransportCredsAndBundle
+		}
+	} else {
+		if cc.dopts.copts.TransportCredentials != nil || cc.dopts.copts.CredsBundle != nil {
+			return nil, errCredentialsConflict
+		}
+		for _, cd := range cc.dopts.copts.PerRPCCredentials {
+			if cd.RequireTransportSecurity() {
+				return nil, errTransportCredentialsMissing
+			}
+		}
+	}
+</code></pre>
+<h4 id="dialer">Dialer</h4>
+<p>Dialer 是发起 rpc 请求的调用器，dialer 中实现了对 rpc 请求调用的具体细节，所以可以算是我们的重点研究对象之一。dialer 中包括了连接建立、地址解析、服务发现、长连接等等具体策略的实现。</p>
+<pre><code>if cc.dopts.copts.Dialer == nil {
+		cc.dopts.copts.Dialer = newProxyDialer(
+			func(ctx context.Context, addr string) (net.Conn, error) {
+				network, addr := parseDialTarget(addr)
+				return (&amp;net.Dialer{}).DialContext(ctx, network, addr)
+			},
+		)
+	}
+</code></pre>
+<p>这一段方法只是简单进行了地址的规则解析，我们具体看 DialContext 方法，其中有一行：</p>
+<pre><code>addrs, err := d.resolver().resolveAddrList(resolveCtx, &quot;dial&quot;, network, address, d.LocalAddr)
+</code></pre>
+<p>可以看到通过 dialer 的 resolver 来进行服务发现，这里以后我们再单独详细讲解。</p>
+<p>这里值得一提的是，通过 dialContext 可以看出，这里的 dial 有两种请求方式，一种是 dialParallel , 另一种是 dialSerial。dialParallel 发出两个完全相同的请求，采用第一个返回的结果，抛弃掉第二个请求。dialSerial 则是发出一串（多个）请求。然后采取第一个返回的请求结果（ 成功或者失败）。</p>
+<h4 id="scchan">scChan</h4>
+<p>scChan 是 dialOptions 中的一个属性，定义如下：</p>
+<pre><code>scChan  &lt;-chan ServiceConfig
+</code></pre>
+<p>可以看到其实他是一个 ServiceConfig类型的一个 channel，那么 ServiceConfig 是什么呢？源码中对这个类的介绍如下：</p>
+<pre><code>// ServiceConfig is provided by the service provider and contains parameters for how clients that connect to the service should behave.
+</code></pre>
+<p>通过介绍得知 ServiceConfig 是服务提供方约定的一些参数。这里说明 client 提供给 server 一个可以通过 channel 来修改这些参数的入口。这里到时候我们介绍服务发现时可以细讲，我们在这里只需要知道 client 的某些属性是可以被 server 修改的就行了</p>
+<pre><code>if cc.dopts.scChan != nil {
+		// Try to get an initial service config.
+		select {
+		case sc, ok := &lt;-cc.dopts.scChan:
+			if ok {
+				cc.sc = &amp;sc
+				scSet = true
+			}
+		default:
+		}
+	}
+</code></pre>
+<h4 id="2通过一个-conn-创建一个客户端">2）通过一个 conn 创建一个客户端</h4>
+<p>通过一个 conn 创建客户端的代码如下：</p>
+<pre><code>	c := pb.NewGreeterClient(conn)
+</code></pre>
+<p>这一步非常简单，其实是 pb 文件中生成的代码，就是创建一个 greeterClient 的客户端。</p>
+<pre><code>	type greeterClient struct {
+		cc *grpc.ClientConn
+	}
+
+	func NewGreeterClient(cc *grpc.ClientConn) GreeterClient {
+		return &amp;greeterClient{cc}
+	}
+</code></pre>
+<h4 id="3发起-rpc-调用">3）发起 rpc 调用</h4>
+<p>前面在创建 Dialer 的时候，我们已经将请求的 target 解析成了 address。我们猜这一步应该是向指定 address 发起 rpc 请求了。来具体看看</p>
+<pre><code>func (c *greeterClient) SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) {
+	out := new(HelloReply)
+	err := c.cc.Invoke(ctx, &quot;/helloworld.Greeter/SayHello&quot;, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+</code></pre>
+<p>SayHello 方法是通过调用 Invoke 的方法去发起 rpc 调用， Invoke 方法如下：</p>
+<pre><code>func (cc *ClientConn) Invoke(ctx context.Context, method string, args, reply interface{}, opts ...CallOption) error {
+	// allow interceptor to see all applicable call options, which means those
+	// configured as defaults from dial option as well as per-call options
+	opts = combine(cc.dopts.callOptions, opts)
+
+	if cc.dopts.unaryInt != nil {
+		return cc.dopts.unaryInt(ctx, method, args, reply, cc, invoke, opts...)
+	}
+	return invoke(ctx, method, args, reply, cc, opts...)
+}
+
+func invoke(ctx context.Context, method string, req, reply interface{}, cc *ClientConn, opts ...CallOption) error {
+	cs, err := newClientStream(ctx, unaryStreamDesc, cc, method, opts...)
+	if err != nil {
+		return err
+	}
+	if err := cs.SendMsg(req); err != nil {
+		return err
+	}
+	return cs.RecvMsg(reply)
+}
+</code></pre>
+<p>Invoke 方法调用了 invoke， 在 invoke 这个方法里面，果然不出所料，我们看到了 sendMsg 和 recvMsg 接口，这两个接口在 clientStream 中被实现了。</p>
+<h4 id="sendmsg">SendMsg</h4>
+<p>我们先来看看 clientStream 中定义的 sendMsg，关键代码如下：</p>
+<pre><code>func (cs *clientStream) SendMsg(m interface{}) (err error) {
+	
+	...
+
+	// load hdr, payload, data
+	hdr, payload, data, err := prepareMsg(m, cs.codec, cs.cp, cs.comp)
+	if err != nil {
+		return err
+	}
+
+	...
+
+	op := func(a *csAttempt) error {
+		err := a.sendMsg(m, hdr, payload, data)
+		// nil out the message and uncomp when replaying; they are only needed for
+		// stats which is disabled for subsequent attempts.
+		m, data = nil, nil
+		return err
+	}
+	
+}
+</code></pre>
+<p>先准备数据，然后再调用 csAttempt 这个结构体中的 sendMsg 方法，</p>
+<pre><code>func (a *csAttempt) sendMsg(m interface{}, hdr, payld, data []byte) error {
+	cs := a.cs
+	if a.trInfo != nil {
+		a.mu.Lock()
+		if a.trInfo.tr != nil {
+			a.trInfo.tr.LazyLog(&amp;payload{sent: true, msg: m}, true)
+		}
+		a.mu.Unlock()
+	}
+	if err := a.t.Write(a.s, hdr, payld, &amp;transport.Options{Last: !cs.desc.ClientStreams}); err != nil {
+		if !cs.desc.ClientStreams {
+			// For non-client-streaming RPCs, we return nil instead of EOF on error
+			// because the generated code requires it.  finish is not called; RecvMsg()
+			// will call it with the stream's status independently.
+			return nil
+		}
+		return io.EOF
+	}
+	if a.statsHandler != nil {
+		a.statsHandler.HandleRPC(cs.ctx, outPayload(true, m, data, payld, time.Now()))
+	}
+	if channelz.IsOn() {
+		a.t.IncrMsgSent()
+	}
+	return nil
+}
+</code></pre>
+<p>最终是通过 a.t.Write 发出的数据写操作，a.t 是一个 ClientTransport 类型，所以最终是通过 ClientTransport 这个结构体的 Write 方法发送数据</p>
+<h4 id="recvmsg">RecvMsg</h4>
+<p>发送数据是通过 ClientTransport 的 Write 方法，我们猜测接收数据肯定是某个结构体的 Read 方法。这里我们来详细看一下</p>
+<pre><code>func (a *csAttempt) recvMsg(m interface{}, payInfo *payloadInfo) (err error) {
+	
+	...
+	
+	err = recv(a.p, cs.codec, a.s, a.dc, m, *cs.callInfo.maxReceiveMessageSize, payInfo, a.decomp)
+	
+	...
+	
+	if a.statsHandler != nil {
+		a.statsHandler.HandleRPC(cs.ctx, &amp;stats.InPayload{
+			Client:   true,
+			RecvTime: time.Now(),
+			Payload:  m,
+			// TODO truncate large payload.
+			Data:       payInfo.uncompressedBytes,
+			WireLength: payInfo.wireLength,
+			Length:     len(payInfo.uncompressedBytes),
+		})
+	}
+	
+	...
+}
+</code></pre>
+<p>可以看到调用了 recv 方法：</p>
+<pre><code>func recv(p *parser, c baseCodec, s *transport.Stream, dc Decompressor, m interface{}, maxReceiveMessageSize int, payInfo *payloadInfo, compressor encoding.Compressor) error {
+	d, err := recvAndDecompress(p, s, dc, maxReceiveMessageSize, payInfo, compressor)
+	...
+}
+</code></pre>
+<p>再看 recvAndDecompress 方法，调用了 recvMsg</p>
+<pre><code>func recvAndDecompress(p *parser, s *transport.Stream, dc Decompressor, maxReceiveMessageSize int, payInfo *payloadInfo, compressor encoding.Compressor) ([]byte, error) {
+	pf, d, err := p.recvMsg(maxReceiveMessageSize)
+	...
+}
+
+func (p *parser) recvMsg(maxReceiveMessageSize int) (pf payloadFormat, msg []byte, err error) {
+	if _, err := p.r.Read(p.header[:]); err != nil {
+		return 0, nil, err
+	}
+
+	...
+}
+</code></pre>
+<p>这里比较清楚了，最终还是调用了 p.r.Read 方法，p.r 是一个 io.Reader 类型。果然万变不离其中，最终都是要落到 IO 上。</p>
+<p>到这里，整个 client 结构已经基本解析清楚了，but wait，总感觉哪里不太对，接收数据是调用 io.Reader ，按道理发送数据应该也是调用 io.Writer 才对。可是追溯到 ClientTransport 这里，发现它是一个 interface ，并没有实现 Write 方法，所以，Write 也是一个接口，这里是不是可以继续追溯呢？</p>
+<pre><code>	Write(s *Stream, hdr []byte, data []byte, opts *Options) error
+</code></pre>
+<p>返回去从头看，我们找到了 transport 的来源，在 Serve() 方法 的 handleRawConn 方法中，newHttp2Transport，创建了一个 Http2Transport ，然后通过 serveStreams 方法将这个 Http2Transport 层层透传下去。</p>
+<pre><code>// Finish handshaking (HTTP2)
+st := s.newHTTP2Transport(conn, authInfo)
+if st == nil {
+	return
+}
+
+rawConn.SetDeadline(time.Time{})
+if !s.addConn(st) {
+	return
+}
+go func() {
+	s.serveStreams(st)
+	s.removeConn(st)
+}()
+</code></pre>
+<p>继续看一下 http2Client 的 Write 方法，如下：</p>
+<pre><code>func (t *http2Server) Write(s *Stream, hdr []byte, data []byte, opts *Options) error {
+	...
+
+	hdr = append(hdr, data[:emptyLen]...)
+	data = data[emptyLen:]
+	df := &amp;dataFrame{
+		streamID:    s.id,
+		h:           hdr,
+		d:           data,
+		onEachWrite: t.setResetPingStrikes,
+	}
+	if err := s.wq.get(int32(len(hdr) + len(data))); err != nil {
+		select {
+		case &lt;-t.ctx.Done():
+			return ErrConnClosing
+		default:
+		}
+		return ContextErr(s.ctx.Err())
+	}
+	return t.controlBuf.put(df)
+}
+</code></pre>
+<p>可以看到，最终是把 data 放到了一个 controlBuf 的结构体里面</p>
+<pre><code>// controlBuf delivers all the control related tasks (e.g., window
+// updates, reset streams, and various settings) to the controller.
+controlBuf *controlBuffer
+</code></pre>
+<p>controlBuf 是 http2 客户端发送数据的实现，这里留待后续研究</p>
+
+      </div>
+
+      
+      <div class="lesson-navigation">
+        
+        <div class="nav-buttons">
+            <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/" class="nav-btn prev-btn">
+              <span>← 上一章</span>
+              <span class="nav-title">第三章：grpc hello world server 解析</span>
+            </a>
+            <a href="https://diu.life/lessons/grpc-read/grpc-service-discovery/" class="nav-btn next-btn">
+              <span>下一章 →</span>
+              <span class="nav-title">第五章：grpc 服务发现</span>
+            </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<style>
+ 
+.main {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+.lesson-container {
+  display: flex;
+  min-height: calc(100vh - 60px);
+  gap: 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.lesson-sidebar {
+  width: 320px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  border-right: none;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding: 30px 25px;
+  z-index: 10;
+}
+
+.lesson-nav h3 {
+  margin: 0 0 30px 0;
+  color: #2c3e50;
+  font-size: 1.4em;
+  font-weight: 700;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e3f2fd;
+  position: relative;
+}
+
+.lesson-nav h3::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.chapter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chapter-item {
+  margin-bottom: 12px;
+}
+
+.chapter-link {
+  display: block;
+  padding: 16px 20px;
+  color: #5a6c7d;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.chapter-link:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #2c3e50;
+  transform: translateX(8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-link:hover::before {
+  left: 100%;
+}
+
+.chapter-item.active .chapter-link {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  transform: translateX(8px);
+}
+
+.chapter-item.active .chapter-link::before {
+  display: none;
+}
+
+.chapter-title {
+  font-size: 0.95em;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.lesson-content {
+  flex: 1;
+  padding: 40px 50px;
+  width: 100%;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  margin: 20px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.lesson-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.post-single {
+  max-width: 100%;
+  margin: 0;
+}
+
+.post-header {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e8ecef;
+}
+
+.post-title {
+  font-size: 2.2em;
+  font-weight: 800;
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  line-height: 1.3;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.post-meta {
+  color: #7f8c8d;
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
+.post-content {
+  line-height: 1.8;
+  color: #34495e;
+  font-size: 1.05em;
+}
+
+.post-content h2 {
+  margin-top: 50px;
+  margin-bottom: 25px;
+  font-size: 1.6em;
+  font-weight: 700;
+  color: #2c3e50;
+  position: relative;
+  padding-left: 20px;
+}
+
+.post-content h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.post-content h3 {
+  margin-top: 35px;
+  margin-bottom: 20px;
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.post-content p {
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+.post-content ul, .post-content ol {
+  margin-bottom: 20px;
+  padding-left: 25px;
+}
+
+.post-content li {
+  margin-bottom: 10px;
+  line-height: 1.7;
+}
+
+.post-content code {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: #e83e8c;
+  font-weight: 500;
+  border: 1px solid #dee2e6;
+}
+
+.post-content pre {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  padding: 25px;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin: 30px 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #4a5568;
+}
+
+.post-content pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: #a0aec0;
+  border: none;
+}
+
+.lesson-navigation {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 2px solid #e8ecef;
+  position: relative;
+}
+
+.lesson-navigation::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 25px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 15px;
+  text-decoration: none;
+  color: #2c3e50;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex: 1;
+  max-width: 320px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transition: left 0.6s;
+}
+
+.nav-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+}
+
+.nav-btn:hover::before {
+  left: 100%;
+}
+
+.nav-btn span:first-child {
+  font-size: 0.95em;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nav-btn:hover span:first-child {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.nav-title {
+  font-weight: 600;
+  line-height: 1.4;
+  font-size: 1.05em;
+}
+
+.next-btn {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .lesson-container {
+    flex-direction: column;
+    background: linear-gradient(180deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
+  
+  .lesson-sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 2px solid #e8ecef;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px 20px;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .lesson-content {
+    max-width: 100%;
+    padding: 30px 20px;
+    margin: 15px;
+    border-radius: 15px;
+  }
+  
+  .post-title {
+    font-size: 1.8em;
+  }
+  
+  .post-content {
+    font-size: 1em;
+  }
+  
+  .nav-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .nav-btn {
+    max-width: 100%;
+  }
+  
+  .next-btn {
+    text-align: left;
+  }
+  
+  .chapter-link:hover,
+  .chapter-item.active .chapter-link {
+    transform: none;
+  }
+}
+</style>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2021 丢哥 all rights reserved.</span>
+
+
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>第八章：grpc 认证鉴权——oauth2认证 | 丢哥</title>
+<meta name="keywords" content="">
+<meta name="description" content="grpc 认证鉴权 —— oauth2
+前面我们说了 tls 认证，tls 保证了 client 和 server 通信的安全性，但是无法做到接口级别的权限控制。例如有 A、B、C、D 四个系统，存在下面两个场景：
+1、我们希望 A 可以访问 B、C 系统，但是不能访问 D 系统
+2、B 系统提供了 b1、b2、b3 三个接口，我们希望 A 系统可以访问 b1、b2 接口，但是不能访问 b3 接口。
+此时 tls 认证肯定是无法实现上面两个诉求的，对于这两个场景，grpc 提供了 oauth2 的认证方式。对 oauth2 不了解的同学可以参考 http://www.ruanyifeng.com/blog/2019/04/oauth_design.html">
+<meta name="author" content="丢哥">
+<link rel="canonical" href="https://diu.life/lessons/grpc-read/grpc-auth-oauth2/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://diu.life/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://diu.life/apple-touch-icon.png">
+<link rel="mask-icon" href="https://diu.life/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="zh" href="https://diu.life/lessons/grpc-read/grpc-auth-oauth2/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-auth-oauth2/">
+  <meta property="og:site_name" content="丢哥">
+  <meta property="og:title" content="第八章：grpc 认证鉴权——oauth2认证">
+  <meta property="og:description" content="grpc 认证鉴权 —— oauth2 前面我们说了 tls 认证，tls 保证了 client 和 server 通信的安全性，但是无法做到接口级别的权限控制。例如有 A、B、C、D 四个系统，存在下面两个场景： 1、我们希望 A 可以访问 B、C 系统，但是不能访问 D 系统 2、B 系统提供了 b1、b2、b3 三个接口，我们希望 A 系统可以访问 b1、b2 接口，但是不能访问 b3 接口。 此时 tls 认证肯定是无法实现上面两个诉求的，对于这两个场景，grpc 提供了 oauth2 的认证方式。对 oauth2 不了解的同学可以参考 http://www.ruanyifeng.com/blog/2019/04/oauth_design.html">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="lessons">
+    <meta property="article:published_time" content="2019-11-08T00:00:00+08:00">
+    <meta property="article:modified_time" content="2019-11-08T00:00:00+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第八章：grpc 认证鉴权——oauth2认证">
+<meta name="twitter:description" content="grpc 认证鉴权 —— oauth2
+前面我们说了 tls 认证，tls 保证了 client 和 server 通信的安全性，但是无法做到接口级别的权限控制。例如有 A、B、C、D 四个系统，存在下面两个场景：
+1、我们希望 A 可以访问 B、C 系统，但是不能访问 D 系统
+2、B 系统提供了 b1、b2、b3 三个接口，我们希望 A 系统可以访问 b1、b2 接口，但是不能访问 b3 接口。
+此时 tls 认证肯定是无法实现上面两个诉求的，对于这两个场景，grpc 提供了 oauth2 的认证方式。对 oauth2 不了解的同学可以参考 http://www.ruanyifeng.com/blog/2019/04/oauth_design.html">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "教程",
+      "item": "https://diu.life/lessons/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "第八章：grpc 认证鉴权——oauth2认证",
+      "item": "https://diu.life/lessons/grpc-read/grpc-auth-oauth2/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第八章：grpc 认证鉴权——oauth2认证",
+  "name": "第八章：grpc 认证鉴权——oauth2认证",
+  "description": "grpc 认证鉴权 —— oauth2 前面我们说了 tls 认证，tls 保证了 client 和 server 通信的安全性，但是无法做到接口级别的权限控制。例如有 A、B、C、D 四个系统，存在下面两个场景： 1、我们希望 A 可以访问 B、C 系统，但是不能访问 D 系统 2、B 系统提供了 b1、b2、b3 三个接口，我们希望 A 系统可以访问 b1、b2 接口，但是不能访问 b3 接口。 此时 tls 认证肯定是无法实现上面两个诉求的，对于这两个场景，grpc 提供了 oauth2 的认证方式。对 oauth2 不了解的同学可以参考 http://www.ruanyifeng.com/blog/2019/04/oauth_design.html\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "grpc 认证鉴权 —— oauth2 前面我们说了 tls 认证，tls 保证了 client 和 server 通信的安全性，但是无法做到接口级别的权限控制。例如有 A、B、C、D 四个系统，存在下面两个场景： 1、我们希望 A 可以访问 B、C 系统，但是不能访问 D 系统 2、B 系统提供了 b1、b2、b3 三个接口，我们希望 A 系统可以访问 b1、b2 接口，但是不能访问 b3 接口。 此时 tls 认证肯定是无法实现上面两个诉求的，对于这两个场景，grpc 提供了 oauth2 的认证方式。对 oauth2 不了解的同学可以参考 http://www.ruanyifeng.com/blog/2019/04/oauth_design.html\noauth2 认证鉴权实现 grpc 官方提供了对 oauth2 认证鉴权的实现 demo，放在 examples 目录的 features 目录的 authentication 目录下，我们来看一下源码实现\nserver server 端源码实现如下：\nfunc main() { flag.Parse() fmt.Printf(\"server starting on port %d...\\n\", *port) cert, err := tls.LoadX509KeyPair(testdata.Path(\"server1.pem\"), testdata.Path(\"server1.key\")) if err != nil { log.Fatalf(\"failed to load key pair: %s\", err) } opts := []grpc.ServerOption{ // The following grpc.ServerOption adds an interceptor for all unary // RPCs. To configure an interceptor for streaming RPCs, see: // https://godoc.org/google.golang.org/grpc#StreamInterceptor grpc.UnaryInterceptor(ensureValidToken), // Enable TLS for all incoming connections. grpc.Creds(credentials.NewServerTLSFromCert(\u0026cert)), } s := grpc.NewServer(opts...) ecpb.RegisterEchoServer(s, \u0026ecServer{}) lis, err := net.Listen(\"tcp\", fmt.Sprintf(\":%d\", *port)) if err != nil { log.Fatalf(\"failed to listen: %v\", err) } if err := s.Serve(lis); err != nil { log.Fatalf(\"failed to serve: %v\", err) } } server 端先调用了 tls 包下的 LoadX509KeyPair，通过 server 的公钥和私钥生成了一个 Certificate 结构体来保存证书信息。然后注册了一个校验 token 的方法到拦截器中，并将证书信息设置到 serverOption 中，构造 server 的时候层层透传进去，最终会被设置到 Server 里面 ServerOptions 结构中的 credentials.TransportCredentials 和 UnaryServerInterceptor 中。\n我们来看看这两个结构什么时候会被调用，先梳理调用链路，在 s.Serve ——\u003e s.handleRawConn ——\u003e s.serveStreams ——\u003e s.handleStream ——\u003e s.processUnaryRPC 方法中有一行\nreply, appErr := md.Handler(srv.server, ctx, df, s.opts.unaryInt) 可以看到调用了 md.Handler 方法，将 s.opts.unaryInt 这个结构传入了进去。s.opts.unaryInt 就是我们之前注册的 UnaryServerInterceptor 拦截器。md 是一个 MethodDesc 这个结构，包括了 MethodName 和 Handler\ntype MethodDesc struct { MethodName string Handler methodHandler } 这里会取出我们之前注册进去的结构，还记得我们介绍 helloworld 时 RegisterService 吗？至于如何取出 MethodName，源码中的设计非常复杂，经过了层层包装，这里不是本节重点就不赘述了。\nfunc RegisterGreeterServer(s *grpc.Server, srv GreeterServer) { s.RegisterService(\u0026_Greeter_serviceDesc, srv) } var _Greeter_serviceDesc = grpc.ServiceDesc{ ServiceName: \"helloworld.Greeter\", HandlerType: (*GreeterServer)(nil), Methods: []grpc.MethodDesc{ { MethodName: \"SayHello\", Handler: _Greeter_SayHello_Handler, }, }, Streams: []grpc.StreamDesc{}, Metadata: \"helloworld.proto\", } 我们看到 md.Handler 其实是 _Greeter_SayHello_Handler 这个结构，它也是在 pb 文件中生成的。\nfunc _Greeter_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) { in := new(HelloRequest) if err := dec(in); err != nil { return nil, err } if interceptor == nil { return srv.(GreeterServer).SayHello(ctx, in) } info := \u0026grpc.UnaryServerInfo{ Server: srv, FullMethod: \"/helloworld.Greeter/SayHello\", } handler := func(ctx context.Context, req interface{}) (interface{}, error) { return srv.(GreeterServer).SayHello(ctx, req.(*HelloRequest)) } return interceptor(ctx, in, info, handler) } 这里调用了我们传入的 interceptor 方法。回到我们的调用：\nreply, appErr := md.Handler(srv.server, ctx, df, s.opts.unaryInt) 所以其实是调用了 s.opts.unaryInt 这个拦截器。这个拦截器是我们之前在 创建 server 的时候赋值的。\nopts := []grpc.ServerOption{ // The following grpc.ServerOption adds an interceptor for all unary // RPCs. To configure an interceptor for streaming RPCs, see: // https://godoc.org/google.golang.org/grpc#StreamInterceptor grpc.UnaryInterceptor(ensureValidToken), // Enable TLS for all incoming connections. grpc.Creds(credentials.NewServerTLSFromCert(\u0026cert)), } s := grpc.NewServer(opts...) 看 grpc.UnaryInterceptor 这个方法，其实是将 ensureValidToken 这个函数赋值给了 s.opts.unaryInt\nfunc UnaryInterceptor(i UnaryServerInterceptor) ServerOption { return newFuncServerOption(func(o *serverOptions) { if o.unaryInt != nil { panic(\"The unary server interceptor was already set and may not be reset.\") } o.unaryInt = i }) } 所以之前我们执行的这一行\nreturn interceptor(ctx, in, info, handler) 其实是执行了 ensureValidToken 这个函数，这个函数就是我们在 server 端定义的 token 校验的函数。先取出我们传入的 metadata 数据，然后校验 token\nfunc ensureValidToken(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) { md, ok := metadata.FromIncomingContext(ctx) if !ok { return nil, errMissingMetadata } // The keys within metadata.MD are normalized to lowercase. // See: https://godoc.org/google.golang.org/grpc/metadata#New if !valid(md[\"authorization\"]) { return nil, errInvalidToken } // Continue execution of handler after ensuring a valid token. return handler(ctx, req) } 校验完 token 后，最终执行了 handler(ctx, req)\nhandler := func(ctx context.Context, req interface{}) (interface{}, error) { return srv.(GreeterServer).SayHello(ctx, req.(*HelloRequest)) } return interceptor(ctx, in, info, handler) 可以看到最终其实执行了 GreeterServer 的 SayHello 这个函数，也就是我们在 main 函数中定义的，这个函数就是我们在 server 端定义的提供 SayHello 给客户端回消息的函数。\n// SayHello implements helloworld.GreeterServer func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) { log.Printf(\"Received: %v\", in.Name) return \u0026pb.HelloReply{Message: \"Hello \" + in.Name}, nil } 这里还可以额外说一下，md.Handler 执行完之后，其实 reply 就是 SayHello 的回包。\nreply, appErr := md.Handler(srv.server, ctx, df, s.opts.unaryInt) 获取到回包之后 server 执行了 sendResponse 方法，将回包发送给 client，这个方法我们之前已经剖析过了，最终会调用 http2Server 的 Write 方法。\nif err := s.sendResponse(t, stream, reply, cp, opts, comp); err != nil { 看到这里，server 端对 token 的校验在哪里执行的我们已经清楚了。假如还没有被绕晕，那么恭喜你！可以继续完成 client 的挑战了。\nclient 在 client 中，先看 main 函数\n// Set up the credentials for the connection. perRPC := oauth.NewOauthAccess(fetchToken()) creds, err := credentials.NewClientTLSFromFile(testdata.Path(\"ca.pem\"), \"x.test.youtube.com\") if err != nil { log.Fatalf(\"failed to load credentials: %v\", err) } opts := []grpc.DialOption{ // In addition to the following grpc.DialOption, callers may also use // the grpc.CallOption grpc.PerRPCCredentials with the RPC invocation // itself. // See: https://godoc.org/google.golang.org/grpc#PerRPCCredentials grpc.WithPerRPCCredentials(perRPC), // oauth.NewOauthAccess requires the configuration of transport // credentials. grpc.WithTransportCredentials(creds), } conn, err := grpc.Dial(*addr, opts...) 可以看到 client 首先通过 NewOauthAccess 方法生成了包含 token 信息的 PerRPCCredentials 结构\nfunc NewOauthAccess(token *oauth2.Token) credentials.PerRPCCredentials { return oauthAccess{token: *token} } 然后再将 PerRPCCredentials 通过 grpc.WithPerRPCCredentials(perRPC) 添加到了到了 client 的 DialOptions 中的 transport.ConnectOptions 结构中的 [] credentials.PerRPCCredentials 结构中。\n那么这个结构什么时候被使用呢，我们来看看。先梳理下调用链 ，在 client 调用的 Invoke ——\u003e invoke ——\u003e newClientStream ——\u003e cs.newAttemptLocked ——\u003e cs.cc.getTransport ——\u003e pick ——\u003e acw.getAddrConn().getReadyTransport() ——\u003e ac.connect() ——\u003e ac.resetTransport() ——\u003e ac.tryAllAddrs ——\u003e ac.createTransport ——\u003e transport.NewClientTransport ——\u003e newHTTP2Client 这个方法里面，有这么一段代码，先取出 []credentials.PerRPCCredentials 中的所有 PerRPCCredentials 添加到 perRPCCreds 中。\ntransportCreds := opts.TransportCredentials perRPCCreds := opts.PerRPCCredentials if b := opts.CredsBundle; b != nil { if t := b.TransportCredentials(); t != nil { transportCreds = t } if t := b.PerRPCCredentials(); t != nil { perRPCCreds = append(perRPCCreds, t) } } 然后再将 perRPCCreds 赋值给 http2Client 的 perRPCCreds 属性\nt := \u0026http2Client{ ... perRPCCreds: perRPCCreds, ... } 那么 perRPCCreds 属性什么时候被用呢？来继续跟踪，newClientStream 方法中有一段代码\nop := func(a *csAttempt) error { return a.newStream() } if err := cs.withRetry(op, func() { cs.bufferForRetryLocked(0, op) }); err != nil { cs.finish(err) return nil, err } 这里调用了 csAttempt 的 newStream ——\u003e a.t.NewStream (http2Client 的 NewStream) ——\u003e createHeaderFields ——\u003e getTrAuthData 方法\nfunc (t *http2Client) getTrAuthData(ctx context.Context, audience string) (map[string]string, error) { if len(t.perRPCCreds) == 0 { return nil, nil } authData := map[string]string{} for _, c := range t.perRPCCreds { data, err := c.GetRequestMetadata(ctx, audience) if err != nil { if _, ok := status.FromError(err); ok { return nil, err } return nil, status.Errorf(codes.Unauthenticated, \"transport: %v\", err) } for k, v := range data { // Capital header names are illegal in HTTP/2. k = strings.ToLower(k) authData[k] = v } } return authData, nil } 这个方法，通过调用 GetRequestMetadata 取出 token 信息，这里会调用 oauth 的 GetRequestMetadata 方法 ，按照指定格式拼装成一个 map[string]string{} 的形式\nfunc (s *serviceAccount) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) { s.mu.Lock() defer s.mu.Unlock() if !s.t.Valid() { var err error s.t, err = s.config.TokenSource(ctx).Token() if err != nil { return nil, err } } return map[string]string{ \"authorization\": s.t.Type() + \" \" + s.t.AccessToken, }, nil } 然后将以 map[string]string{} 的形式组装成一个 string map 返回，如下：\nfor k, v := range authData { headerFields = append(headerFields, hpack.HeaderField{Name: k, Value: encodeMetadataHeader(k, v)}) } 返回的 map 会被遍历每个 key，并设置到 headerFields 中，以 http 头部的形式发送出去。数据最终会被 metadata.FromIncomingContext(ctx) 获取到，然后被取出 map 数据。\n至此，client 和 server 的数据流转过程被打通\n",
+  "wordCount" : "2136",
+  "inLanguage": "zh",
+  "datePublished": "2019-11-08T00:00:00+08:00",
+  "dateModified": "2019-11-08T00:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "丢哥"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://diu.life/lessons/grpc-read/grpc-auth-oauth2/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "丢哥",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://diu.life/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://diu.life/" title="首页">
+                    <span>首页</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://diu.life/posts/" title="文章">
+                    <span>文章</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://diu.life/projects/" title="独立开发">
+                    <span>独立开发</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://diu.life/lessons/" title="教程">
+                    <span>教程</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://diu.life/about/" title="关于">
+                    <span>关于</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+<div class="lesson-container">
+  
+  <div class="lesson-sidebar">
+    <div class="lesson-nav">
+      <h3>Grpc-Read 教程</h3>
+      <ul class="chapter-list">
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-concepts-http2/" class="chapter-link">
+            <span class="chapter-title">第一章：grpc concepts &amp; http2</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world/" class="chapter-link">
+            <span class="chapter-title">第二章：grpc hello world</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/" class="chapter-link">
+            <span class="chapter-title">第三章：grpc hello world server 解析</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/" class="chapter-link">
+            <span class="chapter-title">第四章：grpc hello world client 解析</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-service-discovery/" class="chapter-link">
+            <span class="chapter-title">第五章：grpc 服务发现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-load-balancing/" class="chapter-link">
+            <span class="chapter-title">第六章：grpc 负载均衡</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-auth-tls/" class="chapter-link">
+            <span class="chapter-title">第七章：grpc 认证鉴权——tls认证</span>
+          </a>
+        </li>
+        <li class="chapter-item active">
+          <a href="https://diu.life/lessons/grpc-read/grpc-auth-oauth2/" class="chapter-link">
+            <span class="chapter-title">第八章：grpc 认证鉴权——oauth2认证</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/" class="chapter-link">
+            <span class="chapter-title">第九章：grpc 拦截器实现</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-codec/" class="chapter-link">
+            <span class="chapter-title">第十章：grpc 协议编解码器</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="chapter-link">
+            <span class="chapter-title">第十一章：grpc 协议解包过程全剖析</span>
+          </a>
+        </li>
+        <li class="chapter-item ">
+          <a href="https://diu.life/lessons/grpc-read/grpc-data-flow/" class="chapter-link">
+            <span class="chapter-title">第十二章：grpc 数据流转</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  
+  <div class="lesson-content">
+    <article class="post-single">
+      <header class="post-header">
+        <h1 class="post-title">第八章：grpc 认证鉴权——oauth2认证</h1>
+        <div class="post-meta">
+          <time datetime="2019-11-08T00:00:00&#43;08:00">2019-11-08</time>
+        </div>
+      </header>
+
+      <div class="post-content">
+        <h2 id="grpc-认证鉴权--oauth2">grpc 认证鉴权 —— oauth2</h2>
+<p>前面我们说了 tls 认证，tls 保证了 client 和 server 通信的安全性，但是无法做到接口级别的权限控制。例如有 A、B、C、D 四个系统，存在下面两个场景：
+1、我们希望 A 可以访问 B、C 系统，但是不能访问 D 系统
+2、B 系统提供了 b1、b2、b3 三个接口，我们希望 A 系统可以访问 b1、b2 接口，但是不能访问 b3 接口。
+此时 tls 认证肯定是无法实现上面两个诉求的，对于这两个场景，grpc 提供了 oauth2 的认证方式。对 oauth2 不了解的同学可以参考 <a href="http://www.ruanyifeng.com/blog/2019/04/oauth_design.html">http://www.ruanyifeng.com/blog/2019/04/oauth_design.html</a></p>
+<h3 id="oauth2-认证鉴权实现">oauth2 认证鉴权实现</h3>
+<p>grpc 官方提供了对 oauth2 认证鉴权的实现 demo，放在 examples 目录的 features 目录的 authentication 目录下，我们来看一下源码实现</p>
+<h4 id="server">server</h4>
+<p>server 端源码实现如下：</p>
+<pre><code>func main() {
+	flag.Parse()
+	fmt.Printf(&quot;server starting on port %d...\n&quot;, *port)
+
+	cert, err := tls.LoadX509KeyPair(testdata.Path(&quot;server1.pem&quot;), testdata.Path(&quot;server1.key&quot;))
+	if err != nil {
+		log.Fatalf(&quot;failed to load key pair: %s&quot;, err)
+	}
+	opts := []grpc.ServerOption{
+		// The following grpc.ServerOption adds an interceptor for all unary
+		// RPCs. To configure an interceptor for streaming RPCs, see:
+		// https://godoc.org/google.golang.org/grpc#StreamInterceptor
+		grpc.UnaryInterceptor(ensureValidToken),
+		// Enable TLS for all incoming connections.
+		grpc.Creds(credentials.NewServerTLSFromCert(&amp;cert)),
+	}
+	s := grpc.NewServer(opts...)
+	ecpb.RegisterEchoServer(s, &amp;ecServer{})
+	lis, err := net.Listen(&quot;tcp&quot;, fmt.Sprintf(&quot;:%d&quot;, *port))
+	if err != nil {
+		log.Fatalf(&quot;failed to listen: %v&quot;, err)
+	}
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf(&quot;failed to serve: %v&quot;, err)
+	}
+}
+</code></pre>
+<p>server 端先调用了 tls 包下的 LoadX509KeyPair，通过 server 的公钥和私钥生成了一个 Certificate 结构体来保存证书信息。然后注册了一个校验 token 的方法到拦截器中，并将证书信息设置到 serverOption 中，构造 server 的时候层层透传进去，最终会被设置到 Server 里面 ServerOptions 结构中的 credentials.TransportCredentials 和 UnaryServerInterceptor 中。</p>
+<p>我们来看看这两个结构什么时候会被调用，先梳理调用链路，在 s.Serve ——&gt; s.handleRawConn ——&gt; s.serveStreams ——&gt; s.handleStream ——&gt; s.processUnaryRPC 方法中有一行</p>
+<pre><code>reply, appErr := md.Handler(srv.server, ctx, df, s.opts.unaryInt)
+</code></pre>
+<p>可以看到调用了 md.Handler 方法，将 s.opts.unaryInt 这个结构传入了进去。s.opts.unaryInt 就是我们之前注册的 UnaryServerInterceptor 拦截器。md 是一个 MethodDesc 这个结构，包括了 MethodName 和 Handler</p>
+<pre><code>type MethodDesc struct {
+	MethodName string
+	Handler    methodHandler
+}
+</code></pre>
+<p>这里会取出我们之前注册进去的结构，还记得我们介绍 helloworld 时 RegisterService 吗？至于如何取出 MethodName，源码中的设计非常复杂，经过了层层包装，这里不是本节重点就不赘述了。</p>
+<pre><code>func RegisterGreeterServer(s *grpc.Server, srv GreeterServer) {
+	s.RegisterService(&amp;_Greeter_serviceDesc, srv)
+}
+
+var _Greeter_serviceDesc = grpc.ServiceDesc{
+	ServiceName: &quot;helloworld.Greeter&quot;,
+	HandlerType: (*GreeterServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: &quot;SayHello&quot;,
+			Handler:    _Greeter_SayHello_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: &quot;helloworld.proto&quot;,
+}
+</code></pre>
+<p>我们看到 md.Handler 其实是 _Greeter_SayHello_Handler 这个结构，它也是在 pb 文件中生成的。</p>
+<pre><code>func _Greeter_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HelloRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).SayHello(ctx, in)
+	}
+	info := &amp;grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: &quot;/helloworld.Greeter/SayHello&quot;,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).SayHello(ctx, req.(*HelloRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+</code></pre>
+<p>这里调用了我们传入的 interceptor 方法。回到我们的调用：</p>
+<pre><code>reply, appErr := md.Handler(srv.server, ctx, df, s.opts.unaryInt)
+</code></pre>
+<p>所以其实是调用了 s.opts.unaryInt 这个拦截器。这个拦截器是我们之前在 创建 server 的时候赋值的。</p>
+<pre><code>	opts := []grpc.ServerOption{
+		// The following grpc.ServerOption adds an interceptor for all unary
+		// RPCs. To configure an interceptor for streaming RPCs, see:
+		// https://godoc.org/google.golang.org/grpc#StreamInterceptor
+		grpc.UnaryInterceptor(ensureValidToken),
+		// Enable TLS for all incoming connections.
+		grpc.Creds(credentials.NewServerTLSFromCert(&amp;cert)),
+	}
+	s := grpc.NewServer(opts...)
+</code></pre>
+<p>看 grpc.UnaryInterceptor 这个方法，其实是将 ensureValidToken 这个函数赋值给了 s.opts.unaryInt</p>
+<pre><code>	func UnaryInterceptor(i UnaryServerInterceptor) ServerOption {
+		return newFuncServerOption(func(o *serverOptions) {
+			if o.unaryInt != nil {
+				panic(&quot;The unary server interceptor was already set and may not be reset.&quot;)
+			}
+			o.unaryInt = i
+		})
+	}
+</code></pre>
+<p>所以之前我们执行的这一行</p>
+<pre><code>	return interceptor(ctx, in, info, handler)
+</code></pre>
+<p>其实是执行了 ensureValidToken 这个函数，这个函数就是我们在 server 端定义的 token 校验的函数。先取出我们传入的 metadata 数据，然后校验 token</p>
+<pre><code>	func ensureValidToken(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			return nil, errMissingMetadata
+		}
+		// The keys within metadata.MD are normalized to lowercase.
+		// See: https://godoc.org/google.golang.org/grpc/metadata#New
+		if !valid(md[&quot;authorization&quot;]) {
+			return nil, errInvalidToken
+		}
+		// Continue execution of handler after ensuring a valid token.
+		return handler(ctx, req)
+}
+</code></pre>
+<p>校验完 token 后，最终执行了 handler(ctx, req)</p>
+<pre><code>	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).SayHello(ctx, req.(*HelloRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+</code></pre>
+<p>可以看到最终其实执行了 GreeterServer 的 SayHello 这个函数，也就是我们在 main 函数中定义的，这个函数就是我们在 server 端定义的提供 SayHello 给客户端回消息的函数。</p>
+<pre><code>// SayHello implements helloworld.GreeterServer
+func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
+	log.Printf(&quot;Received: %v&quot;, in.Name)
+	return &amp;pb.HelloReply{Message: &quot;Hello &quot; + in.Name}, nil
+}
+</code></pre>
+<p>这里还可以额外说一下，md.Handler 执行完之后，其实 reply 就是 SayHello 的回包。</p>
+<pre><code>	reply, appErr := md.Handler(srv.server, ctx, df, s.opts.unaryInt)
+</code></pre>
+<p>获取到回包之后 server 执行了 sendResponse 方法，将回包发送给 client，这个方法我们之前已经剖析过了，最终会调用 http2Server 的 Write 方法。</p>
+<pre><code>if err := s.sendResponse(t, stream, reply, cp, opts, comp); err != nil {
+</code></pre>
+<p>看到这里，server 端对 token 的校验在哪里执行的我们已经清楚了。假如还没有被绕晕，那么恭喜你！可以继续完成 client 的挑战了。</p>
+<h4 id="client">client</h4>
+<p>在 client 中，先看 main 函数</p>
+<pre><code>// Set up the credentials for the connection.
+	perRPC := oauth.NewOauthAccess(fetchToken())
+	creds, err := credentials.NewClientTLSFromFile(testdata.Path(&quot;ca.pem&quot;), &quot;x.test.youtube.com&quot;)
+	if err != nil {
+		log.Fatalf(&quot;failed to load credentials: %v&quot;, err)
+	}
+	opts := []grpc.DialOption{
+		// In addition to the following grpc.DialOption, callers may also use
+		// the grpc.CallOption grpc.PerRPCCredentials with the RPC invocation
+		// itself.
+		// See: https://godoc.org/google.golang.org/grpc#PerRPCCredentials
+		grpc.WithPerRPCCredentials(perRPC),
+		// oauth.NewOauthAccess requires the configuration of transport
+		// credentials.
+		grpc.WithTransportCredentials(creds),
+	}
+
+	conn, err := grpc.Dial(*addr, opts...)
+</code></pre>
+<p>可以看到 client 首先通过 NewOauthAccess 方法生成了包含 token 信息的 PerRPCCredentials 结构</p>
+<pre><code>func NewOauthAccess(token *oauth2.Token) credentials.PerRPCCredentials {
+	return oauthAccess{token: *token}
+}
+</code></pre>
+<p>然后再将 PerRPCCredentials 通过  grpc.WithPerRPCCredentials(perRPC) 添加到了到了 client 的 DialOptions 中的 transport.ConnectOptions 结构中的 [] credentials.PerRPCCredentials 结构中。</p>
+<p>那么这个结构什么时候被使用呢，我们来看看。先梳理下调用链 ，在 client 调用的 Invoke ——&gt; invoke ——&gt; newClientStream ——&gt; cs.newAttemptLocked ——&gt; cs.cc.getTransport ——&gt; pick ——&gt; acw.getAddrConn().getReadyTransport() ——&gt;  ac.connect() ——&gt; ac.resetTransport() ——&gt; ac.tryAllAddrs ——&gt; ac.createTransport ——&gt; transport.NewClientTransport ——&gt; newHTTP2Client  这个方法里面，有这么一段代码，先取出 []credentials.PerRPCCredentials 中的所有 PerRPCCredentials 添加到 perRPCCreds 中。</p>
+<pre><code>	transportCreds := opts.TransportCredentials
+	perRPCCreds := opts.PerRPCCredentials
+
+	if b := opts.CredsBundle; b != nil {
+		if t := b.TransportCredentials(); t != nil {
+			transportCreds = t
+		}
+		if t := b.PerRPCCredentials(); t != nil {
+			perRPCCreds = append(perRPCCreds, t)
+		}
+	}
+</code></pre>
+<p>然后再将 perRPCCreds 赋值给 http2Client 的 perRPCCreds 属性</p>
+<pre><code>t := &amp;http2Client{
+
+	...
+
+	perRPCCreds:           perRPCCreds,
+	
+	...
+}
+</code></pre>
+<p>那么 perRPCCreds 属性什么时候被用呢？来继续跟踪，newClientStream  方法中有一段代码</p>
+<pre><code>	op := func(a *csAttempt) error { return a.newStream() }
+	if err := cs.withRetry(op, func() { cs.bufferForRetryLocked(0, op) }); err != nil {
+		cs.finish(err)
+		return nil, err
+	}
+</code></pre>
+<p>这里调用了 csAttempt 的 newStream ——&gt; a.t.NewStream (http2Client 的 NewStream) ——&gt; createHeaderFields ——&gt; getTrAuthData 方法</p>
+<pre><code>func (t *http2Client) getTrAuthData(ctx context.Context, audience string) (map[string]string, error) {
+	if len(t.perRPCCreds) == 0 {
+		return nil, nil
+	}
+	authData := map[string]string{}
+	for _, c := range t.perRPCCreds {
+		data, err := c.GetRequestMetadata(ctx, audience)
+		if err != nil {
+			if _, ok := status.FromError(err); ok {
+				return nil, err
+			}
+
+			return nil, status.Errorf(codes.Unauthenticated, &quot;transport: %v&quot;, err)
+		}
+		for k, v := range data {
+			// Capital header names are illegal in HTTP/2.
+			k = strings.ToLower(k)
+			authData[k] = v
+		}
+	}
+	return authData, nil
+}
+</code></pre>
+<p>这个方法，通过调用 GetRequestMetadata 取出 token 信息，这里会调用 oauth 的 GetRequestMetadata 方法 ，按照指定格式拼装成一个  map[string]string{} 的形式</p>
+<pre><code>func (s *serviceAccount) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if !s.t.Valid() {
+		var err error
+		s.t, err = s.config.TokenSource(ctx).Token()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return map[string]string{
+		&quot;authorization&quot;: s.t.Type() + &quot; &quot; + s.t.AccessToken,
+	}, nil
+}
+</code></pre>
+<p>然后将以 map[string]string{} 的形式组装成一个 string map 返回，如下：</p>
+<pre><code>   for k, v := range authData {
+		headerFields = append(headerFields, hpack.HeaderField{Name: k, Value: encodeMetadataHeader(k, v)})
+	}
+</code></pre>
+<p>返回的 map 会被遍历每个 key，并设置到 headerFields 中，以 http 头部的形式发送出去。数据最终会被 metadata.FromIncomingContext(ctx) 获取到，然后被取出 map 数据。</p>
+<p>至此，client 和 server 的数据流转过程被打通</p>
+
+      </div>
+
+      
+      <div class="lesson-navigation">
+        
+        <div class="nav-buttons">
+            <a href="https://diu.life/lessons/grpc-read/grpc-auth-tls/" class="nav-btn prev-btn">
+              <span>← 上一章</span>
+              <span class="nav-title">第七章：grpc 认证鉴权——tls认证</span>
+            </a>
+            <a href="https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/" class="nav-btn next-btn">
+              <span>下一章 →</span>
+              <span class="nav-title">第九章：grpc 拦截器实现</span>
+            </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<style>
+ 
+.main {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+.lesson-container {
+  display: flex;
+  min-height: calc(100vh - 60px);
+  gap: 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.lesson-sidebar {
+  width: 320px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  border-right: none;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding: 30px 25px;
+  z-index: 10;
+}
+
+.lesson-nav h3 {
+  margin: 0 0 30px 0;
+  color: #2c3e50;
+  font-size: 1.4em;
+  font-weight: 700;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e3f2fd;
+  position: relative;
+}
+
+.lesson-nav h3::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.chapter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chapter-item {
+  margin-bottom: 12px;
+}
+
+.chapter-link {
+  display: block;
+  padding: 16px 20px;
+  color: #5a6c7d;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.chapter-link:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #2c3e50;
+  transform: translateX(8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-link:hover::before {
+  left: 100%;
+}
+
+.chapter-item.active .chapter-link {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  transform: translateX(8px);
+}
+
+.chapter-item.active .chapter-link::before {
+  display: none;
+}
+
+.chapter-title {
+  font-size: 0.95em;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.lesson-content {
+  flex: 1;
+  padding: 40px 50px;
+  width: 100%;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  margin: 20px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.lesson-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.post-single {
+  max-width: 100%;
+  margin: 0;
+}
+
+.post-header {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e8ecef;
+}
+
+.post-title {
+  font-size: 2.2em;
+  font-weight: 800;
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  line-height: 1.3;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.post-meta {
+  color: #7f8c8d;
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
+.post-content {
+  line-height: 1.8;
+  color: #34495e;
+  font-size: 1.05em;
+}
+
+.post-content h2 {
+  margin-top: 50px;
+  margin-bottom: 25px;
+  font-size: 1.6em;
+  font-weight: 700;
+  color: #2c3e50;
+  position: relative;
+  padding-left: 20px;
+}
+
+.post-content h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.post-content h3 {
+  margin-top: 35px;
+  margin-bottom: 20px;
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.post-content p {
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+.post-content ul, .post-content ol {
+  margin-bottom: 20px;
+  padding-left: 25px;
+}
+
+.post-content li {
+  margin-bottom: 10px;
+  line-height: 1.7;
+}
+
+.post-content code {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: #e83e8c;
+  font-weight: 500;
+  border: 1px solid #dee2e6;
+}
+
+.post-content pre {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  padding: 25px;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin: 30px 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #4a5568;
+}
+
+.post-content pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: #a0aec0;
+  border: none;
+}
+
+.lesson-navigation {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 2px solid #e8ecef;
+  position: relative;
+}
+
+.lesson-navigation::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 25px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 15px;
+  text-decoration: none;
+  color: #2c3e50;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex: 1;
+  max-width: 320px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transition: left 0.6s;
+}
+
+.nav-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+}
+
+.nav-btn:hover::before {
+  left: 100%;
+}
+
+.nav-btn span:first-child {
+  font-size: 0.95em;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nav-btn:hover span:first-child {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.nav-title {
+  font-weight: 600;
+  line-height: 1.4;
+  font-size: 1.05em;
+}
+
+.next-btn {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .lesson-container {
+    flex-direction: column;
+    background: linear-gradient(180deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
+  
+  .lesson-sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 2px solid #e8ecef;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px 20px;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .lesson-content {
+    max-width: 100%;
+    padding: 30px 20px;
+    margin: 15px;
+    border-radius: 15px;
+  }
+  
+  .post-title {
+    font-size: 1.8em;
+  }
+  
+  .post-content {
+    font-size: 1em;
+  }
+  
+  .nav-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .nav-btn {
+    max-width: 100%;
+  }
+  
+  .next-btn {
+    text-align: left;
+  }
+  
+  .chapter-link:hover,
+  .chapter-item.active .chapter-link {
+    transform: none;
+  }
+}
+</style>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2021 丢哥 all rights reserved.</span>
+
+
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

@@ -86,7 +86,7 @@ lessons:
   url: "/lessons/grpc-read/"
   description: "深入学习 gRPC 框架的源码实现，从基础概念到高级特性，包括 HTTP/2 协议、服务发现、负载均衡、认证鉴权、拦截器、协议编解码等核心机制的源码分析。"
   icon: "/images/grpc-read.svg"
-  difficulty: "高级"
+  difficulty: "中级"
   date: "2019-11-01"
   duration: "270 min"
   chapters:

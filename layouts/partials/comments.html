@@ -1,0 +1,46 @@
+{{- if .Site.Params.comments -}}
+<div id="comments" class="comments-section">
+  <h3>评论</h3>
+  <div class="giscus-container">
+    <script src="https://giscus.app/client.js"
+            data-repo="{{ .Site.Params.giscus.repo | default "" }}"
+            data-repo-id="{{ .Site.Params.giscus.repoId | default "" }}"
+            data-category="{{ .Site.Params.giscus.category | default "General" }}"
+            data-category-id="{{ .Site.Params.giscus.categoryId | default "" }}"
+            data-mapping="{{ .Site.Params.giscus.mapping | default "pathname" }}"
+            data-strict="{{ .Site.Params.giscus.strict | default "0" }}"
+            data-reactions-enabled="{{ .Site.Params.giscus.reactionsEnabled | default "1" }}"
+            data-emit-metadata="{{ .Site.Params.giscus.emitMetadata | default "0" }}"
+            data-input-position="{{ .Site.Params.giscus.inputPosition | default "bottom" }}"
+            data-theme="{{ .Site.Params.giscus.theme | default "preferred_color_scheme" }}"
+            data-lang="{{ .Site.Params.giscus.lang | default "zh-CN" }}"
+            data-loading="{{ .Site.Params.giscus.loading | default "lazy" }}"
+            crossorigin="anonymous"
+            async>
+    </script>
+  </div>
+</div>
+
+<style>
+.comments-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.comments-section h3 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.giscus-container {
+  margin-top: 1rem;
+}
+
+/* 适配暗色主题 */
+[data-theme="dark"] .giscus-container {
+  color-scheme: dark;
+}
+</style>
+{{- end -}}

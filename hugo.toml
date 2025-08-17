@@ -19,8 +19,23 @@ hasCJKLanguage = true
   ShowBreadCrumbs = false
   ShowPostNavLinks = true
   ShowCodeCopyButtons = true
-  comments = false
+  comments = true
   mainSections = ["posts"]
+
+  # Giscus 评论系统配置
+  [params.giscus]
+    repo = "lubanproj/lubanproj.github.io"  # 你的 GitHub 仓库，格式：username/repo-name
+    repoId = "R_kgDOPb-Eiw"  # 仓库 ID，可在 https://giscus.app 获取
+    category = "General"  # Discussion 分类
+    categoryId = "DIC_kwDOPb-Ei84CuQ8V"  # 分类 ID，可在 https://giscus.app 获取
+    mapping = "title"  # 页面与 discussion 的映射方式
+    strict = "0"  # 严格匹配
+    reactionsEnabled = "1"  # 启用反应
+    emitMetadata = "0"  # 发送元数据
+    inputPosition = "bottom"  # 输入框位置
+    theme = "preferred_color_scheme"  # 主题
+    lang = "zh-CN"  # 语言
+    loading = "lazy"  # 加载方式
 
   # 开启首页文章列表
   # homeInfoParams = { Title = "欢迎来到我的博客 👋", Content = "这是我的个人技术博客，记录开发、思考和生活。" }

@@ -7,23 +7,19 @@ on:
       - main  # 监听 main 分支的变更
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: false
+          submodules: false  # ← 添加这一行，明确不使用 submodule
+
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
@@ -34,15 +30,9 @@ jobs:
       - name: Build Hugo site
         run: hugo --minify
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public
-
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
-
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages

@@ -56,7 +56,8 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://diu.life/lessons/go-rpc/connection-pool/">
+</noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2499390968830075"
+     crossorigin="anonymous"></script><meta property="og:url" content="https://diu.life/lessons/go-rpc/connection-pool/">
   <meta property="og:site_name" content="丢哥">
   <meta property="og:title" content="第十一章：连接池实现">
   <meta property="og:description" content="一、为什么需要连接池 连接池是一个创建和管理连接的缓冲池技术。为什么需要连接池呢？我们知道，client 每次向 server 发起请求都会创建一个连接。一般一个 rpc 请求消耗的时间可能是几百毫秒到几秒，也就是说在一个比较短的时间内，这个连接就会被销毁。假设我们一秒钟需要处理 20w 个请求，假如不使用连接池的话，可能几万十几万的连接在短时间内都会被创建和销毁，这对 cpu 资源是一个很大的消耗，同时因为我们的端口数是 1~65535，除了一些端口被计算机内部占用，每次 client 创建连接都需要分配一个端口，假如并发量过大的话，可能会出现计算机端口不够用的情况。">

@@ -1,0 +1,219 @@
+<!doctype html><html lang=zh dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>第九章：grpc 拦截器实现 | 丢哥</title><meta name=keywords content><meta name=description content="grpc 源码解读 —— 从 0 到 1 实现拦截器
+拦截器，通俗点说，就是在执行一段代码之前或者之后，去执行另外一段代码。
+拦截器在业界知名框架中的运用非常普遍。包括 Spring 、Grpc 等框架中都有拦截器的实现。接下来我们想办法从 0 到 1 自己实现一个拦截器。以下的实现主要使用 go 语言讲解。"><meta name=author content="丢哥"><link rel=canonical href=https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://diu.life/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://diu.life/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://diu.life/favicon-32x32.png><link rel=apple-touch-icon href=https://diu.life/apple-touch-icon.png><link rel=mask-icon href=https://diu.life/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh href=https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/"><meta property="og:site_name" content="丢哥"><meta property="og:title" content="第九章：grpc 拦截器实现"><meta property="og:description" content="grpc 源码解读 —— 从 0 到 1 实现拦截器 拦截器，通俗点说，就是在执行一段代码之前或者之后，去执行另外一段代码。 拦截器在业界知名框架中的运用非常普遍。包括 Spring 、Grpc 等框架中都有拦截器的实现。接下来我们想办法从 0 到 1 自己实现一个拦截器。以下的实现主要使用 go 语言讲解。"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="lessons"><meta property="article:published_time" content="2019-11-09T00:00:00+08:00"><meta property="article:modified_time" content="2019-11-09T00:00:00+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="第九章：grpc 拦截器实现"><meta name=twitter:description content="grpc 源码解读 —— 从 0 到 1 实现拦截器
+拦截器，通俗点说，就是在执行一段代码之前或者之后，去执行另外一段代码。
+拦截器在业界知名框架中的运用非常普遍。包括 Spring 、Grpc 等框架中都有拦截器的实现。接下来我们想办法从 0 到 1 自己实现一个拦截器。以下的实现主要使用 go 语言讲解。"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"教程","item":"https://diu.life/lessons/"},{"@type":"ListItem","position":2,"name":"第九章：grpc 拦截器实现","item":"https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"第九章：grpc 拦截器实现","name":"第九章：grpc 拦截器实现","description":"grpc 源码解读 —— 从 0 到 1 实现拦截器 拦截器，通俗点说，就是在执行一段代码之前或者之后，去执行另外一段代码。 拦截器在业界知名框架中的运用非常普遍。包括 Spring 、Grpc 等框架中都有拦截器的实现。接下来我们想办法从 0 到 1 自己实现一个拦截器。以下的实现主要使用 go 语言讲解。\n","keywords":[],"articleBody":"grpc 源码解读 —— 从 0 到 1 实现拦截器 拦截器，通俗点说，就是在执行一段代码之前或者之后，去执行另外一段代码。 拦截器在业界知名框架中的运用非常普遍。包括 Spring 、Grpc 等框架中都有拦截器的实现。接下来我们想办法从 0 到 1 自己实现一个拦截器。以下的实现主要使用 go 语言讲解。\n假设有一个方法 handler(ctx context.Context) ，我想要给这个方法赋予一个能力：允许在这个方法执行之前能够打印一行日志。\n1、定义结构 于是我们轻而易举得想到了定义一个结构 interceptor 这个结构包含两个参数，一个 context 和 一个 handler\ntype interceptor func(ctx context.Context, handler func(ctx context.Context) ) 为了能够更加方便，我们将 handler 单独定义成一种类型：\ntype interceptor func(ctx context.Context, h handler) type handler func(ctx context.Context) 2、申明赋值 接下来，为了实现我们的目标，对 handler 的每个操作，我们都需要先经过 interceptor 。于是我们申明两个 interceptor 和 handler 的变量并赋值\nvar h = func(ctx context.Context) { fmt.Println(\"do something ...\") } var inter1 = func(ctx context.Context, h handler) { fmt.Println(\"interceptor1\") h(ctx) } 3、编写执行函数 编写一个执行函数，看看效果\nfunc main() { var ctx context.Context var ceps []interceptor var h = func(ctx context.Context) { fmt.Println(\"do something ...\") } var inter1 = func(ctx context.Context, h handler) { fmt.Println(\"interceptor1\") h(ctx) } ceps = append(ceps, inter1) for _ , cep := range ceps { cep(ctx, h) } } 输出结果为 ：\ninterceptor1 do something ... ok，我们已经完成了实现这个方法之前 输出一行内容。\n是不是大功告成了呢？ wait … 我们再来加一个 interceptor 试试，于是我们又加了一个 interceptor\nvar inter2 = func(ctx context.Context, h handler) { fmt.Println(\"interceptor2\") h(ctx) } 同样，我们编写一个执行函数\nfunc main() { var ctx context.Context var ceps []interceptor var h = func(ctx context.Context) { fmt.Println(\"do something ...\") } var inter1 = func(ctx context.Context, h handler) { fmt.Println(\"interceptor1\") h(ctx) } var inter2 = func(ctx context.Context, h handler) { fmt.Println(\"interceptor2\") h(ctx) } ceps = append(ceps, inter1, inter2) for _ , cep := range ceps { cep(ctx, h) } } 执行结果如下：\ninterceptor1 do something ... interceptor2 do something ... 可以看到，在 handler 之前确实输出了两行内容。但是总感觉哪里不太对？？？ wait … handler 竟然执行了两次。这可不是我们想要的效果，我们希望无论打印多少行内容，应该保证 handler 只执行一次。\n4、借鉴 grpc-go 于是我们开始想办法，怎么才能让 handler 只执行一次呢？ 想啊想，想了一会儿没想到，这个时候灵光一闪，可以借助前人的智慧啊…… grpc 中肯定有实现，我们先来 “借鉴” 一下，毕竟他山之石，可以攻玉嘛…..\n翻开 grpc-go 的源码，直接找到 helloworld demo client 端的 main 函数，grpc.Dial ——\u003e DialContext ，里面有一行\nchainUnaryClientInterceptors(cc) 别问我是怎么找到的，直接去看我之前关于 client 的源码解读 grpc quick start 就知道了（这广告貌似一点也不违合 hhh）。\n来看看这个函数，这个函数就有点牛逼了。\n// chainUnaryClientInterceptors chains all unary client interceptors into one. func chainUnaryClientInterceptors(cc *ClientConn) { interceptors := cc.dopts.chainUnaryInts // Prepend dopts.unaryInt to the chaining interceptors if it exists, since unaryInt will // be executed before any other chained interceptors. if cc.dopts.unaryInt != nil { interceptors = append([]UnaryClientInterceptor{cc.dopts.unaryInt}, interceptors...) } var chainedInt UnaryClientInterceptor if len(interceptors) == 0 { chainedInt = nil } else if len(interceptors) == 1 { chainedInt = interceptors[0] } else { chainedInt = func(ctx context.Context, method string, req, reply interface{}, cc *ClientConn, invoker UnaryInvoker, opts ...CallOption) error { return interceptors[0](ctx, method, req, reply, cc, getChainUnaryInvoker(interceptors, 0, invoker), opts...) } } cc.dopts.unaryInt = chainedInt } chains all unary client interceptors into one. 这句话告诉我们，这个函数把所有拦截器串成了一个拦截器。这是怎么实现的呢？这不就是我们上面碰到的问题吗！来瞅瞅~~~\n// getChainUnaryInvoker recursively generate the chained unary invoker. func getChainUnaryInvoker(interceptors []UnaryClientInterceptor, curr int, finalInvoker UnaryInvoker) UnaryInvoker { if curr == len(interceptors)-1 { return finalInvoker } return func(ctx context.Context, method string, req, reply interface{}, cc *ClientConn, opts ...CallOption) error { return interceptors[curr+1](ctx, method, req, reply, cc, getChainUnaryInvoker(interceptors, curr+1, finalInvoker), opts...) } } 原来是通过 getChainUnaryInvoker 这个方法，返回一个 UnaryInvoker ，这一个 UnaryInvoker 也是一个函数\ntype UnaryInvoker func(ctx context.Context, method string, req, reply interface{}, cc *ClientConn, opts ...CallOption) error 在这个 UnaryInvoker 实例化时会去调用第 curr+1 个 interceptors。也就是最终会返回这样一个结构：\n接下来将这个结构赋值给了 cc.dopts.unaryInt ，但此时并没有调用。什么时候开始调用的呢？\n还记得我们之前 client SayHello 的时候调用的这一行代码吗？\nerr := c.cc.Invoke(ctx, \"/helloworld.Greeter/SayHello\", in, out, opts...) 在 Invoke 这个函数里面进行了真正的调用\nfunc (cc *ClientConn) Invoke(ctx context.Context, method string, args, reply interface{}, opts ...CallOption) error { // allow interceptor to see all applicable call options, which means those // configured as defaults from dial option as well as per-call options opts = combine(cc.dopts.callOptions, opts) if cc.dopts.unaryInt != nil { return cc.dopts.unaryInt(ctx, method, args, reply, cc, invoke, opts...) } return invoke(ctx, method, args, reply, cc, opts...) } 这一行代码 cc.dopts.unaryInt(ctx, method, args, reply, cc, invoke, opts…) 才是入口，就如同多米诺骨牌一样，只要这里开始调用，然后就会一直层层调用下去，直到所有的 interceptor 调用完成。\n这里的代码虽然不多，但其实设计得非常精妙。包括每一个结构的定义。前辈果然还是前辈\n5、从 0 到 1 实现一个拦截器 仔细研究完 grpc 的经典实现，这里我们就可以自己来实现一个简化版的拦截器了。\n5.1 重新定义结构 首先，之前我们的疑问是如何让 handler 只执行一遍。这里我们将原来的 handler 升级一下，成为 Invoker , 重新定义一个 handler ，用于在 Invoker 执行之前处理某些事情。\ntype invoker func(ctx context.Context, interceptors []interceptor2 , h handler) error type handler func(ctx context.Context) 之前的 interceptor 也需要更改一下，需要传入我们的 invoker 和 handler\ntype interceptor2 func(ctx context.Context, h handler, ivk invoker) error 5.2 串联所有 interceptor 接下来，我们需要把所有的 interceptor 串联起来\nfunc getInvoker(ctx context.Context, interceptors []interceptor2 , cur int, ivk invoker) invoker{ if cur == len(interceptors) - 1 { return ivk } return func(ctx context.Context, interceptors []interceptor2 , h handler) error{ return interceptors[cur+1](ctx, h, getInvoker(ctx,interceptors, cur+1, ivk)) } } 5.3 返回第一个 interceptor 作为入口 func getChainInterceptor(ctx context.Context, interceptors []interceptor2 , ivk invoker) interceptor2 { if len(interceptors) == 0 { return nil } if len(interceptors) == 1 { return interceptors[0] } return func(ctx context.Context, h handler, ivk invoker) error { return interceptors[0](ctx, h, getInvoker(ctx, interceptors, 0, ivk)) } } 5.4 编写执行用例 完整的执行用例如下：\npackage main import ( \"context\" \"fmt\" ) type interceptor2 func(ctx context.Context, h handler, ivk invoker) error type handler func(ctx context.Context) type invoker func(ctx context.Context, interceptors []interceptor2 , h handler) error func main() { var ctx context.Context var ceps []interceptor2 var h = func(ctx context.Context) { fmt.Println(\"do something\") } var inter1 = func(ctx context.Context, h handler, ivk invoker) error{ h(ctx) return ivk(ctx,ceps,h) } var inter2 = func(ctx context.Context, h handler, ivk invoker) error{ h(ctx) return ivk(ctx,ceps,h) } var inter3 = func(ctx context.Context, h handler, ivk invoker) error{ h(ctx) return ivk(ctx,ceps,h) } ceps = append(ceps, inter1, inter2, inter3) var ivk = func(ctx context.Context, interceptors []interceptor2 , h handler) error { fmt.Println(\"invoker start\") return nil } cep := getChainInterceptor(ctx, ceps,ivk) cep(ctx, h,ivk) } func getChainInterceptor(ctx context.Context, interceptors []interceptor2 , ivk invoker) interceptor2 { if len(interceptors) == 0 { return nil } if len(interceptors) == 1 { return interceptors[0] } return func(ctx context.Context, h handler, ivk invoker) error { return interceptors[0](ctx, h, getInvoker(ctx, interceptors, 0, ivk)) } } func getInvoker(ctx context.Context, interceptors []interceptor2 , cur int, ivk invoker) invoker{ if cur == len(interceptors) - 1 { return ivk } return func(ctx context.Context, interceptors []interceptor2 , h handler) error{ return interceptors[cur+1](ctx, h, getInvoker(ctx,interceptors, cur+1, ivk)) } } 5.5 执行结果 do something do something do something invoker start 执行结果如上，可以看到每次 Invoker 执行前我们都调用了 handler，但是 Invoker 只被调用了一次，完美地实现了我们的诉求，一个简化版的拦截器诞生了。\n","wordCount":"1997","inLanguage":"zh","datePublished":"2019-11-09T00:00:00+08:00","dateModified":"2019-11-09T00:00:00+08:00","author":{"@type":"Person","name":"丢哥"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/"},"publisher":{"@type":"Organization","name":"丢哥","logo":{"@type":"ImageObject","url":"https://diu.life/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://diu.life/ accesskey=h title="丢哥 (Alt + H)">丢哥</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://diu.life/ title=首页><span>首页</span></a></li><li><a href=https://diu.life/posts/ title=文章><span>文章</span></a></li><li><a href=https://diu.life/projects/ title=独立开发><span>独立开发</span></a></li><li><a href=https://diu.life/lessons/ title=教程><span>教程</span></a></li><li><a href=https://diu.life/about/ title=关于><span>关于</span></a></li></ul></nav></header><main class=main><div class=lesson-container><div class=lesson-sidebar><div class=lesson-nav><h3>Grpc-Read 教程</h3><ul class=chapter-list><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-concepts-http2/ class=chapter-link><span class=chapter-title>第一章：grpc concepts & http2</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-hello-world/ class=chapter-link><span class=chapter-title>第二章：grpc hello world</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/ class=chapter-link><span class=chapter-title>第三章：grpc hello world server 解析</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/ class=chapter-link><span class=chapter-title>第四章：grpc hello world client 解析</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-service-discovery/ class=chapter-link><span class=chapter-title>第五章：grpc 服务发现</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-load-balancing/ class=chapter-link><span class=chapter-title>第六章：grpc 负载均衡</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-auth-tls/ class=chapter-link><span class=chapter-title>第七章：grpc 认证鉴权——tls认证</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-auth-oauth2/ class=chapter-link><span class=chapter-title>第八章：grpc 认证鉴权——oauth2认证</span></a></li><li class="chapter-item active"><a href=https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/ class=chapter-link><span class=chapter-title>第九章：grpc 拦截器实现</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-protocol-codec/ class=chapter-link><span class=chapter-title>第十章：grpc 协议编解码器</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/ class=chapter-link><span class=chapter-title>第十一章：grpc 协议解包过程全剖析</span></a></li><li class=chapter-item><a href=https://diu.life/lessons/grpc-read/grpc-data-flow/ class=chapter-link><span class=chapter-title>第十二章：grpc 数据流转</span></a></li></ul></div></div><div class=lesson-content><article class=post-single><header class=post-header><h1 class=post-title>第九章：grpc 拦截器实现</h1><div class=post-meta><time datetime=2019-11-09T00:00:00+08:00>2019-11-09</time></div></header><div class=post-content><h2 id=grpc-源码解读--从-0-到-1-实现拦截器>grpc 源码解读 —— 从 0 到 1 实现拦截器</h2><p>拦截器，通俗点说，就是在执行一段代码之前或者之后，去执行另外一段代码。
+拦截器在业界知名框架中的运用非常普遍。包括 Spring 、Grpc 等框架中都有拦截器的实现。接下来我们想办法从 0 到 1 自己实现一个拦截器。以下的实现主要使用 go 语言讲解。</p><p>假设有一个方法 handler(ctx context.Context) ，我想要给这个方法赋予一个能力：允许在这个方法执行之前能够打印一行日志。</p><h4 id=1定义结构>1、定义结构</h4><p>于是我们轻而易举得想到了定义一个结构 interceptor 这个结构包含两个参数，一个 context 和 一个 handler</p><pre><code>	type interceptor func(ctx context.Context, handler func(ctx context.Context) )
+</code></pre><p>为了能够更加方便，我们将 handler 单独定义成一种类型：</p><pre><code>	type interceptor func(ctx context.Context, h handler)
+
+	type handler func(ctx context.Context)
+</code></pre><h4 id=2申明赋值>2、申明赋值</h4><p>接下来，为了实现我们的目标，对 handler 的每个操作，我们都需要先经过 interceptor 。于是我们申明两个 interceptor 和 handler 的变量并赋值</p><pre><code>	var h = func(ctx context.Context) {
+			fmt.Println(&quot;do something ...&quot;)
+	}
+	
+	var inter1 = func(ctx context.Context, h handler) {
+			fmt.Println(&quot;interceptor1&quot;)
+			h(ctx)
+	}
+</code></pre><h4 id=3编写执行函数>3、编写执行函数</h4><p>编写一个执行函数，看看效果</p><pre><code>	func main() {
+	
+		var ctx context.Context
+	
+		var ceps []interceptor
+	
+		var h = func(ctx context.Context) {
+			fmt.Println(&quot;do something ...&quot;)
+		}
+	
+		var inter1 = func(ctx context.Context, h handler) {
+			fmt.Println(&quot;interceptor1&quot;)
+			h(ctx)
+		}
+	
+		ceps = append(ceps, inter1)
+	
+		for _ , cep := range ceps {
+			cep(ctx, h)
+		}
+	
+	}
+</code></pre><p>输出结果为 ：</p><pre><code>	interceptor1
+	do something ...
+</code></pre><p>ok，我们已经完成了实现这个方法之前 输出一行内容。</p><p>是不是大功告成了呢？ wait &mldr; 我们再来加一个 interceptor 试试，于是我们又加了一个 interceptor</p><pre><code>	   var inter2 = func(ctx context.Context, h handler) {
+			fmt.Println(&quot;interceptor2&quot;)
+			h(ctx)
+		}
+</code></pre><p>同样，我们编写一个执行函数</p><pre><code>	func main() {
+	
+		var ctx context.Context
+	
+		var ceps []interceptor
+	
+		var h = func(ctx context.Context) {
+			fmt.Println(&quot;do something ...&quot;)
+		}
+	
+		var inter1 = func(ctx context.Context, h handler) {
+			fmt.Println(&quot;interceptor1&quot;)
+			h(ctx)
+		}
+		var inter2 = func(ctx context.Context, h handler) {
+			fmt.Println(&quot;interceptor2&quot;)
+			h(ctx)
+		}
+	
+		ceps = append(ceps, inter1, inter2)
+	
+		for _ , cep := range ceps {
+			cep(ctx, h)
+		}
+	
+	}
+</code></pre><p>执行结果如下：</p><pre><code>	interceptor1
+	do something ...
+	interceptor2
+	do something ...
+</code></pre><p>可以看到，在 handler 之前确实输出了两行内容。但是总感觉哪里不太对？？？ wait &mldr; handler 竟然执行了两次。这可不是我们想要的效果，我们希望无论打印多少行内容，应该保证 handler 只执行一次。</p><h4 id=4借鉴-grpc-go>4、借鉴 grpc-go</h4><p>于是我们开始想办法，怎么才能让 handler 只执行一次呢？ 想啊想，想了一会儿没想到，这个时候灵光一闪，可以借助前人的智慧啊&mldr;&mldr; grpc 中肯定有实现，我们先来 “借鉴” 一下，毕竟他山之石，可以攻玉嘛&mldr;..</p><p>翻开 grpc-go 的源码，直接找到 helloworld demo client 端的 main 函数，grpc.Dial ——> DialContext ，里面有一行</p><pre><code>	chainUnaryClientInterceptors(cc)
+</code></pre><p>别问我是怎么找到的，直接去看我之前关于 client 的源码解读 <a href=https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/>grpc quick start</a> 就知道了（这广告貌似一点也不违合 hhh）。</p><p>来看看这个函数，这个函数就有点牛逼了。</p><pre><code>	// chainUnaryClientInterceptors chains all unary client interceptors into one.
+	func chainUnaryClientInterceptors(cc *ClientConn) {
+		interceptors := cc.dopts.chainUnaryInts
+		// Prepend dopts.unaryInt to the chaining interceptors if it exists, since unaryInt will
+		// be executed before any other chained interceptors.
+		if cc.dopts.unaryInt != nil {
+			interceptors = append([]UnaryClientInterceptor{cc.dopts.unaryInt}, interceptors...)
+		}
+		var chainedInt UnaryClientInterceptor
+		if len(interceptors) == 0 {
+			chainedInt = nil
+		} else if len(interceptors) == 1 {
+			chainedInt = interceptors[0]
+		} else {
+			chainedInt = func(ctx context.Context, method string, req, reply interface{}, cc *ClientConn, invoker UnaryInvoker, opts ...CallOption) error {
+				return interceptors[0](ctx, method, req, reply, cc, getChainUnaryInvoker(interceptors, 0, invoker), opts...)
+			}
+		}
+		cc.dopts.unaryInt = chainedInt
+	}
+</code></pre><p>chains all unary client interceptors into one. 这句话告诉我们，这个函数把所有拦截器串成了一个拦截器。这是怎么实现的呢？这不就是我们上面碰到的问题吗！来瞅瞅~~~</p><pre><code>	// getChainUnaryInvoker recursively generate the chained unary invoker.
+	func getChainUnaryInvoker(interceptors []UnaryClientInterceptor, curr int, finalInvoker UnaryInvoker) UnaryInvoker {
+		if curr == len(interceptors)-1 {
+			return finalInvoker
+		}
+		return func(ctx context.Context, method string, req, reply interface{}, cc *ClientConn, opts ...CallOption) error {
+			return interceptors[curr+1](ctx, method, req, reply, cc, getChainUnaryInvoker(interceptors, curr+1, finalInvoker), opts...)
+		}
+	}
+</code></pre><p>原来是通过 getChainUnaryInvoker 这个方法，返回一个 UnaryInvoker ，这一个 UnaryInvoker 也是一个函数</p><pre><code>type UnaryInvoker func(ctx context.Context, method string, req, reply interface{}, cc *ClientConn, opts ...CallOption) error
+</code></pre><p>在这个 UnaryInvoker 实例化时会去调用第 curr+1 个 interceptors。也就是最终会返回这样一个结构：</p><p><img alt=请求流程 loading=lazy src=/images/grpc-read/9-1.jpg>
+接下来将这个结构赋值给了 cc.dopts.unaryInt ，但此时并没有调用。什么时候开始调用的呢？</p><p>还记得我们之前 client SayHello 的时候调用的这一行代码吗？</p><pre><code>	err := c.cc.Invoke(ctx, &quot;/helloworld.Greeter/SayHello&quot;, in, out, opts...)
+</code></pre><p>在 Invoke 这个函数里面进行了真正的调用</p><pre><code>	func (cc *ClientConn) Invoke(ctx context.Context, method string, args, reply interface{}, opts ...CallOption) error {
+		// allow interceptor to see all applicable call options, which means those
+		// configured as defaults from dial option as well as per-call options
+		opts = combine(cc.dopts.callOptions, opts)
+	
+		if cc.dopts.unaryInt != nil {
+			return cc.dopts.unaryInt(ctx, method, args, reply, cc, invoke, opts...)
+		}
+		return invoke(ctx, method, args, reply, cc, opts...)
+	}
+</code></pre><p>这一行代码 cc.dopts.unaryInt(ctx, method, args, reply, cc, invoke, opts&mldr;) 才是入口，就如同多米诺骨牌一样，只要这里开始调用，然后就会一直层层调用下去，直到所有的 interceptor 调用完成。</p><p>这里的代码虽然不多，但其实设计得非常精妙。包括每一个结构的定义。前辈果然还是前辈</p><h4 id=5从-0-到-1-实现一个拦截器>5、从 0 到 1 实现一个拦截器</h4><p>仔细研究完 grpc 的经典实现，这里我们就可以自己来实现一个简化版的拦截器了。</p><h5 id=51-重新定义结构>5.1 重新定义结构</h5><p>首先，之前我们的疑问是如何让 handler 只执行一遍。这里我们将原来的 handler 升级一下，成为 Invoker , 重新定义一个 handler ，用于在 Invoker 执行之前处理某些事情。</p><pre><code>type invoker func(ctx context.Context, interceptors []interceptor2 , h handler) error
+type handler func(ctx context.Context)
+</code></pre><p>之前的 interceptor 也需要更改一下，需要传入我们的 invoker 和 handler</p><pre><code>type interceptor2 func(ctx context.Context, h handler, ivk invoker) error
+</code></pre><h5 id=52-串联所有-interceptor>5.2 串联所有 interceptor</h5><p>接下来，我们需要把所有的 interceptor 串联起来</p><pre><code>func getInvoker(ctx context.Context, interceptors []interceptor2 , cur int, ivk invoker) invoker{
+	 if cur == len(interceptors) - 1 {
+		return ivk
+	}
+	 return func(ctx context.Context, interceptors []interceptor2 , h handler) error{
+		return 	interceptors[cur+1](ctx, h, getInvoker(ctx,interceptors, cur+1, ivk))
+	}
+}
+</code></pre><h5 id=53-返回第一个-interceptor-作为入口>5.3 返回第一个 interceptor 作为入口</h5><pre><code>	func getChainInterceptor(ctx context.Context, interceptors []interceptor2 , ivk invoker) interceptor2 {
+		if len(interceptors) == 0 {
+			return nil
+		}
+		if len(interceptors) == 1 {
+			return interceptors[0]
+		}
+		return func(ctx context.Context, h handler, ivk invoker) error {
+			return interceptors[0](ctx, h, getInvoker(ctx, interceptors, 0, ivk))
+		}
+	} 
+</code></pre><h5 id=54--编写执行用例>5.4 编写执行用例</h5><p>完整的执行用例如下：</p><pre><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+)
+
+type interceptor2 func(ctx context.Context, h handler, ivk invoker) error
+
+type handler func(ctx context.Context)
+
+type invoker func(ctx context.Context, interceptors []interceptor2 , h handler) error
+
+func main() {
+
+	var ctx context.Context
+	var ceps []interceptor2
+	var h = func(ctx context.Context) {
+		fmt.Println(&quot;do something&quot;)
+	}
+
+	var inter1 = func(ctx context.Context, h handler, ivk invoker) error{
+		h(ctx)
+		return ivk(ctx,ceps,h)
+	}
+	var inter2 = func(ctx context.Context, h handler, ivk invoker) error{
+		h(ctx)
+		return ivk(ctx,ceps,h)
+	}
+
+	var inter3 = func(ctx context.Context, h handler, ivk invoker) error{
+		h(ctx)
+		return 	ivk(ctx,ceps,h)
+	}
+
+	ceps = append(ceps, inter1, inter2, inter3)
+	var ivk = func(ctx context.Context, interceptors []interceptor2 , h handler) error {
+		fmt.Println(&quot;invoker start&quot;)
+		return nil
+	}
+
+	cep := getChainInterceptor(ctx, ceps,ivk)
+	cep(ctx, h,ivk)
+
+}
+
+func getChainInterceptor(ctx context.Context, interceptors []interceptor2 , ivk invoker) interceptor2 {
+	if len(interceptors) == 0 {
+		return nil
+	}
+	if len(interceptors) == 1 {
+		return interceptors[0]
+	}
+	return func(ctx context.Context, h handler, ivk invoker) error {
+		return interceptors[0](ctx, h, getInvoker(ctx, interceptors, 0, ivk))
+	}
+
+}
+
+
+func getInvoker(ctx context.Context, interceptors []interceptor2 , cur int, ivk invoker) invoker{
+	 if cur == len(interceptors) - 1 {
+		return ivk
+	}
+	 return func(ctx context.Context, interceptors []interceptor2 , h handler) error{
+		return 	interceptors[cur+1](ctx, h, getInvoker(ctx,interceptors, cur+1, ivk))
+	}
+}
+</code></pre><h5 id=55-执行结果>5.5 执行结果</h5><pre><code>	do something
+	do something
+	do something
+	invoker start
+</code></pre><p>执行结果如上，可以看到每次 Invoker 执行前我们都调用了 handler，但是 Invoker 只被调用了一次，完美地实现了我们的诉求，一个简化版的拦截器诞生了。</p></div><div class=lesson-navigation><div class=nav-buttons><a href=https://diu.life/lessons/grpc-read/grpc-auth-oauth2/ class="nav-btn prev-btn"><span>← 上一章</span>
+<span class=nav-title>第八章：grpc 认证鉴权——oauth2认证</span>
+</a><a href=https://diu.life/lessons/grpc-read/grpc-protocol-codec/ class="nav-btn next-btn"><span>下一章 →</span>
+<span class=nav-title>第十章：grpc 协议编解码器</span></a></div></div></article></div></div><style>.main{max-width:100% !important;padding:0 !important}.lesson-container{display:flex;min-height:calc(100vh - 60px);gap:0;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%)}.lesson-sidebar{width:320px;background:linear-gradient(180deg,#ffffff 0%,#f8f9fa 100%);border-right:none;box-shadow:2px 0 20px rgba(0,0,0,8%);position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;padding:30px 25px;z-index:10}.lesson-nav h3{margin:0 0 30px;color:#2c3e50;font-size:1.4em;font-weight:700;text-align:center;padding-bottom:15px;border-bottom:2px solid #e3f2fd;position:relative}.lesson-nav h3::after{content:'';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:60px;height:2px;background:linear-gradient(90deg,#667eea 0%,#764ba2 100%)}.chapter-list{list-style:none;padding:0;margin:0}.chapter-item{margin-bottom:12px}.chapter-link{display:block;padding:16px 20px;color:#5a6c7d;text-decoration:none;border-radius:12px;transition:all .3s cubic-bezier(.4,0,.2,1);border:1px solid transparent;background:rgba(255,255,255,.7);backdrop-filter:blur(10px);position:relative;overflow:hidden}.chapter-link::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transition:left .5s}.chapter-link:hover{background:rgba(255,255,255,.9);color:#2c3e50;transform:translateX(8px);box-shadow:0 8px 25px rgba(0,0,0,.1)}.chapter-link:hover::before{left:100%}.chapter-item.active .chapter-link{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;font-weight:600;box-shadow:0 10px 30px rgba(102,126,234,.3);transform:translateX(8px)}.chapter-item.active .chapter-link::before{display:none}.chapter-title{font-size:.95em;line-height:1.5;font-weight:500}.lesson-content{flex:1;padding:40px 50px;width:100%;overflow-x:auto;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);margin:20px;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.1);position:relative}.lesson-content::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);border-radius:20px 20px 0 0}.post-single{max-width:100%;margin:0}.post-header{margin-bottom:40px;padding-bottom:20px;border-bottom:1px solid #e8ecef}.post-title{font-size:2.2em;font-weight:800;margin:0 0 15px;color:#2c3e50;line-height:1.3;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.post-meta{color:#7f8c8d;font-size:.95em;font-weight:500}.post-content{line-height:1.8;color:#34495e;font-size:1.05em}.post-content h2{margin-top:50px;margin-bottom:25px;font-size:1.6em;font-weight:700;color:#2c3e50;position:relative;padding-left:20px}.post-content h2::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:60%;background:linear-gradient(180deg,#667eea 0%,#764ba2 100%);border-radius:2px}.post-content h3{margin-top:35px;margin-bottom:20px;font-size:1.4em;font-weight:600;color:#2c3e50}.post-content p{margin-bottom:20px;text-align:justify}.post-content ul,.post-content ol{margin-bottom:20px;padding-left:25px}.post-content li{margin-bottom:10px;line-height:1.7}.post-content code{background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);padding:4px 8px;border-radius:6px;font-size:.9em;color:#e83e8c;font-weight:500;border:1px solid #dee2e6}.post-content pre{background:linear-gradient(135deg,#2c3e50 0%,#34495e 100%);padding:25px;border-radius:12px;overflow-x:auto;margin:30px 0;box-shadow:0 10px 30px rgba(0,0,0,.1);border:1px solid #4a5568}.post-content pre code{background:0 0;padding:0;border-radius:0;color:#a0aec0;border:none}.lesson-navigation{margin-top:60px;padding-top:40px;border-top:2px solid #e8ecef;position:relative}.lesson-navigation::before{content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:100px;height:2px;background:linear-gradient(90deg,#667eea 0%,#764ba2 100%)}.nav-buttons{display:flex;justify-content:space-between;gap:25px}.nav-btn{display:flex;flex-direction:column;padding:20px 25px;background:linear-gradient(135deg,#ffffff 0%,#f8f9fa 100%);border:2px solid #e9ecef;border-radius:15px;text-decoration:none;color:#2c3e50;transition:all .3s cubic-bezier(.4,0,.2,1);flex:1;max-width:320px;position:relative;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,8%)}.nav-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(102,126,234,.1),transparent);transition:left .6s}.nav-btn:hover{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-color:#667eea;color:#fff;transform:translateY(-3px);box-shadow:0 15px 40px rgba(102,126,234,.3)}.nav-btn:hover::before{left:100%}.nav-btn span:first-child{font-size:.95em;color:#7f8c8d;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}.nav-btn:hover span:first-child{color:rgba(255,255,255,.9)}.nav-title{font-weight:600;line-height:1.4;font-size:1.05em}.next-btn{text-align:right}@media(max-width:768px){.lesson-container{flex-direction:column;background:linear-gradient(180deg,#f5f7fa 0%,#c3cfe2 100%)}.lesson-sidebar{width:100%;height:auto;position:static;border-right:none;border-bottom:2px solid #e8ecef;box-shadow:0 2px 15px rgba(0,0,0,.1);padding:25px 20px;margin:0;border-radius:0}.lesson-content{max-width:100%;padding:30px 20px;margin:15px;border-radius:15px}.post-title{font-size:1.8em}.post-content{font-size:1em}.nav-buttons{flex-direction:column;gap:15px}.nav-btn{max-width:100%}.next-btn{text-align:left}.chapter-link:hover,.chapter-item.active .chapter-link{transform:none}}</style></main><footer class=footer><span>&copy; 2021 丢哥 all rights reserved.</span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="复制";function s(){t.innerHTML="已复制！",setTimeout(()=>{t.innerHTML="复制"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

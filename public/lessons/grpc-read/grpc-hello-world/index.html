@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>第二章：grpc hello world | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="grpc quick start
@@ -12,16 +12,16 @@
 1、安装
 go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要先执行 go version 查看 go  版本，假如版本低于 1.6 则需要先升级。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="https://diu.life/lessons/grpc-read/grpc-hello-world/">
+<link rel="canonical" href="http://localhost:1313/lessons/grpc-read/grpc-hello-world/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://diu.life/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://diu.life/apple-touch-icon.png">
-<link rel="mask-icon" href="https://diu.life/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="https://diu.life/lessons/grpc-read/grpc-hello-world/">
+<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/grpc-read/grpc-hello-world/">
 <noscript>
     <style>
         #theme-toggle,
@@ -58,83 +58,7 @@ go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要�
         }
 
     </style>
-</noscript><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-hello-world/">
-  <meta property="og:site_name" content="丢哥">
-  <meta property="og:title" content="第二章：grpc hello world">
-  <meta property="og:description" content="grpc quick start 我们分析 go 版本的 grpc 实现，所以这里主要讲解 grpc-go 的安装和使用
-1、安装 go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要先执行 go version 查看 go 版本，假如版本低于 1.6 则需要先升级。">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="lessons">
-    <meta property="article:published_time" content="2019-11-02T00:00:00+08:00">
-    <meta property="article:modified_time" content="2019-11-02T00:00:00+08:00">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="第二章：grpc hello world">
-<meta name="twitter:description" content="grpc quick start
-我们分析 go 版本的 grpc 实现，所以这里主要讲解 grpc-go 的安装和使用
-1、安装
-go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要先执行 go version 查看 go  版本，假如版本低于 1.6 则需要先升级。">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "教程",
-      "item": "https://diu.life/lessons/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "gRPC 源码阅读",
-      "item": "https://diu.life/lessons/grpc-read/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  3 ,
-      "name": "第二章：grpc hello world",
-      "item": "https://diu.life/lessons/grpc-read/grpc-hello-world/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "第二章：grpc hello world",
-  "name": "第二章：grpc hello world",
-  "description": "grpc quick start 我们分析 go 版本的 grpc 实现，所以这里主要讲解 grpc-go 的安装和使用\n1、安装 go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要先执行 go version 查看 go 版本，假如版本低于 1.6 则需要先升级。\n",
-  "keywords": [
-    
-  ],
-  "articleBody": "grpc quick start 我们分析 go 版本的 grpc 实现，所以这里主要讲解 grpc-go 的安装和使用\n1、安装 go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要先执行 go version 查看 go 版本，假如版本低于 1.6 则需要先升级。\n官网上给的安装方式是\ngo get -u google.golang.org/grpc 因为 google.golang.org 这个域名在国内会被墙，所以假如可以翻墙的计算机可以用这种方式，不能翻墙的可以通过以下方式安装\ngit clone https://github.com/grpc/grpc-go.git $GOPATH/src/google.golang.org/grpc git clone https://github.com/golang/net.git $GOPATH/src/golang.org/x/net git clone https://github.com/golang/text.git $GOPATH/src/golang.org/x/text go get -u github.com/golang/protobuf/{proto,protoc-gen-go} git clone https://github.com/google/go-genproto.git $GOPATH/src/google.golang.org/genproto cd $GOPATH/src/ go install google.golang.org/grpc 假如安装不成功则说明你 GOPATH 没有配置，可以先配置 GOPATH 后再执行\n// 配置 GOPATH export GOPATH=/Users/delvin/go 2、hello world grpc-go 官方提供了一些 examples ，都放在 examples 目录下，examples 目录下有三个目录，features 目录主要是 grpc 的一些特写使用，包括路由寻址、keep-alive、负载均衡等。helloworld 目录下主要是提供了一个 helloworld demo。route_guide 目录主要提供了对 grpc 四种调用方式：Simple RPC、Client-side streaming RPC、Server-side streaming RPC、Bidirectional streaming RPC 的模拟调用 demo。\n我们通过 grpc 提供的 helloworld demo 来简单了解下如何使用 grpc 。\n之前我们说到了 grpc 是通过 protocol buffer 来实现接口的定义的。helloworld 包下已经给我们定义好了一个 helloworld.proto 如下：\nsyntax = \"proto3\"; option java_multiple_files = true; option java_package = \"io.grpc.examples.helloworld\"; option java_outer_classname = \"HelloWorldProto\"; package helloworld; // The greeting service definition. service Greeter { // Sends a greeting rpc SayHello (HelloRequest) returns (HelloReply) {} } // The request message containing the user's name. message HelloRequest { string name = 1; } // The response message containing the greetings message HelloReply { string message = 1; } 可以看到 SayHello 这个结构体里面已经定义好了一个 rpc Service 调用，\nrpc SayHello (HelloRequest) returns (HelloReply) {} 在 Service 中包含一个方法，SayHello, 支持传入一个 HelloRequest 的参数，返回一个 HelloReply 的响应。这两个结构体分别也在 proto 文件里面定义了。\n通过 protoc 可以生成一个 pb.go 文件（这里 demo ）里面已经生成好了。然后编写一个 client 和 server 即可实现一个完整的 rpc 调用链路，这里 demo 里面也提供了，我们先直接运行一下：\ncd $GOPATH/src/google.golang.org/grpc/examples/helloworld 先在一个 terminal 下执行：\ngo run greeter_server/main.go 然后在另一个 terminal 下执行：\ngo run greeter_client/main.go 此时 client 会输出 Greeting: Helloworld\n2019/08/03 15:57:46 Greeting: Helloworld 3、自定义一个 service 这里也是 grpc docs 上一个相同的例子，我贴上来介绍一下，为了让本节内容更完整。\n（1）在 pb 文件里面添加一个 rpc 方法\n// The greeting service definition. service Greeter { // Sends a greeting rpc SayHello (HelloRequest) returns (HelloReply) {} // Sends another greeting rpc SayHelloAgain (HelloRequest) returns (HelloReply) {} } // The request message containing the user's name. message HelloRequest { string name = 1; } // The response message containing the greetings message HelloReply { string message = 1; } （2）生成 pb.go 文件\nprotoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld （3）在 greeter_server/main.go 下添加一个方法，入参和返回值和 SayHello 完全相同，使用已经定义过的结构体 HelloRequest 和 HelloReply\nfunc (s *server) SayHelloAgain(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) { return \u0026pb.HelloReply{Message: \"Hello again \" + in.Name}, nil } （4）在 greeter_client/main.go 下添加一个方法调用，调用 SayHelloAgain 这个方法\nr, err = c.SayHelloAgain(ctx, \u0026pb.HelloRequest{Name: name}) if err != nil { log.Fatalf(\"could not greet: %v\", err) } log.Printf(\"Greeting: %s\", r.Message) （5）执行\n先在一个 terminal 下执行：\ngo run greeter_server/main.go 然后在另一个 terminal 下执行：\ngo run greeter_client/main.go 可以看到 client 的 terminal 输出如下：\nDEVLINTANG-MB0:helloworld delvin$ go run greeter_client/main.go 2019/08/03 16:18:24 Greeting: Hello world 2019/08/03 16:18:24 Greeting: Hello again world 这篇内容主要介绍了 grpc 的安装以及基本使用。分析了通过 grpc 输出 hello world 的基本要素和过程。\n",
-  "wordCount" : "1083",
-  "inLanguage": "zh",
-  "datePublished": "2019-11-02T00:00:00+08:00",
-  "dateModified": "2019-11-02T00:00:00+08:00",
-  "author":{
-    "@type": "Person",
-    "name": "丢哥"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://diu.life/lessons/grpc-read/grpc-hello-world/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "丢哥",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://diu.life/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -152,7 +76,7 @@ go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要�
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -178,27 +102,27 @@ go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要�
         </div>
         <ul id="menu">
             <li>
-                <a href="https://diu.life/" title="首页">
+                <a href="http://localhost:1313/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="https://diu.life/posts/" title="文章">
+                <a href="http://localhost:1313/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="https://diu.life/projects/" title="独立开发">
+                <a href="http://localhost:1313/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="https://diu.life/lessons/" title="教程">
+                <a href="http://localhost:1313/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="https://diu.life/about/" title="关于">
+                <a href="http://localhost:1313/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -213,62 +137,62 @@ go 语言版本的 grpc 安装需要 1.6 以上的 go 版本，所以你需要�
       <h3>Grpc-Read 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-concepts-http2/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-concepts-http2/" class="chapter-link">
             <span class="chapter-title">第一章：grpc concepts &amp; http2</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world/" class="chapter-link">
             <span class="chapter-title">第二章：grpc hello world</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world-server-analysis/" class="chapter-link">
             <span class="chapter-title">第三章：grpc hello world server 解析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world-client-analysis/" class="chapter-link">
             <span class="chapter-title">第四章：grpc hello world client 解析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-service-discovery/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-service-discovery/" class="chapter-link">
             <span class="chapter-title">第五章：grpc 服务发现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-load-balancing/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-load-balancing/" class="chapter-link">
             <span class="chapter-title">第六章：grpc 负载均衡</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-auth-tls/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-auth-tls/" class="chapter-link">
             <span class="chapter-title">第七章：grpc 认证鉴权——tls认证</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-auth-oauth2/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-auth-oauth2/" class="chapter-link">
             <span class="chapter-title">第八章：grpc 认证鉴权——oauth2认证</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-interceptor-implementation/" class="chapter-link">
             <span class="chapter-title">第九章：grpc 拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-codec/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-protocol-codec/" class="chapter-link">
             <span class="chapter-title">第十章：grpc 协议编解码器</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-protocol-unpacking-analysis/" class="chapter-link">
             <span class="chapter-title">第十一章：grpc 协议解包过程全剖析</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/grpc-read/grpc-data-flow/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/grpc-read/grpc-data-flow/" class="chapter-link">
             <span class="chapter-title">第十二章：grpc 数据流转</span>
           </a>
         </li>
@@ -408,11 +332,11 @@ log.Printf(&quot;Greeting: %s&quot;, r.Message)
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="https://diu.life/lessons/grpc-read/grpc-concepts-http2/" class="nav-btn prev-btn">
+            <a href="http://localhost:1313/lessons/grpc-read/grpc-concepts-http2/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第一章：grpc concepts &amp; http2</span>
             </a>
-            <a href="https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/" class="nav-btn next-btn">
+            <a href="http://localhost:1313/lessons/grpc-read/grpc-hello-world-server-analysis/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第三章：grpc hello world server 解析</span>
             </a>

@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>第二十二章：框架性能测试 | 丢哥</title>
 <meta name="keywords" content="">
 <meta name="description" content="到这一章，我们的框架核心功能的原理和实现就已经介绍完了。那拥有这些能力的框架究竟性能如何呢，我们在这一章节就来测试一下。
 一、编写性能测试工具
 为了测试框架性能，我们需要写一个测试工具，这个工具能够模拟不同的并发数和 qps 请求，实现对我们 gorpc 框架开发的 server 的不断发包和收包。">
 <meta name="author" content="丢哥">
-<link rel="canonical" href="https://diu.life/lessons/go-rpc/performance-test/">
+<link rel="canonical" href="http://localhost:1313/lessons/go-rpc/performance-test/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://diu.life/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://diu.life/apple-touch-icon.png">
-<link rel="mask-icon" href="https://diu.life/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="zh" href="https://diu.life/lessons/go-rpc/performance-test/">
+<link rel="alternate" hreflang="zh" href="http://localhost:1313/lessons/go-rpc/performance-test/">
 <noscript>
     <style>
         #theme-toggle,
@@ -57,82 +57,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://diu.life/lessons/go-rpc/performance-test/">
-  <meta property="og:site_name" content="丢哥">
-  <meta property="og:title" content="第二十二章：框架性能测试">
-  <meta property="og:description" content="到这一章，我们的框架核心功能的原理和实现就已经介绍完了。那拥有这些能力的框架究竟性能如何呢，我们在这一章节就来测试一下。
-一、编写性能测试工具 为了测试框架性能，我们需要写一个测试工具，这个工具能够模拟不同的并发数和 qps 请求，实现对我们 gorpc 框架开发的 server 的不断发包和收包。">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="lessons">
-    <meta property="article:published_time" content="2020-02-22T00:00:00+08:00">
-    <meta property="article:modified_time" content="2020-02-22T00:00:00+08:00">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="第二十二章：框架性能测试">
-<meta name="twitter:description" content="到这一章，我们的框架核心功能的原理和实现就已经介绍完了。那拥有这些能力的框架究竟性能如何呢，我们在这一章节就来测试一下。
-一、编写性能测试工具
-为了测试框架性能，我们需要写一个测试工具，这个工具能够模拟不同的并发数和 qps 请求，实现对我们 gorpc 框架开发的 server 的不断发包和收包。">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "教程",
-      "item": "https://diu.life/lessons/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "从 0 到 1 开发一款高性能 RPC 框架",
-      "item": "https://diu.life/lessons/go-rpc/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  3 ,
-      "name": "第二十二章：框架性能测试",
-      "item": "https://diu.life/lessons/go-rpc/performance-test/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "第二十二章：框架性能测试",
-  "name": "第二十二章：框架性能测试",
-  "description": "到这一章，我们的框架核心功能的原理和实现就已经介绍完了。那拥有这些能力的框架究竟性能如何呢，我们在这一章节就来测试一下。\n一、编写性能测试工具 为了测试框架性能，我们需要写一个测试工具，这个工具能够模拟不同的并发数和 qps 请求，实现对我们 gorpc 框架开发的 server 的不断发包和收包。\n",
-  "keywords": [
-    
-  ],
-  "articleBody": "到这一章，我们的框架核心功能的原理和实现就已经介绍完了。那拥有这些能力的框架究竟性能如何呢，我们在这一章节就来测试一下。\n一、编写性能测试工具 为了测试框架性能，我们需要写一个测试工具，这个工具能够模拟不同的并发数和 qps 请求，实现对我们 gorpc 框架开发的 server 的不断发包和收包。\n这个工具的代码都放在 github 上了，地址为：gorpc-benchmark\n下面简单介绍下这个工具的实现：\n先定义了一个 Counter 类来汇总一些核心数据，包括总请求量、请求的成功量、失败量、并发数、总耗时等。\ntype Counter struct { Succ int64 // 成功量 Fail int64 // 失败量 Total int64 // 总量 Concurrency int64 // 并发量 Cost int64 // 总耗时 ms } 接下来需要实现根据指定的并发数、总请求数来进行发包，这里的发包我们还是使用 gorpc 框架自带的 client。\nfunc request(totalReqs int64, concurrency int64, target string) { perClientReqs := totalReqs / concurrency counter := \u0026Counter{ Total: perClientReqs * concurrency, Concurrency: concurrency, } opts := []client.Option{ client.WithTarget(target), client.WithNetwork(\"tcp\"), client.WithTimeout(2000 * time.Millisecond), client.WithSerializationType(\"msgpack\"), } c := client.DefaultClient req := \u0026testdata.HelloRequest{ Msg: \"hello\", } var wg sync.WaitGroup wg.Add(int(concurrency)) startTime := time.Now().UnixNano() for i := int64(0); i \u003c counter.Concurrency; i++ { go func(i int64) { for j := int64(0); j \u003c perClientReqs; j++ { rsp := \u0026testdata.HelloReply{} err := c.Call(context.Background(), \"/helloworld.Greeter/SayHello\", req, rsp, opts...) if err == nil \u0026\u0026 rsp.Msg == \"world\" { atomic.AddInt64(\u0026counter.Succ, 1) } else { log.Info(\"rsp fail : %v\", err) atomic.AddInt64(\u0026counter.Fail, 1) } } wg.Done() }(i) } wg.Wait() counter.Cost = (time.Now().UnixNano() - startTime) / 1000000 log.Info(\"took %d ms for %d requests\", counter.Cost, counter.Total) log.Info(\"sent requests : %d\\n\", counter.Total) log.Info(\"received requests : %d\\n\", atomic.LoadInt64(\u0026counter.Succ)+atomic.LoadInt64(\u0026counter.Fail)) log.Info(\"received requests succ : %d\\n\", atomic.LoadInt64(\u0026counter.Succ)) log.Info(\"received requests fail : %d\\n\", atomic.LoadInt64(\u0026counter.Fail)) log.Info(\"throughput (TPS) : %d\\n\", totalReqs*1000/counter.Cost) } 这段代码的核心是用到了 sync.WaitGroup ，用来实现当所有的协程都执行成功后才统计我们的成功率、失败率、框架的 TPS 能力数据。并且使用原子包 atomic 进行计数。\n我们来解释下核心的这段代码，并发数 concurrency 默认是 500，总请求数 total 默认是 1000000，支持用户传参修改。当 concurrency = 500 ，total = 1000000 时，用 for 循环启动了 500 个协程，每个协程需要发送 1000000/500 = 2000 个请求，这里使用了第二个 for 循环来循环发送请求，判断响应是否成功，如下：\nvar wg sync.WaitGroup wg.Add(int(concurrency)) startTime := time.Now().UnixNano() for i := int64(0); i \u003c counter.Concurrency; i++ { go func(i int64) { for j := int64(0); j \u003c perClientReqs; j++ { rsp := \u0026testdata.HelloReply{} err := c.Call(context.Background(), \"/helloworld.Greeter/SayHello\", req, rsp, opts...) if err == nil \u0026\u0026 rsp.Msg == \"world\" { atomic.AddInt64(\u0026counter.Succ, 1) } else { log.Info(\"rsp fail : %v\", err) atomic.AddInt64(\u0026counter.Fail, 1) } } wg.Done() }(i) } wg.Wait() 二、性能测试 测试工具写好之后，我们就对一个 gorpc 的 server 进行性能压测了。步骤如下：\n## 先 clone 测试代码 git clone https://github.com/lubanproj/gorpc-benchmark.git cd gorpc-benchmark ## 启动 server go run -v server.go ## 另起终端，启动 client go run -v client.go -concurrency=500 -total=1000000 按照上述步骤执行命令，得到下面结果：\ntook 13267 ms for 1000000 requests sent requests : 1000000 received requests : 1000000 received requests succ : 1000000 received requests fail : 0 throughput (TPS) : 75374 三、性能分析 1、pprof go 语言自身提供了一套工具链来进行性能分析，这里主要用到的是一个大杀器 —— pprof 工具。\npprof 是 go 语言自带的工具包，可以用来进行性能分析，同时自带可视化。平常比较常用的性能分析包主要有下面两种：\nruntime/pprof：对程序 runtime 运行时的数据进行性能分析，包括 cpu、内存占用等 net/http/pprof：采集 HTTP Server 的运行时数据进行分析，这个其实在上面的功能的基础上，包了一层接口，提供了一个 http 服务。 我们这里主要用 http 服务的方式，也就是第二个包。\n使用姿势如下：\nimport ( \"net/http\" _ \"net/http/pprof\" ) func pprof() { go func() { http.ListenAndServe(\"localhost:8899\", http.DefaultServeMux) }() } 首先我们需要引入 “net/http/pprof” 这个包，然后调用 http.ListenAndServe(“localhost:8899”, http.DefaultServeMux) ，暴露出一个 http 服务，给用户查询性能分析的可见化结果，包括火焰图等。\n2、分析调用链路 引入 pprof 工具后，在之前的步骤的基础上，稍微更改一下，启动 server 的时候同时启动 pprof，如下：\n## 先 clone 测试代码 git clone https://github.com/lubanproj/gorpc-benchmark.git cd gorpc-benchmark ## 启动 server go run -v server.go pprof.go ## 另起终端，启动 client go run -v client.go -concurrency=500 -total=1000000 启动 client 后，另起终端，执行：\ngo tool pprof http://localhost:8899/debug/pprof/profile?seconds=30 这个命令会采集 server 30s 内的 cpu 消耗情况，然后把结果输出到一个 profile 文件中，如下：\nFetching profile over HTTP from http://localhost:8899/debug/pprof/profile?seconds=30 Saved profile in /data/home/diubrother/pprof/pprof.server.samples.cpu.001.pb.gz File: server Type: cpu Time: May 10, 2020 at 6:17pm (CST) Duration: 30s, Total samples = 20.74s (69.13%) Entering interactive mode (type \"help\" for commands, \"o\" for options) 分析 profile 文件，执行：\ngo tool pprof -http=:9000 /data/home/diubrother/pprof/pprof.server.samples.cpu.001.pb.gz 在浏览器中输入 http://localhost:9000/ ，即可看到服务的调用树，如下：\n通过分析调用树，可以清晰看到系统的耗时和瓶颈。\n小结 本章主要介绍了框架性能分析的流程，并且介绍了如何使用 pprof 进行性能分析。\n",
-  "wordCount" : "1409",
-  "inLanguage": "zh",
-  "datePublished": "2020-02-22T00:00:00+08:00",
-  "dateModified": "2020-02-22T00:00:00+08:00",
-  "author":{
-    "@type": "Person",
-    "name": "丢哥"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://diu.life/lessons/go-rpc/performance-test/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "丢哥",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://diu.life/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -150,7 +75,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://diu.life/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
+            <a href="http://localhost:1313/" accesskey="h" title="丢哥 (Alt + H)">丢哥</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -176,27 +101,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://diu.life/" title="首页">
+                <a href="http://localhost:1313/" title="首页">
                     <span>首页</span>
                 </a>
             </li>
             <li>
-                <a href="https://diu.life/posts/" title="文章">
+                <a href="http://localhost:1313/posts/" title="文章">
                     <span>文章</span>
                 </a>
             </li>
             <li>
-                <a href="https://diu.life/projects/" title="独立开发">
+                <a href="http://localhost:1313/projects/" title="独立开发">
                     <span>独立开发</span>
                 </a>
             </li>
             <li>
-                <a href="https://diu.life/lessons/" title="教程">
+                <a href="http://localhost:1313/lessons/" title="教程">
                     <span>教程</span>
                 </a>
             </li>
             <li>
-                <a href="https://diu.life/about/" title="关于">
+                <a href="http://localhost:1313/about/" title="关于">
                     <span>关于</span>
                 </a>
             </li>
@@ -211,122 +136,122 @@
       <h3>Go-Rpc 教程</h3>
       <ul class="chapter-list">
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/what-is-rpc/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/what-is-rpc/" class="chapter-link">
             <span class="chapter-title">第一章：RPC 原理</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/rpc-framework-overview/" class="chapter-link">
             <span class="chapter-title">第二章：RPC 框架概览</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/build-server/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/build-server/" class="chapter-link">
             <span class="chapter-title">第三章：框架搭建 —— server</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/build-client/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/build-client/" class="chapter-link">
             <span class="chapter-title">第四章：框架搭建 —— client</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/build-transport/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/build-transport/" class="chapter-link">
             <span class="chapter-title">第五章：框架搭建 —— transport</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/context-timeout/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/context-timeout/" class="chapter-link">
             <span class="chapter-title">第六章：超时机制</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/custom-protocol/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/custom-protocol/" class="chapter-link">
             <span class="chapter-title">第七章：自定义协议实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/codec/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/codec/" class="chapter-link">
             <span class="chapter-title">第八章：协议编解码实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/" class="chapter-link">
             <span class="chapter-title">第九章：序列化实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/log-component/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/log-component/" class="chapter-link">
             <span class="chapter-title">第十章：日志模块实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/connection-pool/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/connection-pool/" class="chapter-link">
             <span class="chapter-title">第十一章：连接池实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/interceptor/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/interceptor/" class="chapter-link">
             <span class="chapter-title">第十二章：拦截器实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/component-interface/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/component-interface/" class="chapter-link">
             <span class="chapter-title">第十三章：组件可插拔实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/plugin/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/plugin/" class="chapter-link">
             <span class="chapter-title">第十四章：插件体系实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-selection/" class="chapter-link">
             <span class="chapter-title">第十五章：服务发现原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/service-discovery-implementation/" class="chapter-link">
             <span class="chapter-title">第十六章：服务发现实现 —— consul</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/load-balance-implementation/" class="chapter-link">
             <span class="chapter-title">第十七章：负载均衡实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/tracing-selection/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/tracing-selection/" class="chapter-link">
             <span class="chapter-title">第十八章：分布式链路追踪原理及选型</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/tracing-implementation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/tracing-implementation/" class="chapter-link">
             <span class="chapter-title">第十九章：分布式链路追踪实现 —— jaeger</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/auth/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/auth/" class="chapter-link">
             <span class="chapter-title">第二十章：认证鉴权实现</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/code-generation/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/code-generation/" class="chapter-link">
             <span class="chapter-title">第二十一章：代码生成工具实现</span>
           </a>
         </li>
         <li class="chapter-item active">
-          <a href="https://diu.life/lessons/go-rpc/performance-test/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/performance-test/" class="chapter-link">
             <span class="chapter-title">第二十二章：框架性能测试</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/performance-optimization/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="chapter-link">
             <span class="chapter-title">第二十三章：框架性能优化</span>
           </a>
         </li>
         <li class="chapter-item ">
-          <a href="https://diu.life/lessons/go-rpc/summary/" class="chapter-link">
+          <a href="http://localhost:1313/lessons/go-rpc/summary/" class="chapter-link">
             <span class="chapter-title">第二十四章：总结与展望</span>
           </a>
         </li>
@@ -514,11 +439,11 @@
       <div class="lesson-navigation">
         
         <div class="nav-buttons">
-            <a href="https://diu.life/lessons/go-rpc/code-generation/" class="nav-btn prev-btn">
+            <a href="http://localhost:1313/lessons/go-rpc/code-generation/" class="nav-btn prev-btn">
               <span>← 上一章</span>
               <span class="nav-title">第二十一章：代码生成工具实现</span>
             </a>
-            <a href="https://diu.life/lessons/go-rpc/performance-optimization/" class="nav-btn next-btn">
+            <a href="http://localhost:1313/lessons/go-rpc/performance-optimization/" class="nav-btn next-btn">
               <span>下一章 →</span>
               <span class="nav-title">第二十三章：框架性能优化</span>
             </a>

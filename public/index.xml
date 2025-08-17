@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>丢哥</title>
-    <link>https://diu.life/</link>
+    <link>http://localhost:1313/</link>
     <description>Recent content on 丢哥</description>
     <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Thu, 01 Jun 2023 00:00:00 +0800</lastBuildDate>
-    <atom:link href="https://diu.life/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>独立开发</title>
-      <link>https://diu.life/projects/</link>
+      <link>http://localhost:1313/projects/</link>
       <pubDate>Thu, 01 Jun 2023 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/projects/</guid>
+      <guid>http://localhost:1313/projects/</guid>
       <description>&lt;h3 id=&#34;knowourself&#34;&gt;KnowOurself&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.knowourself.com/&#34;&gt;KnowOurself&lt;/a&gt; MBTI 性格分析、性格测试网站&lt;/li&gt;
@@ -32,9 +32,9 @@
     </item>
     <item>
       <title>关于我</title>
-      <link>https://diu.life/about/</link>
+      <link>http://localhost:1313/about/</link>
       <pubDate>Wed, 01 Mar 2023 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/about/</guid>
+      <guid>http://localhost:1313/about/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;永不畏败&lt;/p&gt;&lt;/blockquote&gt;
 &lt;ul&gt;
@@ -50,50 +50,50 @@
     </item>
     <item>
       <title>我为什么想成立工作室</title>
-      <link>https://diu.life/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</link>
+      <link>http://localhost:1313/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</link>
       <pubDate>Fri, 13 Mar 2020 21:14:41 +0800</pubDate>
-      <guid>https://diu.life/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</guid>
+      <guid>http://localhost:1313/posts/%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E6%88%90%E7%AB%8B%E5%B7%A5%E4%BD%9C%E5%AE%A4/</guid>
       <description>&lt;p&gt;其实是想说说自己成立鲁班科技工作室的初衷。但有一种五味陈杂的感觉，突然不知道从何说起。自身的感受很多、很杂、很乱，其实归结到一起无非就是，对未来感到焦虑，对目前阶段的自己的状态并不是非常满意。所以工作室的 slogan，我想表达的是希望鲁班科技工作室能够帮助大家成为让自己满意的人。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第二十四章：总结与展望</title>
-      <link>https://diu.life/lessons/go-rpc/summary/</link>
+      <link>http://localhost:1313/lessons/go-rpc/summary/</link>
       <pubDate>Mon, 24 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/summary/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/summary/</guid>
       <description>&lt;p&gt;写到这里，感慨颇多&lt;/p&gt;
 &lt;p&gt;从 0 到 1 去实现一款 rpc 框架，其实还是有一些难度和挑战的。但是相信在这个过程中，大家一定会有不少收获&lt;/p&gt;
 &lt;p&gt;在这里推荐一个 go 资料的网址（收集了几乎所有使用 go 实现的开源系统或第三方包的源码）：https://github.com/avelino/awesome-go&lt;/p&gt;</description>
     </item>
     <item>
       <title>第二十三章：框架性能优化</title>
-      <link>https://diu.life/lessons/go-rpc/performance-optimization/</link>
+      <link>http://localhost:1313/lessons/go-rpc/performance-optimization/</link>
       <pubDate>Sun, 23 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/performance-optimization/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/performance-optimization/</guid>
       <description>&lt;p&gt;上一章介绍了使用 pprof 工具进行框架的性能测试，本章来继续介绍一下如何通过火焰图分析框架的性能瓶颈，并进行相应的性能优化。&lt;/p&gt;
 &lt;h3 id=&#34;一压测环境&#34;&gt;一、压测环境&lt;/h3&gt;
 &lt;p&gt;压测的前提是有一台压测机器，我们的压测环境为：&lt;/p&gt;</description>
     </item>
     <item>
       <title>第二十二章：框架性能测试</title>
-      <link>https://diu.life/lessons/go-rpc/performance-test/</link>
+      <link>http://localhost:1313/lessons/go-rpc/performance-test/</link>
       <pubDate>Sat, 22 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/performance-test/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/performance-test/</guid>
       <description>&lt;p&gt;到这一章，我们的框架核心功能的原理和实现就已经介绍完了。那拥有这些能力的框架究竟性能如何呢，我们在这一章节就来测试一下。&lt;/p&gt;
 &lt;h3 id=&#34;一编写性能测试工具&#34;&gt;一、编写性能测试工具&lt;/h3&gt;
 &lt;p&gt;为了测试框架性能，我们需要写一个测试工具，这个工具能够模拟不同的并发数和 qps 请求，实现对我们 gorpc 框架开发的 server 的不断发包和收包。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第二十一章：代码生成工具实现</title>
-      <link>https://diu.life/lessons/go-rpc/code-generation/</link>
+      <link>http://localhost:1313/lessons/go-rpc/code-generation/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/code-generation/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/code-generation/</guid>
       <description>&lt;p&gt;前面我们说到了 gorpc 调用有反射和代码生成两种调用方式。前面的介绍一直都以反射的调用方式来进行介绍。下面我们先来介绍一下代码生成方式的调用全过程，接着介绍下代码生成工具的调研和具体实现。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第二十章：认证鉴权实现</title>
-      <link>https://diu.life/lessons/go-rpc/auth/</link>
+      <link>http://localhost:1313/lessons/go-rpc/auth/</link>
       <pubDate>Thu, 20 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/auth/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/auth/</guid>
       <description>&lt;p&gt;本章介绍 gorpc 认证鉴权的实现，本章主要介绍原理和部分代码实现，全部代码可以参考：&lt;a href=&#34;https://github.com/lubanproj/gorpc/tree/master/auth&#34;&gt;auth&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;在实现 gorpc 认证鉴权之前，我们需要了解一些认证鉴权方面的知识。&lt;/p&gt;
 &lt;h3 id=&#34;一单体模式下的认证鉴权&#34;&gt;一、单体模式下的认证鉴权&lt;/h3&gt;
@@ -101,119 +101,119 @@
     </item>
     <item>
       <title>第十九章：分布式链路追踪实现 —— jaeger</title>
-      <link>https://diu.life/lessons/go-rpc/tracing-implementation/</link>
+      <link>http://localhost:1313/lessons/go-rpc/tracing-implementation/</link>
       <pubDate>Wed, 19 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/tracing-implementation/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/tracing-implementation/</guid>
       <description>&lt;p&gt;上一章我们介绍了分布式链路追踪的原理、opentracing 规范并对 jaeger 进行了简单介绍，这一章我们将介绍使用 jaeger 来进行分布式链路追踪的具体实现。&lt;/p&gt;
 &lt;h3 id=&#34;一运行效果&#34;&gt;一、运行效果&lt;/h3&gt;
 &lt;p&gt;由于很多同学没有接触过分布式链路追踪，所以我们这一次改变方式，先给大家看一下我们需要实现的效果，然后一一讲解怎么去实现。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十八章：分布式链路追踪原理及选型</title>
-      <link>https://diu.life/lessons/go-rpc/tracing-selection/</link>
+      <link>http://localhost:1313/lessons/go-rpc/tracing-selection/</link>
       <pubDate>Tue, 18 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/tracing-selection/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/tracing-selection/</guid>
       <description>&lt;h3 id=&#34;一什么是分布式链路追踪&#34;&gt;一、什么是分布式链路追踪？&lt;/h3&gt;
 &lt;p&gt;现代微服务系统中，一套复杂的分布式 Web 系统中，客户端的一次请求操作，可能需要经过系统中多个模块、多个中间件、多台机器的相互协作才能完成，并且这一系列调用请求中，有些是串行处理的，有些是并发执行的，那么如何确定客户端的一次操作背后调用了哪些应用、哪些模块，经过了哪些节点，每个模块的调用先后顺序是怎样的，每个模块的性能问题如何呢？为了解决这个问题，分布式链路追踪这个概念应运而生。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十七章：负载均衡实现</title>
-      <link>https://diu.life/lessons/go-rpc/load-balance-implementation/</link>
+      <link>http://localhost:1313/lessons/go-rpc/load-balance-implementation/</link>
       <pubDate>Mon, 17 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/load-balance-implementation/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/load-balance-implementation/</guid>
       <description>&lt;p&gt;其实我们在前面介绍服务发现的时候就顺带牵涉到了负载均衡。我们在这一章对负载均衡进行一个详细的讲解。&lt;/p&gt;
 &lt;h3 id=&#34;一什么是负载均衡&#34;&gt;一、什么是负载均衡？&lt;/h3&gt;
 &lt;p&gt;负载均衡（load balance），它的职责是将网络请求，或者其他形式的负载 “均摊” 到不同的机器上吗，从而避免出现集群中某些服务器压力过大，而另一些服务器又比较空闲的情况。通过负载均衡，我们可以让每台服务器获取到适合自己处理能力的负载。在为高负载服务器分流的同时，还可以避免资源浪费，一举两得。负载均衡可分为软件负载均衡和硬件负载均衡。在我们日常开发中，一般很难接触到硬件负载均衡。但软件负载均衡还是可以接触到的，比如 nginx。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十六章：服务发现实现 —— consul</title>
-      <link>https://diu.life/lessons/go-rpc/service-discovery-implementation/</link>
+      <link>http://localhost:1313/lessons/go-rpc/service-discovery-implementation/</link>
       <pubDate>Sun, 16 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/service-discovery-implementation/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/service-discovery-implementation/</guid>
       <description>&lt;p&gt;上一章我们介绍了服务发现的具体原理以及技术选型，本章我们将从代码实现的角度来介绍下如何使用 consul 来进行框架服务发现支持。&lt;/p&gt;
 &lt;h3 id=&#34;一consul-介绍&#34;&gt;一、consul 介绍&lt;/h3&gt;
 &lt;p&gt;关于 consul 的介绍，最直接的可以参考官方 github 仓库 &lt;a href=&#34;https://github.com/hashicorp/consul&#34;&gt;consul&lt;/a&gt;，或者直接参考 consul 官网 &lt;a href=&#34;https://www.consul.io/&#34;&gt;www.consul.io&lt;/a&gt; 。这里我们只介绍最基础的环境安装和 quick start&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十五章：服务发现原理及选型</title>
-      <link>https://diu.life/lessons/go-rpc/service-discovery-selection/</link>
+      <link>http://localhost:1313/lessons/go-rpc/service-discovery-selection/</link>
       <pubDate>Sat, 15 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/service-discovery-selection/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/service-discovery-selection/</guid>
       <description>&lt;p&gt;上一章介绍了插件体系的实现，从本章开始，我们开始陆续介绍各个插件的设计与实现。之前说到了，在微服务环境下，框架默认支持的能力包括：服务发现、负载均衡、分布式链路追踪。我们先从服务发现开始，介绍框架是如何支持服务发现能力的。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十四章：插件体系实现</title>
-      <link>https://diu.life/lessons/go-rpc/plugin/</link>
+      <link>http://localhost:1313/lessons/go-rpc/plugin/</link>
       <pubDate>Fri, 14 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/plugin/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/plugin/</guid>
       <description>&lt;h3 id=&#34;一什么是插件&#34;&gt;一、什么是插件？&lt;/h3&gt;
 &lt;p&gt;插件（plug-in），是一个程序的辅助或者扩展功能模块，对程序来说可有可无，但它能给程序提供一种额外的功能。&lt;/p&gt;
 &lt;p&gt;插件化思想在不同的场景有不同的运用。对于前台应用来说，插件化主要解决减少应用程序大小、免安装扩展功能。对于后台应用来说，插件化主要是用来减少模块间的依赖，降低模块间耦合度。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十三章：组件可插拔实现</title>
-      <link>https://diu.life/lessons/go-rpc/component-interface/</link>
+      <link>http://localhost:1313/lessons/go-rpc/component-interface/</link>
       <pubDate>Thu, 13 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/component-interface/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/component-interface/</guid>
       <description>&lt;h3 id=&#34;一软件的可插拔性&#34;&gt;一、软件的可插拔性&lt;/h3&gt;
 &lt;p&gt;在介绍框架的组件可插拔的实现之前，我们先介绍下软件的可插拔性。&lt;/p&gt;
 &lt;p&gt;什么叫软件的可插拔性呢？通俗一点的解释，顾名思义，就是某个模块插上去和不插上去都不影响系统的正常运行。插上去，某个功能就会被实现，拔掉，又不会影响系统的正常运作。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十二章：拦截器实现</title>
-      <link>https://diu.life/lessons/go-rpc/interceptor/</link>
+      <link>http://localhost:1313/lessons/go-rpc/interceptor/</link>
       <pubDate>Wed, 12 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/interceptor/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/interceptor/</guid>
       <description>&lt;h3 id=&#34;一什么是拦截器&#34;&gt;一、什么是拦截器？&lt;/h3&gt;
 &lt;p&gt;拦截器，通俗点说，就是在执行一段代码之前或者之后，去执行另外一段代码。 拦截器在业界知名框架中的运用非常普遍。包括 Spring 、Grpc 等框架中都有拦截器的实现。接下来我们想办法从 0 到 1 自己实现一个拦截器。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十一章：连接池实现</title>
-      <link>https://diu.life/lessons/go-rpc/connection-pool/</link>
+      <link>http://localhost:1313/lessons/go-rpc/connection-pool/</link>
       <pubDate>Tue, 11 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/connection-pool/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/connection-pool/</guid>
       <description>&lt;h3 id=&#34;一为什么需要连接池&#34;&gt;一、为什么需要连接池&lt;/h3&gt;
 &lt;p&gt;连接池是一个创建和管理连接的缓冲池技术。为什么需要连接池呢？我们知道，client 每次向 server 发起请求都会创建一个连接。一般一个 rpc 请求消耗的时间可能是几百毫秒到几秒，也就是说在一个比较短的时间内，这个连接就会被销毁。假设我们一秒钟需要处理 20w 个请求，假如不使用连接池的话，可能几万十几万的连接在短时间内都会被创建和销毁，这对 cpu 资源是一个很大的消耗，同时因为我们的端口数是 1~65535，除了一些端口被计算机内部占用，每次 client 创建连接都需要分配一个端口，假如并发量过大的话，可能会出现计算机端口不够用的情况。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十章：日志模块实现</title>
-      <link>https://diu.life/lessons/go-rpc/log-component/</link>
+      <link>http://localhost:1313/lessons/go-rpc/log-component/</link>
       <pubDate>Mon, 10 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/log-component/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/log-component/</guid>
       <description>&lt;h3 id=&#34;一log-库调研&#34;&gt;一、log 库调研&lt;/h3&gt;
 &lt;p&gt;要实现 log 模块，我们最容易想到的就是能不能直接使用第三方库。其实社区上的 log 组件是非常多的。在 github 上搜索一下 go log，看到排名靠前的组件有 logrus、zap、glog 等。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第九章：序列化实现</title>
-      <link>https://diu.life/lessons/go-rpc/marshal-and-unmarshal/</link>
+      <link>http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/</link>
       <pubDate>Sun, 09 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/marshal-and-unmarshal/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/marshal-and-unmarshal/</guid>
       <description>&lt;h3 id=&#34;一序列化与反序列化&#34;&gt;一、序列化与反序列化&lt;/h3&gt;
 &lt;p&gt;在计算机网络中，数据都是以二进制形式进行传输的。将对象转换成可以传输的二进制数据的过程叫做序列化。将二进制的数据转换成对象的过程叫做反序列化。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第八章：协议编解码实现</title>
-      <link>https://diu.life/lessons/go-rpc/codec/</link>
+      <link>http://localhost:1313/lessons/go-rpc/codec/</link>
       <pubDate>Sat, 08 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/codec/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/codec/</guid>
       <description>&lt;p&gt;上一章我们介绍了协议的格式、协议的设计和实现。这一章主要重点说说框架的协议编解码。&lt;/p&gt;
 &lt;h3 id=&#34;一什么是编解码&#34;&gt;一、什么是编解码？&lt;/h3&gt;
 &lt;p&gt;上一章说到了，client 向 server 发送数据包，把请求包转成二进制数据流后，不是直接发送，而是按照协议的格式，拼装成一个数据帧之后，将二进制的数据帧发送给 server。server 读取到这个数据帧后，解析出 request，然后处理请求，得到 response，将 response 拼装帧头、包头等信息，得到一个完整的数据帧，然后返回给 client。client 拿到数据帧之后，从 server 返回的数据帧解析出 response，这就是一次 rpc 完整的数据流转过程。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第七章：自定义协议实现</title>
-      <link>https://diu.life/lessons/go-rpc/custom-protocol/</link>
+      <link>http://localhost:1313/lessons/go-rpc/custom-protocol/</link>
       <pubDate>Fri, 07 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/custom-protocol/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/custom-protocol/</guid>
       <description>&lt;h3 id=&#34;一协议选型&#34;&gt;一、协议选型&lt;/h3&gt;
 &lt;p&gt;协议是客户端和服务端之间对话的 “语言” ，是客户端和服务端双方必须共同遵从的一组约定。如怎么样建立连接、怎么样互相识别等。&lt;/p&gt;
 &lt;p&gt;之前 RPC 原理的章节说到了，关于 client 和 server 之间进行传输的协议选型，这里有两种方案。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第六章：超时机制</title>
-      <link>https://diu.life/lessons/go-rpc/context-timeout/</link>
+      <link>http://localhost:1313/lessons/go-rpc/context-timeout/</link>
       <pubDate>Thu, 06 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/context-timeout/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/context-timeout/</guid>
       <description>&lt;h3 id=&#34;一超时&#34;&gt;一、超时&lt;/h3&gt;
 &lt;p&gt;超时是 rpc 请求中最常见的问题之一。一般发生超时的情况都是在涉及到跨系统调用的场景，假如具体划分，可以分为客户端调用超时和服务端超时。&lt;/p&gt;
 &lt;ul&gt;
@@ -224,16 +224,16 @@
     </item>
     <item>
       <title>第五章：框架搭建 —— transport</title>
-      <link>https://diu.life/lessons/go-rpc/build-transport/</link>
+      <link>http://localhost:1313/lessons/go-rpc/build-transport/</link>
       <pubDate>Wed, 05 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/build-transport/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/build-transport/</guid>
       <description>&lt;p&gt;前面我们分别介绍了 client 和 server 层的实现，在介绍 client 和 server 时，都涉及到了 transport。transport 就是传输层通信能力的实现。它提供了基于 tcp/udp 等协议的最底层通信能力的实现。接下来我们就来看看它是怎么实现的。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第四章：框架搭建 —— client</title>
-      <link>https://diu.life/lessons/go-rpc/build-client/</link>
+      <link>http://localhost:1313/lessons/go-rpc/build-client/</link>
       <pubDate>Tue, 04 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/build-client/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/build-client/</guid>
       <description>&lt;p&gt;上一章我们讲解了框架搭建的 server 搭建，这一章我们将接着讲 client 模块的搭建。&lt;/p&gt;
 &lt;p&gt;先贴上代码地址： &lt;a href=&#34;https://github.com/lubanproj/gorpc&#34;&gt;gorpc&lt;/a&gt; 可以参考 client 模块&lt;/p&gt;
 &lt;h3 id=&#34;一client-的结构&#34;&gt;一、client 的结构&lt;/h3&gt;
@@ -241,9 +241,9 @@
     </item>
     <item>
       <title>第三章：框架搭建 —— server</title>
-      <link>https://diu.life/lessons/go-rpc/build-server/</link>
+      <link>http://localhost:1313/lessons/go-rpc/build-server/</link>
       <pubDate>Mon, 03 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/build-server/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/build-server/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;我们的框架代码地址是 &lt;a href=&#34;https://github.com/lubanproj/gorpc&#34;&gt;gorpc&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
 &lt;h3 id=&#34;一server-的结构&#34;&gt;一、server 的结构&lt;/h3&gt;
@@ -251,58 +251,58 @@
     </item>
     <item>
       <title>第二章：RPC 框架概览</title>
-      <link>https://diu.life/lessons/go-rpc/rpc-framework-overview/</link>
+      <link>http://localhost:1313/lessons/go-rpc/rpc-framework-overview/</link>
       <pubDate>Sun, 02 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/rpc-framework-overview/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/rpc-framework-overview/</guid>
       <description>&lt;h3 id=&#34;一模块&#34;&gt;一、模块&lt;/h3&gt;
 &lt;p&gt;上一章我们说到了要想设计出一款优秀的 RPC 框架，需要解决的问题，包括开发效率、通信效率、数据传输、通用化能力、服务治理等。为了解决这些问题，框架首先要支持一些基本的能力，在我们的框架中，这些能力支持如下：&lt;/p&gt;</description>
     </item>
     <item>
       <title>第一章：RPC 原理</title>
-      <link>https://diu.life/lessons/go-rpc/what-is-rpc/</link>
+      <link>http://localhost:1313/lessons/go-rpc/what-is-rpc/</link>
       <pubDate>Sat, 01 Feb 2020 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/go-rpc/what-is-rpc/</guid>
+      <guid>http://localhost:1313/lessons/go-rpc/what-is-rpc/</guid>
       <description>&lt;h3 id=&#34;什么是-rpc-&#34;&gt;什么是 RPC ？&lt;/h3&gt;
 &lt;p&gt;RPC （Remote Procedure Call），即远程过程调用。它允许本地计算机调用另一台远程计算机上的程序，不需要了解底层网络细节，从而使得整个过程就像本地调用一样方便。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十二章：grpc 数据流转</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-data-flow/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-data-flow/</link>
       <pubDate>Tue, 12 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-data-flow/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-data-flow/</guid>
       <description>&lt;h1 id=&#34;grpc-数据流转&#34;&gt;grpc 数据流转&lt;/h1&gt;
 &lt;p&gt;阅读本文的前提是你对 grpc 协议的编解码和 协议打解包过程都比较清楚了，假如不是很了解可以先去阅读 &lt;a href=&#34;https://diu.life/lessons/grpc-read/grpc-protocol-codec/&#34;&gt;《10 - grpc 协议编解码器》&lt;/a&gt; 和 &lt;a href=&#34;https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/&#34;&gt;《11 - grpc 协议解包过程全剖析》&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十一章：grpc 协议解包过程全剖析</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-protocol-unpacking-analysis/</link>
       <pubDate>Mon, 11 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-protocol-unpacking-analysis/</guid>
       <description>&lt;h3 id=&#34;http2-协议帧格式&#34;&gt;http2 协议帧格式&lt;/h3&gt;
 &lt;p&gt;我们知道网络传输都是以二进制的形式，所以所有的协议底层的传输也是二进制。那么问题来了，client 往 server 发一个数据包，server 如何知道数据包是完成还是还在发送呢？又或者，假如一个数据包过大，client 需要拆成几个包发送，或者数据包过小，client 需要合成一个包发送，server 如何识别呢？为了解决这些问题，client 和 server 都会约定好一些双方都能理解的“规则“，这就是协议。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第十章：grpc 协议编解码器</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-protocol-codec/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-protocol-codec/</link>
       <pubDate>Sun, 10 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-protocol-codec/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-protocol-codec/</guid>
       <description>&lt;h3 id=&#34;协议编解码器&#34;&gt;协议编解码器&lt;/h3&gt;
 &lt;p&gt;一般的协议都会包括协议头和协议体，对于业务而言，一般只关心需要发送的业务数据。所以，协议头的内容一般是框架自动帮忙填充。将业务数据包装成指定协议格式的数据包就是编码的过程，从指定协议格式中的数据包中取出业务数据的过程就是解码的过程。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第九章：grpc 拦截器实现</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-interceptor-implementation/</link>
       <pubDate>Sat, 09 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-interceptor-implementation/</guid>
       <description>&lt;h2 id=&#34;grpc-源码解读--从-0-到-1-实现拦截器&#34;&gt;grpc 源码解读 —— 从 0 到 1 实现拦截器&lt;/h2&gt;
 &lt;p&gt;拦截器，通俗点说，就是在执行一段代码之前或者之后，去执行另外一段代码。
 拦截器在业界知名框架中的运用非常普遍。包括 Spring 、Grpc 等框架中都有拦截器的实现。接下来我们想办法从 0 到 1 自己实现一个拦截器。以下的实现主要使用 go 语言讲解。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第八章：grpc 认证鉴权——oauth2认证</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-auth-oauth2/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-auth-oauth2/</link>
       <pubDate>Fri, 08 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-auth-oauth2/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-auth-oauth2/</guid>
       <description>&lt;h2 id=&#34;grpc-认证鉴权--oauth2&#34;&gt;grpc 认证鉴权 —— oauth2&lt;/h2&gt;
 &lt;p&gt;前面我们说了 tls 认证，tls 保证了 client 和 server 通信的安全性，但是无法做到接口级别的权限控制。例如有 A、B、C、D 四个系统，存在下面两个场景：
 1、我们希望 A 可以访问 B、C 系统，但是不能访问 D 系统
@@ -311,9 +311,9 @@
     </item>
     <item>
       <title>第七章：grpc 认证鉴权——tls认证</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-auth-tls/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-auth-tls/</link>
       <pubDate>Thu, 07 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-auth-tls/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-auth-tls/</guid>
       <description>&lt;h2 id=&#34;grpc-认证鉴权&#34;&gt;grpc 认证鉴权&lt;/h2&gt;
 &lt;p&gt;在了解 grpc 认证鉴权之前，我们有必要先梳理一下认证鉴权方面的知识。&lt;/p&gt;
 &lt;h3 id=&#34;1单体模式下的认证鉴权&#34;&gt;1、单体模式下的认证鉴权&lt;/h3&gt;
@@ -321,18 +321,18 @@
     </item>
     <item>
       <title>第六章：grpc 负载均衡</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-load-balancing/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-load-balancing/</link>
       <pubDate>Wed, 06 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-load-balancing/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-load-balancing/</guid>
       <description>&lt;h3 id=&#34;grpc负载均衡&#34;&gt;grpc负载均衡&lt;/h3&gt;
 &lt;h4 id=&#34;负载均衡流程&#34;&gt;负载均衡流程&lt;/h4&gt;
 &lt;p&gt;grpc 官方的 doc 中介绍了，grpc 的负载均衡是基于一次请求而不是一次连接的。也就是说，假如所有的请求都来自同一个客户端的连接，这些请求还是会被均衡到所有服务器。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第五章：grpc 服务发现</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-service-discovery/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-service-discovery/</link>
       <pubDate>Tue, 05 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-service-discovery/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-service-discovery/</guid>
       <description>&lt;h3 id=&#34;服务发现&#34;&gt;服务发现&lt;/h3&gt;
 &lt;p&gt;在了解 grpc 服务发现之前，我们先来了解一下服务发现的路由方式。一般来说，我们有客户端路由和代理层路由两种方式。&lt;/p&gt;
 &lt;h4 id=&#34;客户端路由&#34;&gt;客户端路由&lt;/h4&gt;
@@ -340,9 +340,9 @@
     </item>
     <item>
       <title>第四章：grpc hello world client 解析</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-hello-world-client-analysis/</link>
       <pubDate>Mon, 04 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-hello-world-client-analysis/</guid>
       <description>&lt;h3 id=&#34;grpc-hello-world--client-解析&#34;&gt;grpc hello world  client 解析&lt;/h3&gt;
 &lt;p&gt;上一节我们介绍了 grpc 输出 hello world 过程中 server 监听和处理请求的过程。这一节中我们将介绍 client 发出请求的过程。&lt;/p&gt;
 &lt;p&gt;来先看代码：&lt;/p&gt;
@@ -373,17 +373,17 @@
     </item>
     <item>
       <title>第三章：grpc hello world server 解析</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-hello-world-server-analysis/</link>
       <pubDate>Sun, 03 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-hello-world-server-analysis/</guid>
       <description>&lt;h3 id=&#34;grpc-hello-world-server-解析&#34;&gt;grpc hello world server 解析&lt;/h3&gt;
 &lt;p&gt;我们介绍 grpc quick start 时，通过快速启动一个 grpc server 端和 client 端，然后以 rpc 调用的方式输出一个 hello world。那么输出 hello world 需要经过哪些方法的处理呢？&amp;hellip;&amp;hellip;.这个我也不知道，所以我们先去瞅瞅源码，探究一下 hello world 的背后是连接是如何建立的，然后一起来解读这个问题哈哈。&lt;/p&gt;</description>
     </item>
     <item>
       <title>第二章：grpc hello world</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-hello-world/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-hello-world/</link>
       <pubDate>Sat, 02 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-hello-world/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-hello-world/</guid>
       <description>&lt;h3 id=&#34;grpc-quick-start&#34;&gt;grpc quick start&lt;/h3&gt;
 &lt;p&gt;我们分析 go 版本的 grpc 实现，所以这里主要讲解 grpc-go 的安装和使用&lt;/p&gt;
 &lt;h4 id=&#34;1安装&#34;&gt;1、安装&lt;/h4&gt;
@@ -391,15 +391,30 @@
     </item>
     <item>
       <title>第一章：grpc concepts &amp; http2</title>
-      <link>https://diu.life/lessons/grpc-read/grpc-concepts-http2/</link>
+      <link>http://localhost:1313/lessons/grpc-read/grpc-concepts-http2/</link>
       <pubDate>Fri, 01 Nov 2019 00:00:00 +0800</pubDate>
-      <guid>https://diu.life/lessons/grpc-read/grpc-concepts-http2/</guid>
+      <guid>http://localhost:1313/lessons/grpc-read/grpc-concepts-http2/</guid>
       <description>&lt;h3 id=&#34;写在前面&#34;&gt;写在前面&lt;/h3&gt;
 &lt;h4 id=&#34;grpc-介绍&#34;&gt;grpc 介绍&lt;/h4&gt;
 &lt;p&gt;grpc 是 google 开源的一款高性能的 rpc 框架。github 上介绍如下：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;gRPC is a modern, open source, high-performance remote procedure call (RPC) framework that can run anywhere
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;市面上的 rpc 框架数不胜数，包括 alibaba dubbo 和微博的 motan 等。grpc 能够在众多的框架中脱颖而出是跟其高性能是密切相关的。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>深圳实习手记</title>
+      <link>http://localhost:1313/posts/%E6%B7%B1%E5%9C%B3%E5%AE%9E%E4%B9%A0%E6%89%8B%E8%AE%B0/</link>
+      <pubDate>Mon, 31 Aug 2015 21:14:41 +0800</pubDate>
+      <guid>http://localhost:1313/posts/%E6%B7%B1%E5%9C%B3%E5%AE%9E%E4%B9%A0%E6%89%8B%E8%AE%B0/</guid>
+      <description>&lt;p&gt;抽出几个小时的代码时间来写这篇日志，说实话，心里还是有些不舍。也许是因为我对自己的时间总是格外吝啬——这大概也是我的 CSDN 博客里转载多于原创的原因吧。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>暑假手记——那些年我们在学校的日子</title>
+      <link>http://localhost:1313/posts/%E6%9A%91%E5%81%87%E6%89%8B%E8%AE%B0%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E4%BB%AC%E5%9C%A8%E5%AD%A6%E6%A0%A1%E7%9A%84%E6%97%A5%E5%AD%90/</link>
+      <pubDate>Tue, 15 Jul 2014 20:33:08 +0800</pubDate>
+      <guid>http://localhost:1313/posts/%E6%9A%91%E5%81%87%E6%89%8B%E8%AE%B0%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E4%BB%AC%E5%9C%A8%E5%AD%A6%E6%A0%A1%E7%9A%84%E6%97%A5%E5%AD%90/</guid>
+      <description>&lt;p&gt;最近团长总是要我们写感悟。其实，我本来就是那种不太习惯把心里话说出口的人。
+我更倾向于“装”——把那些情绪、思绪都收进心里，静静地等时间去打磨、沉淀，最后留下的才是精华。等哪天“装满了”，或者小酌一杯，情绪一涌，就会一股脑全倒出来。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

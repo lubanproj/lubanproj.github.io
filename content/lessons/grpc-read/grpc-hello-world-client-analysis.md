@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-4"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-hello-world-client-analysis/"
 ---
 
 ### grpc hello world  client 解析

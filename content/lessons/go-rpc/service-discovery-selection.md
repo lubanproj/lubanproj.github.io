@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-15"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/service-discovery-selection/"
 ---
 
 上一章介绍了插件体系的实现，从本章开始，我们开始陆续介绍各个插件的设计与实现。之前说到了，在微服务环境下，框架默认支持的能力包括：服务发现、负载均衡、分布式链路追踪。我们先从服务发现开始，介绍框架是如何支持服务发现能力的。

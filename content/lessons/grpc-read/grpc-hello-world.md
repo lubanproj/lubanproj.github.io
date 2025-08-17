@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-2"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-hello-world/"
 ---
 
 ### grpc quick start

@@ -4,6 +4,7 @@ date: 2024-01-20T00:00:00+08:00
 draft: false
 lesson: "go-rpc"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/"
 ---
 
 ### 教程概览

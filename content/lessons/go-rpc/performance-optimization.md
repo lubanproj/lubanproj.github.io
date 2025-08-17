@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-23"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/performance-optimization/"
 ---
 
 上一章介绍了使用 pprof 工具进行框架的性能测试，本章来继续介绍一下如何通过火焰图分析框架的性能瓶颈，并进行相应的性能优化。

@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-17"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/load-balance-implementation/"
 ---
 
 其实我们在前面介绍服务发现的时候就顺带牵涉到了负载均衡。我们在这一章对负载均衡进行一个详细的讲解。

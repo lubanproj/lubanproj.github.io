@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-19"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/tracing-implementation/"
 ---
 
 上一章我们介绍了分布式链路追踪的原理、opentracing 规范并对 jaeger 进行了简单介绍，这一章我们将介绍使用 jaeger 来进行分布式链路追踪的具体实现。

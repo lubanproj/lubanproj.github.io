@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-7"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/custom-protocol/"
 ---
 
 ### 一、协议选型

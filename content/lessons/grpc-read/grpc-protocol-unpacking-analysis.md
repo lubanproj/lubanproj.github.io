@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-11"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/"
 ---
 
 ###  http2 协议帧格式

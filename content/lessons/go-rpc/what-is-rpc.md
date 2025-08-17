@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-1"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/what-is-rpc/"
 ---
 
 ### 什么是 RPC ？

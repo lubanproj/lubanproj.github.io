@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-6"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-load-balancing/"
 ---
 
 ### grpc负载均衡

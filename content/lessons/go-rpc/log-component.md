@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-10"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/log-component/"
 ---
 
 ### 一、log 库调研

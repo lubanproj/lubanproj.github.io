@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-16"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/service-discovery-implementation/"
 ---
 
 上一章我们介绍了服务发现的具体原理以及技术选型，本章我们将从代码实现的角度来介绍下如何使用 consul 来进行框架服务发现支持。

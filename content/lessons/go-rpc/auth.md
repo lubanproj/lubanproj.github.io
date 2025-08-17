@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-20"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/auth/"
 ---
 
 本章介绍 gorpc 认证鉴权的实现，本章主要介绍原理和部分代码实现，全部代码可以参考：[auth](https://github.com/lubanproj/gorpc/tree/master/auth)

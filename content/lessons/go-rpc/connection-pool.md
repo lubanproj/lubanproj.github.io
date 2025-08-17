@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-11"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/connection-pool/"
 ---
 
 ### 一、为什么需要连接池

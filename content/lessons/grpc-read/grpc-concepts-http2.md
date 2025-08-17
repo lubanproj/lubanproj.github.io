@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-1"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-concepts-http2/"
 ---
 
 ### 写在前面

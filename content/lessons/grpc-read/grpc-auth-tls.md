@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-7"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-auth-tls/"
 ---
 
 ## grpc 认证鉴权

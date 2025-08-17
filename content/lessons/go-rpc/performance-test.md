@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-22"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/performance-test/"
 ---
 
 到这一章，我们的框架核心功能的原理和实现就已经介绍完了。那拥有这些能力的框架究竟性能如何呢，我们在这一章节就来测试一下。

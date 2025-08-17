@@ -4,6 +4,7 @@ date: 2019-11-01T00:00:00+08:00
 draft: false
 lesson: "grpc-read"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/"
 ---
 
 ### 教程概览

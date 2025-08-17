@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-14"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/plugin/"
 ---
 
 ### 一、什么是插件？

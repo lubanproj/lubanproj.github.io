@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-9"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/marshal-and-unmarshal/"
 ---
 
 ### 一、序列化与反序列化

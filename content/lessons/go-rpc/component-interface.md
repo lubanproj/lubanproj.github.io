@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-13"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/component-interface/"
 ---
 
 ### 一、软件的可插拔性

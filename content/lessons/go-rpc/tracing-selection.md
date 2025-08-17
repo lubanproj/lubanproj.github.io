@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-18"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/tracing-selection/"
 ---
 
 ### 一、什么是分布式链路追踪？

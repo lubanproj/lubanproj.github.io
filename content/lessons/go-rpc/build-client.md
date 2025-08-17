@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-4"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/build-client/"
 ---
 
 

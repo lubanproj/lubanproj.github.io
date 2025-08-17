@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-12"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/interceptor/"
 ---
 
 ### 一、什么是拦截器？

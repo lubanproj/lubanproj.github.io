@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-5"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/build-transport/"
 ---
 
 

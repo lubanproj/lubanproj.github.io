@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-3"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-hello-world-server-analysis/"
 ---
 
 ### grpc hello world server 解析

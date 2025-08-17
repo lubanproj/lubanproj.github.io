@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-5"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-service-discovery/"
 ---
 
 ### 服务发现

@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-24"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/summary/"
 ---
 
 写到这里，感慨颇多

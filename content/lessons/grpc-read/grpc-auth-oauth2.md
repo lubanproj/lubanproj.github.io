@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-8"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-auth-oauth2/"
 ---
 
 ## grpc 认证鉴权 —— oauth2

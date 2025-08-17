@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-8"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/codec/"
 ---
 
 上一章我们介绍了协议的格式、协议的设计和实现。这一章主要重点说说框架的协议编解码。

@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-6"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/context-timeout/"
 ---
 
 ### 一、超时

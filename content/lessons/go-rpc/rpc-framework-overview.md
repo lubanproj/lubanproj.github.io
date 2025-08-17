@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-2"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/rpc-framework-overview/"
 ---
 
 ### 一、模块

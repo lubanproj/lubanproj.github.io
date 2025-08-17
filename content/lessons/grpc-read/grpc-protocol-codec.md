@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-10"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-protocol-codec/"
 ---
 
 ### 协议编解码器

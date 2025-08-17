@@ -5,6 +5,7 @@ draft: false
 lesson: "go-rpc"
 chapter: "chapter-21"
 layout: "single"
+canonical: "https://diu.life/lessons/go-rpc/code-generation/"
 ---
 
 前面我们说到了 gorpc 调用有反射和代码生成两种调用方式。前面的介绍一直都以反射的调用方式来进行介绍。下面我们先来介绍一下代码生成方式的调用全过程，接着介绍下代码生成工具的调研和具体实现。

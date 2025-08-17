@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-12"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-data-flow/"
 ---
 
 #  grpc 数据流转

@@ -5,6 +5,7 @@ draft: false
 lesson: "grpc-read"
 chapter: "chapter-9"
 layout: "single"
+canonical: "https://diu.life/lessons/grpc-read/grpc-interceptor-implementation/"
 ---
 
 ## grpc 源码解读 —— 从 0 到 1 实现拦截器

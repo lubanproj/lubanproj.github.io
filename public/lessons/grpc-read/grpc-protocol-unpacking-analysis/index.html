@@ -57,7 +57,52 @@
 
     </style>
 </noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2499390968830075"
-     crossorigin="anonymous"></script><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/">
+     crossorigin="anonymous"></script><style>
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    text-align: center;
+}
+
+.footer-links {
+    font-size: 0.9em;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+.footer-links a {
+    color: inherit;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-links a:first-child {
+    margin-left: 0;
+}
+
+.footer-links a:last-child {
+    margin-right: 0;
+}
+
+@media (max-width: 600px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .footer-copyright {
+        text-align: center;
+    }
+}
+</style><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-protocol-unpacking-analysis/">
   <meta property="og:site_name" content="丢哥">
   <meta property="og:title" content="第十一章：grpc 协议解包过程全剖析">
   <meta property="og:description" content="http2 协议帧格式 我们知道网络传输都是以二进制的形式，所以所有的协议底层的传输也是二进制。那么问题来了，client 往 server 发一个数据包，server 如何知道数据包是完成还是还在发送呢？又或者，假如一个数据包过大，client 需要拆成几个包发送，或者数据包过小，client 需要合成一个包发送，server 如何识别呢？为了解决这些问题，client 和 server 都会约定好一些双方都能理解的“规则“，这就是协议。">
@@ -196,16 +241,6 @@
             <li>
                 <a href="https://diu.life/about/" title="关于">
                     <span>关于</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://diu.life/privacy-policy/" title="隐私政策">
-                    <span>隐私政策</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://diu.life/terms-of-service/" title="服务条款">
-                    <span>服务条款</span>
                 </a>
             </li>
         </ul>
@@ -904,8 +939,15 @@ length 表示消息体数据长度。现在终于知道了这个数据结构的�
     </main>
     
 <footer class="footer">
-        <span>&copy; 2021 丢哥 all rights reserved.</span>
-
+    <div class="footer-content">
+        <div class="footer-copyright">
+                <span>&copy; 2024 丢哥 all rights reserved.</span>
+        </div>
+        <div class="footer-links">
+            <a href="/privacy-policy/" title="隐私政策">隐私政策</a> |
+            <a href="/terms-of-service/" title="服务条款">服务条款</a>
+        </div>
+    </div>
 
 </footer>
 <a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
@@ -1014,7 +1056,6 @@ length 表示消息体数据长度。现在终于知道了这个数据结构的�
             codeblock.parentNode.appendChild(copybutton);
         }
     });
-</script>
-</body>
+</script></body>
 
 </html>

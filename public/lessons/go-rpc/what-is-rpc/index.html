@@ -57,7 +57,52 @@ RPC （Remote Procedure Call），即远程过程调用。它允许本地计算�
 
     </style>
 </noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2499390968830075"
-     crossorigin="anonymous"></script><meta property="og:url" content="https://diu.life/lessons/go-rpc/what-is-rpc/">
+     crossorigin="anonymous"></script><style>
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    text-align: center;
+}
+
+.footer-links {
+    font-size: 0.9em;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+.footer-links a {
+    color: inherit;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-links a:first-child {
+    margin-left: 0;
+}
+
+.footer-links a:last-child {
+    margin-right: 0;
+}
+
+@media (max-width: 600px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .footer-copyright {
+        text-align: center;
+    }
+}
+</style><meta property="og:url" content="https://diu.life/lessons/go-rpc/what-is-rpc/">
   <meta property="og:site_name" content="丢哥">
   <meta property="og:title" content="第一章：RPC 原理">
   <meta property="og:description" content="什么是 RPC ？ RPC （Remote Procedure Call），即远程过程调用。它允许本地计算机调用另一台远程计算机上的程序，不需要了解底层网络细节，从而使得整个过程就像本地调用一样方便。">
@@ -196,16 +241,6 @@ RPC （Remote Procedure Call），即远程过程调用。它允许本地计算�
             <li>
                 <a href="https://diu.life/about/" title="关于">
                     <span>关于</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://diu.life/privacy-policy/" title="隐私政策">
-                    <span>隐私政策</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://diu.life/terms-of-service/" title="服务条款">
-                    <span>服务条款</span>
                 </a>
             </li>
         </ul>
@@ -807,8 +842,15 @@ RPC （Remote Procedure Call），即远程过程调用。它允许本地计算�
     </main>
     
 <footer class="footer">
-        <span>&copy; 2021 丢哥 all rights reserved.</span>
-
+    <div class="footer-content">
+        <div class="footer-copyright">
+                <span>&copy; 2024 丢哥 all rights reserved.</span>
+        </div>
+        <div class="footer-links">
+            <a href="/privacy-policy/" title="隐私政策">隐私政策</a> |
+            <a href="/terms-of-service/" title="服务条款">服务条款</a>
+        </div>
+    </div>
 
 </footer>
 <a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
@@ -917,7 +959,6 @@ RPC （Remote Procedure Call），即远程过程调用。它允许本地计算�
             codeblock.parentNode.appendChild(copybutton);
         }
     });
-</script>
-</body>
+</script></body>
 
 </html>

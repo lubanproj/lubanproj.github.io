@@ -66,15 +66,15 @@ hasCJKLanguage = true
     url = "/about/"
     weight = 5
 
-  [[menu.main]]
+  [[menu.footer]]
     name = "隐私政策"
     url = "/privacy-policy/"
-    weight = 6
+    weight = 1
 
-  [[menu.main]]
+  [[menu.footer]]
     name = "服务条款"
     url = "/terms-of-service/"
-    weight = 7
+    weight = 2
 
 [markup]
   [markup.tableOfContents]

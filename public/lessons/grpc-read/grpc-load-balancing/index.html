@@ -58,7 +58,52 @@ grpc 官方的 doc 中介绍了，grpc 的负载均衡是基于一次请求而�
 
     </style>
 </noscript><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2499390968830075"
-     crossorigin="anonymous"></script><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-load-balancing/">
+     crossorigin="anonymous"></script><style>
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    text-align: center;
+}
+
+.footer-links {
+    font-size: 0.9em;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+.footer-links a {
+    color: inherit;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-links a:first-child {
+    margin-left: 0;
+}
+
+.footer-links a:last-child {
+    margin-right: 0;
+}
+
+@media (max-width: 600px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .footer-copyright {
+        text-align: center;
+    }
+}
+</style><meta property="og:url" content="https://diu.life/lessons/grpc-read/grpc-load-balancing/">
   <meta property="og:site_name" content="丢哥">
   <meta property="og:title" content="第六章：grpc 负载均衡">
   <meta property="og:description" content="grpc负载均衡 负载均衡流程 grpc 官方的 doc 中介绍了，grpc 的负载均衡是基于一次请求而不是一次连接的。也就是说，假如所有的请求都来自同一个客户端的连接，这些请求还是会被均衡到所有服务器。">
@@ -198,16 +243,6 @@ grpc 官方的 doc 中介绍了，grpc 的负载均衡是基于一次请求而�
             <li>
                 <a href="https://diu.life/about/" title="关于">
                     <span>关于</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://diu.life/privacy-policy/" title="隐私政策">
-                    <span>隐私政策</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://diu.life/terms-of-service/" title="服务条款">
-                    <span>服务条款</span>
                 </a>
             </li>
         </ul>
@@ -972,8 +1007,15 @@ grpc 官方的 doc 中介绍了，grpc 的负载均衡是基于一次请求而�
     </main>
     
 <footer class="footer">
-        <span>&copy; 2021 丢哥 all rights reserved.</span>
-
+    <div class="footer-content">
+        <div class="footer-copyright">
+                <span>&copy; 2024 丢哥 all rights reserved.</span>
+        </div>
+        <div class="footer-links">
+            <a href="/privacy-policy/" title="隐私政策">隐私政策</a> |
+            <a href="/terms-of-service/" title="服务条款">服务条款</a>
+        </div>
+    </div>
 
 </footer>
 <a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
@@ -1082,7 +1124,6 @@ grpc 官方的 doc 中介绍了，grpc 的负载均衡是基于一次请求而�
             codeblock.parentNode.appendChild(copybutton);
         }
     });
-</script>
-</body>
+</script></body>
 
 </html>

@@ -66,6 +66,16 @@ hasCJKLanguage = true
     url = "/about/"
     weight = 5
 
+  [[menu.main]]
+    name = "隐私政策"
+    url = "/privacy-policy/"
+    weight = 6
+
+  [[menu.main]]
+    name = "服务条款"
+    url = "/terms-of-service/"
+    weight = 7
+
 [markup]
   [markup.tableOfContents]
     endLevel = 3

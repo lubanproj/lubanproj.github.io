@@ -6,8 +6,28 @@
     <description>Recent content on 丢哥</description>
     <generator>Hugo -- 0.148.2</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 01 Jun 2023 00:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 01 Jan 2024 00:00:00 +0800</lastBuildDate>
     <atom:link href="https://diu.life/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>服务条款</title>
+      <link>https://diu.life/terms-of-service/</link>
+      <pubDate>Mon, 01 Jan 2024 00:00:00 +0800</pubDate>
+      <guid>https://diu.life/terms-of-service/</guid>
+      <description>&lt;h2 id=&#34;服务条款&#34;&gt;服务条款&lt;/h2&gt;
+&lt;p&gt;最后更新日期：2024年1月1日&lt;/p&gt;
+&lt;p&gt;欢迎使用丢哥的个人博客（https://diu.life/）。通过访问和使用本网站，您同意遵守以下服务条款。&lt;/p&gt;
+&lt;h3 id=&#34;1-接受条款&#34;&gt;1. 接受条款&lt;/h3&gt;
+&lt;p&gt;通过访问、浏览或使用本网站，您表示同意受本服务条款的约束。如果您不同意这些条款，请不要使用本网站。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>隐私政策</title>
+      <link>https://diu.life/privacy-policy/</link>
+      <pubDate>Mon, 01 Jan 2024 00:00:00 +0800</pubDate>
+      <guid>https://diu.life/privacy-policy/</guid>
+      <description>&lt;h2 id=&#34;隐私政策&#34;&gt;隐私政策&lt;/h2&gt;
+&lt;p&gt;最后更新日期：2024年1月1日&lt;/p&gt;
+&lt;p&gt;欢迎访问丢哥的个人博客（https://diu.life/）。本隐私政策说明了我们如何收集、使用和保护您的个人信息。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>独立开发</title>
       <link>https://diu.life/projects/</link>

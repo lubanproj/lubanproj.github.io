@@ -4,7 +4,7 @@
     <title>从 0 到 1 开发一款高性能 RPC 框架 on 丢哥</title>
     <link>https://diu.life/lessons/go-rpc/</link>
     <description>Recent content in 从 0 到 1 开发一款高性能 RPC 框架 on 丢哥</description>
-    <generator>Hugo -- 0.148.2</generator>
+    <generator>Hugo -- 0.152.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Mon, 24 Feb 2020 00:00:00 +0800</lastBuildDate>
     <atom:link href="https://diu.life/lessons/go-rpc/index.xml" rel="self" type="application/rss+xml" />
@@ -198,7 +198,8 @@
       <pubDate>Mon, 03 Feb 2020 00:00:00 +0800</pubDate>
       <guid>https://diu.life/lessons/go-rpc/build-server/</guid>
       <description>&lt;blockquote&gt;
-&lt;p&gt;我们的框架代码地址是 &lt;a href=&#34;https://github.com/lubanproj/gorpc&#34;&gt;gorpc&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;我们的框架代码地址是 &lt;a href=&#34;https://github.com/lubanproj/gorpc&#34;&gt;gorpc&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h3 id=&#34;一server-的结构&#34;&gt;一、server 的结构&lt;/h3&gt;
 &lt;p&gt;要搭建 server 层，首先我们要明确 server 层需要支持哪些能力，其实 server 的核心就是提供服务请求的处理能力。server 侧定义服务，发布服务，接收到服务的请求后，根据服务名和请求的方法名去路由到一个 handler 处理器，然后由 handler 处理请求，得到响应，并且把响应数据发送给 client。&lt;/p&gt;</description>
     </item>

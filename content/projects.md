@@ -17,6 +17,10 @@ showPagination: false
 
 - [AskAny](https://www.askany.vip/) 一次提问，可以获得多种大模型的回答
 
+### TranslationTool
+
+- [TranslationTool](https://www.translationtool.vip/) 一款简单、好用的 App 文案翻译工具
+
 ### ItSoFunny
 
 - [ItSoFunny](https://www.itsofunny.com/) 一个有趣的网站，分享一些有趣的内容
@@ -24,4 +28,6 @@ showPagination: false
 ### Lumo
 
 - [Lumo](https://www.lumomusic.xyz/) 一个简易的 AI 音乐播放器
+
+
 

@@ -11,7 +11,7 @@
 RPC （Remote Procedure Call），即远程过程调用。它允许本地计算机调用另一台远程计算机上的程序，不需要了解底层网络细节，从而使得整个过程就像本地调用一样方便。">
 <meta name="author" content="丢哥">
 <link rel="canonical" href="https://diu.life/lessons/go-rpc/what-is-rpc/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.2211ca3164be7830024f6aad2b3a2e520843a64f8f048445c3401c1249aa051d.css" integrity="sha256-IhHKMWS&#43;eDACT2qtKzouUghDpk&#43;PBIRFw0AcEkmqBR0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://diu.life/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
@@ -392,10 +392,10 @@ RPC （Remote Procedure Call），即远程过程调用。它允许本地计算�
 <p>RPC （Remote Procedure Call），即远程过程调用。它允许本地计算机调用另一台远程计算机上的程序，不需要了解底层网络细节，从而使得整个过程就像本地调用一样方便。</p>
 <h3 id="一rpc-调用过程">一、RPC 调用过程</h3>
 <p>了解 RPC 调用之前，我们先来了解下本地调用是如何实现的。以 go 语言的 read 函数为例</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">file</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;test.txt&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="kd">var</span>	<span class="nx">b</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="nx">file</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
-</span></span></code></pre></div><p>可以看到先通过 os 这个内置包获取一个文件句柄 fd，然后通过文件句柄 fd 去发起系统调用，进而读取文件中的数据。在远程调用的场景下，源数据存储在远程计算机，那么我们希望一次 RPC 过程应该是像本地调用一样“顺滑”的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">file</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;test.txt&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">var</span><span class="w">	</span><span class="nx">b</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nx">file</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></div><p>可以看到先通过 os 这个内置包获取一个文件句柄 fd，然后通过文件句柄 fd 去发起系统调用，进而读取文件中的数据。在远程调用的场景下，源数据存储在远程计算机，那么我们希望一次 RPC 过程应该是像本地调用一样“顺滑”的。</p>
 <p>那么如何去实现呢？如下图所示：</p>
 <p><img alt="img" loading="lazy" src="/images/go-rpc/1-1.jpg"></p>
 <p>由上图可以看到，其实一次 RPC 调用，假如单独看客户端或者服务端，你会发现它和本地调用几乎一致。但是由于数据源不在本机而在远程主机，所以这里需要通过网络调用的方式，去远程主机获取数据。所以区别就在于网络调用这里。那么假如我们把网络调用的所有细节封装掉，使得其对客户端程序几乎完全无感知，这样其实就可以做到像本地调用一样“顺滑”了吗？这其实就是 RPC 需要解决的本质问题。</p>

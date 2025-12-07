@@ -16,7 +16,7 @@
 我们发现，假如只对客户端进行超时处理，可能会出现一次 rpc 请求 client 返回异常了，server 还在运行，这是一种资源浪费。假如只对服务端进行超时处理，则 client 会循环等待收包，假如 server 的回包丢包了，会造成 client 死循环，这也是不合理的。">
 <meta name="author" content="丢哥">
 <link rel="canonical" href="https://diu.life/lessons/go-rpc/context-timeout/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.2211ca3164be7830024f6aad2b3a2e520843a64f8f048445c3401c1249aa051d.css" integrity="sha256-IhHKMWS&#43;eDACT2qtKzouUghDpk&#43;PBIRFw0AcEkmqBR0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://diu.life/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://diu.life/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://diu.life/favicon-32x32.png">
@@ -426,17 +426,17 @@
 <p>这里就介绍一下 go 里面一个非常强大的包 —— context</p>
 <h4 id="1什么是-context">1、什么是 context</h4>
 <p>Context 是一个非常抽象的概念，中文翻译为 ”上下文“，为了方便理解，我们可以把它看做是 goroutine 的上下文。包括 goroutine 的运行状态、环境等信息。Context 可以用来在 goroutine 之间传递上下文信息，包括：信号、超时时间、k-v 键值对等。同时它可以用作并发控制。它的接口定义如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Context</span> <span class="kd">interface</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">   <span class="c1">// 返回代表 Context 完成的时间</span>
-</span></span><span class="line"><span class="cl">   <span class="nf">Deadline</span><span class="p">()</span> <span class="p">(</span><span class="nx">deadline</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">   <span class="c1">// 当 Context 被取消或者死亡后，返回一个 channel</span>
-</span></span><span class="line"><span class="cl">   <span class="nf">Done</span><span class="p">()</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
-</span></span><span class="line"><span class="cl">   <span class="c1">// 当 Context 被取消或者死亡后，返回错误信息</span>
-</span></span><span class="line"><span class="cl">   <span class="nf">Err</span><span class="p">()</span> <span class="kt">error</span>
-</span></span><span class="line"><span class="cl">   <span class="c1">// 获取 key 对应的 value</span>
-</span></span><span class="line"><span class="cl">   <span class="nf">Value</span><span class="p">(</span><span class="nx">key</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>它主要有上面四个方法，通过 Deadline() 我们可以获取 Context 存活的时间。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Context</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">// 返回代表 Context 完成的时间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nf">Deadline</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="nx">deadline</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="kt">bool</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">// 当 Context 被取消或者死亡后，返回一个 channel</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nf">Done</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;-</span><span class="kd">chan</span><span class="w"> </span><span class="kd">struct</span><span class="p">{}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">// 当 Context 被取消或者死亡后，返回错误信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nf">Err</span><span class="p">()</span><span class="w"> </span><span class="kt">error</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">// 获取 key 对应的 value</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nf">Value</span><span class="p">(</span><span class="nx">key</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><span class="kd">interface</span><span class="p">{}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>它主要有上面四个方法，通过 Deadline() 我们可以获取 Context 存活的时间。</p>
 <h4 id="2context-的父子模型">2、Context 的父子模型</h4>
 <p><img alt="img" loading="lazy" src="/images/go-rpc/6-3.jpg"></p>
 <p>要理解 Context ，必须要介绍下 Context 的父子模型。假如上图是在某个服务端 server 内进行请求处理的流程。 goroutine A 这里的 Context A 是 goroutine B、C、D 的 parent Context。goroutine E、F 与 goroutine C 共用 context C，Context C 是 Context G 的 parent Context。</p>
@@ -455,12 +455,12 @@
 </li>
 <li>
 <p>判断 client Options 参数选项的 timeout 值是否被设置，假如被设置，则通过 context.WithTimeout 方法设置 parent Context 的超时时间。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">timeout</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">   <span class="kd">var</span> <span class="nx">cancel</span> <span class="nx">context</span><span class="p">.</span><span class="nx">CancelFunc</span>
-</span></span><span class="line"><span class="cl">   <span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="p">=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">   <span class="k">defer</span> <span class="nf">cancel</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">if</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">timeout</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">var</span><span class="w"> </span><span class="nx">cancel</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">CancelFunc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">cancel</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="k">defer</span><span class="w"> </span><span class="nf">cancel</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div></li>
 <li>
 <p>对下游链路发起调用，基于 parent Context 去生成子 Context 发起调用。</p>
 </li>
@@ -472,12 +472,12 @@
 </li>
 <li>
 <p>service 在调用 Handle 方法处理请求时，判断 timeout 值是否被设置，假如被设置，则新起一个携带超时时间 timeout 的子 Context。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">   <span class="kd">var</span> <span class="nx">cancel</span> <span class="nx">context</span><span class="p">.</span><span class="nx">CancelFunc</span>
-</span></span><span class="line"><span class="cl">   <span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="p">=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">   <span class="k">defer</span> <span class="nf">cancel</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">if</span><span class="w"> </span><span class="nx">s</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">timeout</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">var</span><span class="w"> </span><span class="nx">cancel</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">CancelFunc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">cancel</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nf">WithTimeout</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">s</span><span class="p">.</span><span class="nx">opts</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="k">defer</span><span class="w"> </span><span class="nf">cancel</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div></li>
 </ul>
 <p>通过这样一套机制，则实现了 client 和 server 双端的超时控制。</p>
 <h3 id="小结">小结</h3>

@@ -9,6 +9,10 @@ showWordCount: false
 showPagination: false
 ---
 
+### Nano Banana Pro
+
+- [Nano Banana Pro](https://www.nanobananapro.fun/) 使用 Nano Banana Pro 模型一键生成图片
+
 ### KnowOurself
 
 - [KnowOurself](https://www.knowourself.com/) MBTI 性格分析、性格测试网站
@@ -28,6 +32,4 @@ showPagination: false
 ### Lumo
 
 - [Lumo](https://www.lumomusic.xyz/) 一个简易的 AI 音乐播放器
-
-
 

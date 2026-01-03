@@ -21,16 +21,16 @@
 </span></span></span><span class=line><span class=cl><span class=w>               </span><span class=p>|</span><span class=w>           </span><span class=p>|</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w>           </span><span class=p>[</span><span class=nx>Span</span><span class=w> </span><span class=nx>D</span><span class=p>]</span><span class=w>    </span><span class=p>[</span><span class=nx>Span</span><span class=w> </span><span class=nx>E</span><span class=p>]</span><span class=w> </span><span class=o>&gt;&gt;</span><span class=p>&gt;</span><span class=w> </span><span class=p>[</span><span class=nx>其他平级</span><span class=w> </span><span class=nx>Span</span><span class=p>]</span><span class=w>
 </span></span></span></code></pre></div><p>opentracing 规范约定，span 之间有两种关系，一种是 ChildOf ，也就是父子关系，如上图的 A 和 B、C ，C 和 D、E 就是父子关系。另一种是 FollowsFrom，这是一种平级关系 ，例如上图中的 B 和 C，E 和 F 等。</p><p><strong>SpanContext</strong></p><p>每个 Span 必须提供访问的 SpanContext，SpanContext 一般用来保存需要传递到下游的服务的一些信息。比如 TraceID、SpanID、ParentSpanID 等，SpanContext 还可以用来封装 Baggage （存储在 SpanContext 中的一个键值对集合）</p><p>更多的概念可以参考：<a href=https://opentracing.io/>opentracing 英文版</a>， <a href=https://wu-sheng.gitbooks.io/opentracing-io/content/pages/spec.html>opentracing 翻译版</a></p><h3 id=三技术选型>三、技术选型</h3><p>社区内支持 opentracing 规范的比较著名的开源项目有 jaeger、zipkin、appdash 、cat 等。</p><ul><li>jaeger： go 语言开发，入手较为困难，系统侵入性一般，数据维度比较丰富，但是入手比较困难。</li><li>appdash：go 语言开发，适合于开发小型的 trace 系统，主要依赖内存，不适合大规模使用。</li><li>zipkin，java 语言开发，github 很活跃，系统倾入性强，扩展性高，也有很多大厂使用</li><li>cat，java 语言开发，github 不活跃，已不太更新了。</li></ul><p>由于我们的框架使用 go 语言实现，所以我们也主要考虑同样使用 go 开发的 jaeger 和 appdash，由于 appdash 比较依赖内存，不适合大规模使用，所以我们最终选择了 jaeger。</p><h3 id=四jaeger-简单介绍>四、jaeger 简单介绍</h3><p>jaeger 是遵循 opentracing 规范的，所以上面介绍的 opentracing 的相关核心概念 jaeger 中也同样适用，哲理就不赘述了。jaeger 的一些使用方法可以详细参考官方文档 <a href=https://www.jaegertracing.io/>jaeger</a></p><p>这里我们简单介绍下 jaeger 的架构，如下图：</p><p><img alt=img loading=lazy src=/images/go-rpc/18-1.jpg></p><p>client 将 Span 数据上报到 agent，通过 agent 将数据发送到 collector 进行收集。collector 收集 agent 上报的数据之后，通过 kafka 消息队列，通过 flink 集群将数据汇总到 DB，UI 通过查询 DB 中的数据来进行链路图的展示。</p><p><strong>jaeger demo</strong></p><p>jaeger 官方提供了一个集成了所有服务的 docker 镜像，运行：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>docker run -d --name jaeger <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -e <span class=nv>COLLECTOR_ZIPKIN_HTTP_PORT</span><span class=o>=</span><span class=m>9411</span> <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -p 5775:5775/udp <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -p 6831:6831/udp <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -p 6832:6832/udp <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -p 5778:5778 <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -p 16686:16686 <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -p 14268:14268 <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -p 14250:14250 <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  -p 9411:9411 <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>  jaegertracing/all-in-one:1.17
+</span></span></span><span class=line><span class=cl>  -e <span class=nv>COLLECTOR_ZIPKIN_HTTP_PORT</span><span class=o>=</span><span class=m>9411</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -p 5775:5775/udp <span class=se>\
+</span></span></span><span class=line><span class=cl>  -p 6831:6831/udp <span class=se>\
+</span></span></span><span class=line><span class=cl>  -p 6832:6832/udp <span class=se>\
+</span></span></span><span class=line><span class=cl>  -p 5778:5778 <span class=se>\
+</span></span></span><span class=line><span class=cl>  -p 16686:16686 <span class=se>\
+</span></span></span><span class=line><span class=cl>  -p 14268:14268 <span class=se>\
+</span></span></span><span class=line><span class=cl>  -p 14250:14250 <span class=se>\
+</span></span></span><span class=line><span class=cl>  -p 9411:9411 <span class=se>\
+</span></span></span><span class=line><span class=cl>  jaegertracing/all-in-one:1.17
 </span></span></code></pre></div><p>然后在浏览器访问 <a href=http://localhost:16686>http://localhost:16686</a> 即可看到 jaeger 的 UI，如下：</p><p><img alt=img loading=lazy src=/images/go-rpc/18-2.jpg></p><h3 id=小结>小结</h3><p>本章主要介绍了分布式链路追踪的原理、opentracing 的核心概念和 jaeger 的简单实用，下一章我们将会介绍代码实现</p></div><div class=lesson-navigation><div class=nav-buttons><a href=https://diu.life/lessons/go-rpc/load-balance-implementation/ class="nav-btn prev-btn"><span>← 上一章</span>
 <span class=nav-title>第十七章：负载均衡实现</span>
 </a><a href=https://diu.life/lessons/go-rpc/tracing-implementation/ class="nav-btn next-btn"><span>下一章 →</span>

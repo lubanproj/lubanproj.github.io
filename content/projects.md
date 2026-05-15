@@ -37,6 +37,6 @@ showPagination: false
 
 - [Lumo](https://www.lumomusic.xyz/) 一个简易的 AI 音乐播放器
 
-### AI Girlfriend
+### Best AI Girlfriend
 
-- [Formind](https://www.bestaiporn.fun/) AI 女友，情感陪伴、聊天，支持自定义
+- [Best AI Girlfriend](https://www.bestaiporn.fun/) AI 女友，情感陪伴、聊天，支持自定义
